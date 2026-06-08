@@ -1,0 +1,675 @@
+{
+  "converted_rule_count": 3248,
+  "converted_rule_types": {
+    "body": 1179,
+    "full": 2,
+    "header": 1116,
+    "meta": 690,
+    "mimeheader": 38,
+    "rawbody": 67,
+    "uri": 156
+  },
+  "dropped_meta_count": 179,
+  "dropped_metas": {
+    "GB_BADJS": [
+      "T_HTML_ATTACH",
+      "T_OBFU_HTML_ATTACH",
+      "UNICODE_OBFU_ASC"
+    ],
+    "GB_DOCUSIGN_G_SHARE": [
+      "GOOG_REDIR_DOCUSIGN"
+    ],
+    "GB_EBIKE": [
+      "CBJ_GiveMeABreak",
+      "NEW_PRODUCTS",
+      "YOUR_DELIVERY_ADDRESS",
+      "__DOS_DIRECT_TO_MX",
+      "__DOS_DIRECT_TO_MX_UNTRUSTED",
+      "__TAG_EXISTS_HEAD",
+      "__YOUR_PERSONAL"
+    ],
+    "GB_EBIKE_ADDR": [
+      "GB_EBIKE",
+      "YOUR_DELIVERY_ADDRESS"
+    ],
+    "GB_EMPTY_CALENDAR": [
+      "EMPTY_MESSAGE"
+    ],
+    "GB_EMPTY_IMAGES": [
+      "EMPTY_MESSAGE",
+      "__ANY_IMAGE_ATTACH"
+    ],
+    "GB_ESP_CRIM": [
+      "KAM_SENDGRID",
+      "__STY_INVIS_MANY"
+    ],
+    "GB_FAKE_DOCUSIGN": [
+      "MXG_SPOOFED_DOCUSIGN"
+    ],
+    "GB_FAKE_SIGNED_MICROSOFT": [
+      "DKIM_VALID_AU",
+      "KAM_ONMICROSOFT_RF"
+    ],
+    "GB_FAKE_ZOHOINVOICE": [
+      "FREEMAIL_REPLYTO_END_DIGIT"
+    ],
+    "GB_FREEMAIL_SEO": [
+      "__GB_RCPT_EMPTY"
+    ],
+    "GB_FREEMAIL_TEXTCOLOR": [
+      "__KAM_BODY_LENGTH_LT_1024"
+    ],
+    "GB_FROM_NAME_FREEMAIL": [
+      "__GB_FROM_ADDR_FREEMAIL",
+      "__GB_FROM_NAME_FREEMAIL"
+    ],
+    "GB_GMAIL_NUM": [
+      "KAM_DMARC_NONE",
+      "KAM_DMARC_QUARANTINE"
+    ],
+    "GB_HTML_FORM": [
+      "T_HTML_ATTACH",
+      "T_OBFU_HTML_ATTACH",
+      "UNICODE_OBFU_ASC"
+    ],
+    "GB_INVALID_FROM_NOTLS": [
+      "KAM_GB_INVALID_FROM",
+      "KAM_NOTLS"
+    ],
+    "GB_INVOICE3": [
+      "__WORD_INVIS_2"
+    ],
+    "GB_INVOICE4": [
+      "PCCC_BAD_FREE_URI"
+    ],
+    "GB_LOOKERSTUDIO": [
+      "__GB_ANY_REDIR"
+    ],
+    "GB_PAYPAL_BTC_INV": [
+      "__KAM_PAYPAL2A"
+    ],
+    "GB_PAYPAL_BTC_PHONE": [
+      "MONEY_NOHTML"
+    ],
+    "GB_PAYPAL_OBFU_PHONE": [
+      "FROM_PAYPAL_SPOOF",
+      "FUZZY_PAYPAL"
+    ],
+    "GB_RETPATH_GOOG_TRIX": [
+      "ENVFROM_GOOG_TRIX"
+    ],
+    "GB_TO_NAME_FREEMAIL": [
+      "__GB_TO_ADDR_FREEMAIL",
+      "__GB_TO_NAME_FREEMAIL"
+    ],
+    "JMQ_CONGRAT": [
+      "HK_SPAMMY_FILENAME",
+      "KAM_RAPTOR_ALTERED",
+      "T_FREEMAIL_DOC_PDF"
+    ],
+    "JMQ_IMPORTANT": [
+      "KAM_LAZY_DOMAIN_SECURITY"
+    ],
+    "JMQ_WIRE": [
+      "HEADER_FROM_DIFFERENT_DOMAINS",
+      "KAM_LAZY_DOMAIN_SECURITY",
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_ACCOUNTPHISH": [
+      "KAM_LAZY_DOMAIN_SECURITY"
+    ],
+    "KAM_ADMIN": [
+      "HEADER_FROM_DIFFERENT_DOMAINS",
+      "HTML_OBFUSCATE_10_20"
+    ],
+    "KAM_APPLINK": [
+      "__KAM_BODY_LENGTH_LT_512"
+    ],
+    "KAM_ARREST": [
+      "__KAM_BODY_LENGTH_LT_128"
+    ],
+    "KAM_ASCII_DIVIDERS": [
+      "HTML_MESSAGE"
+    ],
+    "KAM_AUTO": [
+      "CBJ_GiveMeABreak"
+    ],
+    "KAM_AUTONEW2": [
+      "KAM_ASCII_DIVIDERS"
+    ],
+    "KAM_BADPO2": [
+      "T_HTML_ATTACH"
+    ],
+    "KAM_BAD_DNSWL": [
+      "RCVD_IN_BL_SPAMCOP_NET",
+      "RCVD_IN_HOSTKARMA_W",
+      "RCVD_IN_XBL"
+    ],
+    "KAM_BAD_HTML": [
+      "T_HTML_ATTACH",
+      "UNWANTED_LANGUAGE_BODY"
+    ],
+    "KAM_BAD_SCAN": [
+      "T_HTML_ATTACH"
+    ],
+    "KAM_BANK": [
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_BANK2": [
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_BENEFICIARY": [
+      "EXTRACTTEXT",
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_BENEFICIARY2": [
+      "DEAR_BENEFICIARY",
+      "GMD_PDF_EMPTY_BODY"
+    ],
+    "KAM_BENEFICIARYLOW": [
+      "EXTRACTTEXT",
+      "KAM_BENEFICIARY",
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_BIDEST": [
+      "KAM_FROM_URIBL_PCCC"
+    ],
+    "KAM_BLUEHORNET": [
+      "HEADER_FROM_DIFFERENT_DOMAINS",
+      "SPF_HELO_NONE"
+    ],
+    "KAM_BOXPHISH": [
+      "__UPGR_MAILBOX"
+    ],
+    "KAM_BTC": [
+      "__GB_ANY_REDIR",
+      "__TO_UNDISCLOSED"
+    ],
+    "KAM_CAMERA": [
+      "__KAM_SUBSCRIPTION_INFO"
+    ],
+    "KAM_CAM_DOMAIN": [
+      "KAM_SEMFRESH"
+    ],
+    "KAM_CARD": [
+      "KAM_RPTR_SUSPECT"
+    ],
+    "KAM_CEP": [
+      "__KAM_BODY_LENGTH_LT_1024",
+      "__PDF_ATTACH"
+    ],
+    "KAM_CERT": [
+      "__PLUGIN_FROMNAME_SPOOF"
+    ],
+    "KAM_CHECKFILE2": [
+      "T_OBFU_PDF_ATTACH"
+    ],
+    "KAM_COLLEGE": [
+      "__KAM_URIBL_PCCC"
+    ],
+    "KAM_COMPROMISED": [
+      "__KAM_BODY_LENGTH_LT_128"
+    ],
+    "KAM_COVID": [
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_COVID2": [
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_CREDIT2": [
+      "__KAM_URIBL_PCCC"
+    ],
+    "KAM_CRIM": [
+      "FUZZY_BITCOIN"
+    ],
+    "KAM_CRIM2": [
+      "HTML_FONT_LOW_CONTRAST"
+    ],
+    "KAM_CRYPTODRIVE": [
+      "__URI_GOOGLE_DRV"
+    ],
+    "KAM_DANGEROUSXLS": [
+      "KAM_OLEMACRO_ENCRYPTED",
+      "KAM_OLEMACRO_RENAME"
+    ],
+    "KAM_DATING": [
+      "FREEMAIL_FORGED_REPLYTO"
+    ],
+    "KAM_DIGITALWALLET": [
+      "HELO_DYNAMIC_DHCP"
+    ],
+    "KAM_DIRECTDEPOSIT": [
+      "KAM_RAPTOR_EXTERNAL"
+    ],
+    "KAM_DOCUSIGN": [
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_DOMAINBROKER": [
+      "KAM_BODY_MARKETINGBL_PCCC"
+    ],
+    "KAM_DRONE2": [
+      "__KAM_SUBSCRIPTION_INFO"
+    ],
+    "KAM_DUJOUR": [
+      "KAM_STORAGE_GOOGLE"
+    ],
+    "KAM_EXPLOIT": [
+      "KAM_SENDGRID"
+    ],
+    "KAM_FACEBOOKMAIL": [
+      "DKIM_ADSP_ALL"
+    ],
+    "KAM_FAKEFORM": [
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_FAKEWEST": [
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_FAKE_AGING": [
+      "KAM_RAPTOR_EXTERNAL"
+    ],
+    "KAM_FAKE_BENEFIT": [
+      "T_HTML_ATTACH"
+    ],
+    "KAM_FAKE_DELIVER": [
+      "HEADER_FROM_DIFFERENT_DOMAINS",
+      "KAM_RAPTOR_ALTERED"
+    ],
+    "KAM_FAKE_DOCUSIGN": [
+      "T_HTML_ATTACH"
+    ],
+    "KAM_FAKE_FAX": [
+      "T_HTML_ATTACH"
+    ],
+    "KAM_FAKE_FAX2": [
+      "GB_BADJS",
+      "KAM_FAKE_FAX",
+      "T_HTML_ATTACH"
+    ],
+    "KAM_FAKE_INVOICE": [
+      "KAM_RAPTOR_ALTERED",
+      "OLEMACRO_URI_TARGET",
+      "T_HTML_ATTACH"
+    ],
+    "KAM_FAKE_INVOICEMS": [
+      "KAM_ONMICROSOFT"
+    ],
+    "KAM_FAKE_MT": [
+      "__HAS_PHP_ORIG_SCRIPT"
+    ],
+    "KAM_FAKE_PAY_UPDATE": [
+      "KAM_RAPTOR_EXTERNAL"
+    ],
+    "KAM_FAKE_PAY_UPDATE_LOW": [
+      "EXTRACTTEXT",
+      "KAM_FAKE_PAY_UPDATE",
+      "KAM_RAPTOR_EXTERNAL"
+    ],
+    "KAM_FAKE_PO": [
+      "T_HTML_ATTACH"
+    ],
+    "KAM_FAKE_REWARDS": [
+      "KAM_STORAGE_GOOGLE"
+    ],
+    "KAM_FAKE_SECURITY": [
+      "__GB_ANY_REDIR"
+    ],
+    "KAM_FAKE_SHARE": [
+      "__GB_ANY_REDIR"
+    ],
+    "KAM_FAKE_SHAREPOINT": [
+      "GOOG_REDIR_NOTRDNS",
+      "KAM_STORAGE_GOOGLE"
+    ],
+    "KAM_FAKE_SHAREPOINTLINK": [
+      "KAM_FAKE_SHAREPOINT",
+      "KAM_STORAGE_GOOGLE"
+    ],
+    "KAM_FAKE_SHAREPOINT_PRODUCTS": [
+      "KAM_FAKE_SHAREPOINT"
+    ],
+    "KAM_FAT": [
+      "__KAM_SUBSCRIPTION_INFO"
+    ],
+    "KAM_FEDEX": [
+      "T_HTML_ATTACH"
+    ],
+    "KAM_GAMBLING": [
+      "FORGED_GMAIL_RCVD",
+      "__FREEMAIL_DOC_PDF"
+    ],
+    "KAM_GARAGE": [
+      "HTML_FONT_LOW_CONTRAST"
+    ],
+    "KAM_GARAGE2": [
+      "HTML_FONT_LOW_CONTRAST",
+      "KAM_GARAGE"
+    ],
+    "KAM_GB_INVALID_FROM": [
+      "ALL_TRUSTED",
+      "NO_RELAYS",
+      "__BOUNCE_CTYPE"
+    ],
+    "KAM_GIRLS": [
+      "__SINGLE_WORD_SUBJ"
+    ],
+    "KAM_GOOGLE2": [
+      "HK_SPAMMY_FILENAME",
+      "KAM_LAZY_DOMAIN_SECURITY"
+    ],
+    "KAM_GRABBAG1": [
+      "HTML_FONT_LOW_CONTRAST",
+      "T_REMOTE_IMAGE"
+    ],
+    "KAM_GRABBAG2": [
+      "AC_HTML_NONSENSE_TAGS"
+    ],
+    "KAM_GRABBAG3": [
+      "__KAM_HAS_10_URIS"
+    ],
+    "KAM_GRABBAG5": [
+      "FORGED_YAHOO_RCVD"
+    ],
+    "KAM_GRABBAG7": [
+      "HTML_MIME_NO_HTML_TAG"
+    ],
+    "KAM_GRABBAG9": [
+      "FREEMAIL_ENVFROM_END_DIGIT",
+      "MALFORMED_FREEMAIL"
+    ],
+    "KAM_HEALTH2": [
+      "HTML_MESSAGE"
+    ],
+    "KAM_HOSE": [
+      "DKIM_INVALID"
+    ],
+    "KAM_IMAGEONLY": [
+      "PDS_OTHER_BAD_TLD"
+    ],
+    "KAM_INSURE": [
+      "CBJ_GiveMeABreak",
+      "FROM_FREEMAIL"
+    ],
+    "KAM_INSURE2": [
+      "CBJ_GiveMeABreak",
+      "FROM_FREEMAIL"
+    ],
+    "KAM_INVEST": [
+      "EXTRACTTEXT",
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_INVOICEPO": [
+      "T_HTML_ATTACH"
+    ],
+    "KAM_JURY": [
+      "KAM_RAPTOR_ALTERED"
+    ],
+    "KAM_LINEPADDING": [
+      "__CBJ_GiveMeABreak1",
+      "__CBJ_GiveMeABreak2"
+    ],
+    "KAM_LINKBAIT": [
+      "KAM_LAZY_DOMAIN_SECURITY",
+      "__KAM_BODY_LENGTH_LT_512",
+      "__KAM_COUNT_URIS"
+    ],
+    "KAM_LINKBAIT2": [
+      "KAM_LINKBAIT"
+    ],
+    "KAM_LINKBAIT3": [
+      "__KAM_BODY_LENGTH_LT_512"
+    ],
+    "KAM_LIST": [
+      "EXTRACTTEXT"
+    ],
+    "KAM_LIST3": [
+      "EXTRACTTEXT"
+    ],
+    "KAM_LIST3_1": [
+      "EXTRACTTEXT",
+      "KAM_LIST3"
+    ],
+    "KAM_LOTTO3": [
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_LUNAR": [
+      "MISSING_HEADERS"
+    ],
+    "KAM_LUNAR2": [
+      "MISSING_HEADERS"
+    ],
+    "KAM_MAILBOX": [
+      "HTML_MIME_NO_HTML_TAG",
+      "KAM_SENDGRID",
+      "KAM_SENDGRID2",
+      "T_FREEMAIL_DOC_PDF",
+      "T_HTML_ATTACH",
+      "__GB_NN_ALONDE",
+      "__GB_NN_AME",
+      "__GB_NN_BOX",
+      "__GB_NN_CLOUDFL"
+    ],
+    "KAM_MAILBOX2": [
+      "KAM_MAILBOX",
+      "__GB_NN_ALONDE",
+      "__GB_NN_AME",
+      "__GB_NN_BOX",
+      "__GB_NN_CLOUDFL"
+    ],
+    "KAM_MAILBOX3": [
+      "KAM_MAILBOX",
+      "KAM_MAILBOX2",
+      "KAM_SENDGRID",
+      "KAM_SENDGRID2"
+    ],
+    "KAM_MATCH": [
+      "HTML_IMAGE_RATIO_06"
+    ],
+    "KAM_MILLIONAIRE": [
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_NEWS": [
+      "__KAM_BODY_LENGTH_LT_128"
+    ],
+    "KAM_NIGERIAN": [
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_NIGERIAN3": [
+      "DEAR_SOMETHING",
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_NOCONFIDENCE": [
+      "KAM_LAZY_DOMAIN_SECURITY"
+    ],
+    "KAM_NOTIFY2": [
+      "HEADER_FROM_DIFFERENT_DOMAINS",
+      "KAM_IFRAME"
+    ],
+    "KAM_ONMICROSOFT": [
+      "__AUTOREPLY_ASU"
+    ],
+    "KAM_ONMICROSOFT_RF": [
+      "__AUTOREPLY_ASU"
+    ],
+    "KAM_PAPERLESS": [
+      "HEADER_FROM_DIFFERENT_DOMAINS"
+    ],
+    "KAM_PASSWORDSCAM": [
+      "__PDF_ATTACH",
+      "__SINGLE_WORD_SUBJ"
+    ],
+    "KAM_PAYMENTSCAM2": [
+      "DEAR_BENEFICIARY"
+    ],
+    "KAM_PAYPAL3": [
+      "KAM_LAZY_DOMAIN_SECURITY"
+    ],
+    "KAM_PAYROLL_SCANNER": [
+      "KAM_IFRAME",
+      "T_HTML_ATTACH"
+    ],
+    "KAM_PHISHCP4": [
+      "KAM_MAILBOX",
+      "KAM_MAILBOX2"
+    ],
+    "KAM_PHOTOPHISH": [
+      "__HAS_ANY_URI"
+    ],
+    "KAM_PHOTOPHISHLOW": [
+      "__HAS_ANY_URI"
+    ],
+    "KAM_PRIV": [
+      "T_HTML_ATTACH"
+    ],
+    "KAM_QUITE_BAD_DNSWL": [
+      "RCVD_IN_BL_SPAMCOP_NET",
+      "RCVD_IN_HOSTKARMA_W",
+      "RCVD_IN_XBL"
+    ],
+    "KAM_RBL": [
+      "RCVD_IN_PBL"
+    ],
+    "KAM_REALLY_FAKE_DELIVER": [
+      "KAM_FAKE_DELIVER",
+      "KAM_RPTR_PASSED"
+    ],
+    "KAM_REFI": [
+      "AC_HTML_NONSENSE_TAGS"
+    ],
+    "KAM_REFI2": [
+      "AC_HTML_NONSENSE_TAGS"
+    ],
+    "KAM_SALE": [
+      "BODY_8BITS"
+    ],
+    "KAM_SANDAL": [
+      "__KAM_SUBSCRIPTION_INFO"
+    ],
+    "KAM_SEENTHIS": [
+      "KAM_LAZY_DOMAIN_SECURITY"
+    ],
+    "KAM_SENDGRID": [
+      "HEADER_FROM_DIFFERENT_DOMAINS",
+      "SPF_HELO_NONE"
+    ],
+    "KAM_SENDGRID2": [
+      "KAM_SENDGRID",
+      "TO_IN_SUBJ"
+    ],
+    "KAM_SEX": [
+      "__HTML_IMG_ONLY"
+    ],
+    "KAM_SIGN": [
+      "KAM_STORAGE_GOOGLE"
+    ],
+    "KAM_STOCKG": [
+      "HTML_MESSAGE"
+    ],
+    "KAM_STORAGE_GOOGLE": [
+      "__URI_GOOG_STO_IMG"
+    ],
+    "KAM_TEMPORARYLINK": [
+      "__AUTOREPLY_ASU"
+    ],
+    "KAM_TEMPORARYLINK_RF": [
+      "__AUTOREPLY_ASU"
+    ],
+    "KAM_UAH_YAHOOGROUP_SENDER": [
+      "FORGED_YAHOO_RCVD",
+      "__DOS_HAS_LIST_UNSUB",
+      "__DOS_HAS_MAILING_LIST",
+      "__ML2"
+    ],
+    "KAM_UKINV": [
+      "HTML_OBFUSCATE_10_20",
+      "HTML_TITLE_SUBJ_DIFF"
+    ],
+    "KAM_VM": [
+      "KAM_RAPTOR_EXTERNAL"
+    ],
+    "KAM_VM_HTML": [
+      "KAM_VM"
+    ],
+    "KAM_WARRANTY": [
+      "CBJ_GiveMeABreak"
+    ],
+    "KAM_WARRANTY2": [
+      "KAM_WARRANTY"
+    ],
+    "KAM_WARRANTY3": [
+      "CBJ_GiveMeABreak"
+    ],
+    "KAM_WEIRDC19": [
+      "__KAM_BODY_LENGTH_LT_512"
+    ],
+    "KAM_WEIRDTRICK2": [
+      "AC_HTML_NONSENSE_TAGS",
+      "HTML_FONT_LOW_CONTRAST",
+      "T_REMOTE_IMAGE"
+    ],
+    "KAM_WU": [
+      "LOTS_OF_MONEY"
+    ],
+    "KAM_ZERODAY2": [
+      "KAM_LAZY_DOMAIN_SECURITY"
+    ],
+    "KAM_ZERODAY3": [
+      "KAM_ZERODAY2",
+      "T_OBFU_DOC_ATTACH"
+    ],
+    "WORD_INVIS_MANY": [
+      "__BODY_TEXT_LINE",
+      "__WORD_INVIS_2"
+    ],
+    "__GB_NN_ALONDE": [
+      "DKIM_VALID_AU",
+      "DMARC_PASS"
+    ],
+    "__GB_NN_AME": [
+      "DMARC_PASS"
+    ],
+    "__GB_NN_BOX": [
+      "DMARC_PASS"
+    ],
+    "__GB_NN_CLOUDFL": [
+      "DKIM_VALID_AU",
+      "DKIM_VALID_EF"
+    ],
+    "__GB_RCPT_EMPTY": [
+      "__HAS_TO"
+    ],
+    "__KAM_SUBSCRIPTION_INFO": [
+      "__SUBSCRIPTION_INFO"
+    ]
+  },
+  "omitted_directives": {
+    "unsupported_header": 4
+  },
+  "omitted_examples": [
+    {
+      "directive": "unsupported_header",
+      "line": 6475,
+      "text": "header   __GB_TO_ADDR_FREEMAIL    eval:check_freemail_header('To:addr')"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 6476,
+      "text": "header   __GB_TO_NAME_FREEMAIL    eval:check_freemail_header('To:name')"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 6481,
+      "text": "header   __GB_FROM_ADDR_FREEMAIL  eval:check_freemail_header('From:addr')"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 6482,
+      "text": "header   __GB_FROM_NAME_FREEMAIL  eval:check_freemail_header('From:name')"
+    }
+  ],
+  "output_bytes": 625090,
+  "output_sha256": "a829f75f0af0dcb2a17f1540b446db9d63804d8d193a48227f8fbac2b1541cc4",
+  "source_bytes": 616302,
+  "source_sha256": "2ec0affce38e08d6119893936d91031bb64f28f598499b2ddc6d75f8b1283dde",
+  "source_url": "https://mcgrail.com/downloads/KAM.cf"
+}

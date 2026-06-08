@@ -1,0 +1,17 @@
+# sample KAM-style rules
+replace_tag LETTER [A-Za-z]
+replace_rules SAMPLE_BODY
+
+ifplugin Mail::SpamAssassin::Plugin::ReplaceTags
+body SAMPLE_BODY /foo<LETTER>/is
+describe SAMPLE_BODY preserves regex flags
+score SAMPLE_BODY 1.5
+else
+body SAMPLE_BODY /fallback/
+endif
+
+header SAMPLE_HEADER Subject =~ /^hello$/i
+meta SAMPLE_META (SAMPLE_BODY && SAMPLE_HEADER)
+score SAMPLE_META 2.0
+
+askdns UNSUPPORTED example.org A

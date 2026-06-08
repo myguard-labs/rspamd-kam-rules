@@ -1,0 +1,82 @@
+name: Update KAM Rules
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: "0 3 * * *"  # Daily at 3am UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Run tests
+        run: python3 -m unittest discover -s tests -v
+
+  update:
+    # Only refresh + publish on a schedule or manual dispatch; push/PR runs
+    # just exercise the test job above. (A fork PR has a read-only token and
+    # could never push anyway.)
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Check if KAM.cf has updates
+        id: check
+        run: |
+          KAM_URL="https://mcgrail.com/downloads/KAM.cf"
+
+          # Get remote Last-Modified timestamp
+          REMOTE_TS=$(curl -sI "$KAM_URL" | grep -i '^Last-Modified:' | cut -d' ' -f2- | tr -d '\r')
+          echo "Remote timestamp: $REMOTE_TS"
+
+          # Check stored timestamp (if exists)
+          if [[ -f .last-modified ]]; then
+            LOCAL_TS=$(cat .last-modified)
+            echo "Local timestamp:  $LOCAL_TS"
+
+            if [[ "$REMOTE_TS" == "$LOCAL_TS" ]]; then
+              echo "No changes detected"
+              echo "changed=false" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+          fi
+
+          echo "Changes detected or first run"
+          echo "changed=true" >> $GITHUB_OUTPUT
+          echo "$REMOTE_TS" > .last-modified
+
+      - name: Update KAM rules
+        if: steps.check.outputs.changed == 'true'
+        run: python3 kam_rspamd.py
+
+      - name: Commit and push if changed
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: update KAM rules from upstream"
+            git push
+          fi

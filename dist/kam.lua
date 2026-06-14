@@ -3296,17 +3296,7 @@ local expressions = {}
 local rule_count = 0
 
 local function parse_atom(str)
-  return str:match('^([^, %s%t%(%)><+!|&]+)') or ''
-end
-
-local function regexp_type(rule)
-  if rule.kind == 'body' then return 'sabody' end
-  if rule.kind == 'rawbody' then return 'sarawbody' end
-  if rule.kind == 'full' then return 'message' end
-  if rule.kind == 'uri' then return 'url' end
-  if rule.kind == 'mimeheader' then return 'mimeheader' end
-  if rule.header_mode == 'raw' then return 'rawheader' end
-  return rule.header == 'ALL' and 'allheader' or 'header'
+  return str:match('^([^, %s%(%)><+!|&]+)') or ''
 end
 
 local function match_data(rule, data, raw)
@@ -3331,7 +3321,11 @@ local function match_header(task, rule)
     local values = {}
     if rule.kind == 'mimeheader' then
       for _, part in ipairs(task:get_parts() or {}) do
-        for _, hdr in ipairs(part:get_header_full(header_name, false) or {}) do table.insert(values, hdr) end
+        -- get_header_full may be absent on older rspamd mime-part bindings;
+        -- guard so a missing method degrades to no match instead of erroring.
+        if part.get_header_full then
+          for _, hdr in ipairs(part:get_header_full(header_name, false) or {}) do table.insert(values, hdr) end
+        end
       end
     else
       values = task:get_header_full(header_name, rule.header_mode == 'case') or {}
@@ -3401,12 +3395,12 @@ for name, rule in pairs(rules) do
       rspamd_logger.errx(rspamd_config, 'cannot compile KAM meta %s: %s', name, rule.expression)
     end
   else
+    -- Matched directly in eval_atom; not registered with the config (a
+    -- registered regexp whose result is never queried only wastes a hyperscan
+    -- slot at load time).
     rule.re = rspamd_regexp.create(rule.expression)
     if rule.re then
       rule.re:set_max_hits(rule.multiple and (rule.maxhits or -1) or 1)
-      local registration = { re = rule.re, type = regexp_type(rule) }
-      if rule.kind == 'header' or rule.kind == 'mimeheader' then registration.header = rule.header end
-      rspamd_config:register_regexp(registration)
     else
       rspamd_logger.errx(rspamd_config, 'cannot compile KAM regexp %s: %s', name, rule.expression)
     end
@@ -3423,21 +3417,26 @@ local function kam_callback(task)
   for name, rule in pairs(rules) do
     if rule.kind == 'meta' then
       local result = eval_atom(name, task)
-      if rule.score ~= 0 and result and result > 0 then task:insert_result(name, result) end
+      -- A meta fires once when its expression is true; its arithmetic value is
+      -- not a hit count, so insert with weight 1 (not result) to avoid scaling.
+      if rule.score ~= 0 and result and result > 0 then task:insert_result(name, 1) end
     end
   end
 end
 
 local parent_id = rspamd_config:register_symbol({
   name = 'KAM_RULES_MODULE', type = 'normal', callback = kam_callback,
-  score = 0.01, priority = 5
+  score = 0.01, priority = 5, group = 'KAM'
 })
 
+-- Every scored rule is a virtual child of KAM_RULES_MODULE and belongs to the
+-- 'KAM' group. The group is uncapped (no max_score) — purely organisational, so
+-- the symbols sum additively. Add a max_score in groups.conf to cap the total.
 for name, rule in pairs(rules) do
   if rule.score ~= 0 then
     rspamd_config:register_symbol({
       name = name, type = 'virtual', parent = parent_id, score = rule.score,
-      description = rule.description
+      description = rule.description, group = 'KAM'
     })
   end
 end

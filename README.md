@@ -27,14 +27,15 @@ This converter reads KAM.cf with a real parser and emits one self-contained `kam
 - **Maps symbols** — `SPF_PASS` → `R_SPF_ALLOW`, `DKIM_VALID` → `R_DKIM_ALLOW`, the
   `URIBL_*` family → Rspamd's SURBL/DBL symbols, so metas actually resolve and fire.
 - **Prunes dead metas** — fixpoint dependency resolution drops any meta whose
-  transitive dependencies aren't reachable on *your* Rspamd (179 in the current run),
+  transitive dependencies aren't reachable on *your* Rspamd (180 in the current run),
   recording the missing symbols in the report.
 - **Preserves semantics** — regex flags, header modes (`addr`/`name`/`raw`/`case`),
   `replace_tag`/`replace_rules` expansion, and `tflags multiple maxhits=N` per-hit
   scoring all survive.
-- **Registers properly** — every pattern goes into Rspamd's regexp cache by type
-  (`sabody`, `sarawbody`, `message`, `url`, `mimeheader`, header variants) for
-  single-pass Hyperscan scanning. Metas compile via `rspamd_expression.create`.
+- **Registers properly** — every scored rule becomes a virtual child of the
+  `KAM_RULES_MODULE` callback symbol and joins the `KAM` symbol group, so the whole
+  ruleset is one organisational unit in the UI/history. Regexps compile via
+  `rspamd_regexp.create`; metas via `rspamd_expression.create`.
 - **Skips the unsupported** — `askdns`, `eval:` plugin functions, and friends go to
   the report, not the output.
 - **Pins the source** — each generated `kam.lua` carries the SHA-256 of the exact
@@ -44,19 +45,19 @@ The result is one `kam.lua` that drops into Rspamd's plugin directory.
 
 ## What gets converted
 
-Out of KAM.cf's ~6,500 lines, the current run converts **3,248 rules**:
+Out of KAM.cf's ~6,500 lines, the current run converts **3,249 rules**:
 
 | Type | Count | Catches |
 |---|---|---|
 | body | 1,179 | message-text patterns |
-| header | 1,116 | Subject / From / Message-ID etc. |
+| header | 1,117 | Subject / From / Message-ID etc. |
 | meta | 690 | combined-signal verdicts |
 | uri | 156 | malicious redirectors, phishing domains |
 | rawbody | 67 | base64-obfuscated payloads pre-decode |
 | mimeheader | 38 | forged attachments |
 | full | 2 | whole RFC 822 message |
 
-179 meta rules are deliberately dropped because they depend on symbols the target
+180 meta rules are deliberately dropped because they depend on symbols the target
 Rspamd doesn't provide (SA-plugin symbols, DNS lists, `eval:` functions).
 
 ## Install
@@ -73,6 +74,19 @@ rspamadm configtest && systemctl restart rspamd
 The plugin is regenerated **daily at 3am UTC** via GitHub Actions, but only commits a
 new `dist/kam.lua` when KAM.cf upstream actually changes (it compares the
 `Last-Modified` header against a stored timestamp).
+
+### Symbol group
+
+Every KAM symbol is registered into the `KAM` group (child of the
+`KAM_RULES_MODULE` callback). The group is **uncapped** — symbols score additively.
+To cap the group's total positive contribution, drop `config/groups.conf` in as
+`/etc/rspamd/local.d/groups.conf` and set `max_score`:
+
+```
+group "KAM" {
+    max_score = 100;   # ceiling for the whole ruleset's contribution
+}
+```
 
 ## Build it yourself
 

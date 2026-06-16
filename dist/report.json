@@ -289,7 +289,8 @@
     "KAM_FAKE_INVOICE": [
       "KAM_RAPTOR_ALTERED",
       "OLEMACRO_URI_TARGET",
-      "T_HTML_ATTACH"
+      "T_HTML_ATTACH",
+      "__WLHTMLATTACH"
     ],
     "KAM_FAKE_INVOICEMS": [
       "KAM_ONMICROSOFT"
@@ -659,7 +660,8 @@
   ],
   "external_dependency_count": 7,
   "omitted_directives": {
-    "unsupported_header": 4
+    "enlist_addrlist": 1,
+    "unsupported_header": 5
   },
   "omitted_examples": [
     {
@@ -681,11 +683,21 @@
       "directive": "unsupported_header",
       "line": 6484,
       "text": "header   __GB_FROM_NAME_FREEMAIL  eval:check_freemail_header('From:name')"
+    },
+    {
+      "directive": "enlist_addrlist",
+      "line": 7780,
+      "text": "enlist_addrlist (WLHTMLATTACH)          *@pearson.com"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 7781,
+      "text": "header          __WLHTMLATTACH          eval:check_from_in_list('WLHTMLATTACH')"
     }
   ],
-  "output_bytes": 627767,
-  "output_sha256": "c6540e68cb988f7ada92d83c3014d41ccf46cc4d80cc932ec8547f761f614a60",
-  "source_bytes": 616595,
-  "source_sha256": "e76cc58944486ee99ef8ffec1f7bd4ea67c9843354b568e4391e464ddfd7114a",
+  "output_bytes": 627780,
+  "output_sha256": "dfbba0be267e8160d3895db19f3e99111fed2803cf0ab43511835d2528de63a3",
+  "source_bytes": 617387,
+  "source_sha256": "3574ef42ef91ff06e1d4b4037bb07fa0886f048144a0b8811c78b273a0f88e6a",
   "source_url": "https://mcgrail.com/downloads/KAM.cf"
 }

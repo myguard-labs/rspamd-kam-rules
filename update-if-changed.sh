@@ -5,12 +5,13 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$SCRIPT_DIR"
 
 KAM_URL="https://mcgrail.com/downloads/KAM.cf"
-LOGFILE="$SCRIPT_DIR/update.log"
 SOURCE_FILE=$(mktemp "$SCRIPT_DIR/.KAM.cf.XXXXXX")
 trap 'rm -f "$SOURCE_FILE"' EXIT
 
+# Emit to stdout/stderr only; the cron entry owns the redirect to update.log.
+# (Self-logging via `tee -a` here AND a cron `>>update.log` doubled every line.)
 log() {
-    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOGFILE"
+    echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*"
 }
 
 log "Checking KAM.cf for updates..."
@@ -35,7 +36,7 @@ log "Content changed; compiling KAM.cf..."
 if python3 kam_rspamd.py \
     --input "$SOURCE_FILE" \
     --url "$KAM_URL" \
-    --expected-sha256 "$SOURCE_SHA" >> "$LOGFILE" 2>&1; then
+    --expected-sha256 "$SOURCE_SHA"; then
     log "Successfully compiled KAM.cf"
 
     # Optional: auto-deploy to rspamd

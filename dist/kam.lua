@@ -2,6 +2,33 @@
 -- Source: https://mcgrail.com/downloads/KAM.cf
 -- Source-SHA256: 3574ef42ef91ff06e1d4b4037bb07fa0886f048144a0b8811c78b273a0f88e6a
 
+-- ---------------------------------------------------------------------------
+-- This plugin is generated from KAM.cf and is a derivative work of it.
+-- KAM.cf — the KAM ruleset for Apache SpamAssassin.
+--
+-- Authors: Kevin A. McGrail, with key contributions from Joe Quinn,
+--          Karsten Bräckelmann, Bill Cole & Giovanni Bechis.
+-- Thanks to Wolfgang Breyha for his help fixing a few rules.
+-- Maintained by The McGrail Foundation, a 501(c)(3) charity.
+-- Home: https://mcgrail.com/template/projects#KAM1
+--
+-- Copyright (c) 2022 Kevin A. McGrail and The McGrail Foundation
+--
+--   Licensed under the Apache License, Version 2.0 (the "License");
+--   you may not use this file except in compliance with the License.
+--   You may obtain a copy of the License at
+--
+--       http://www.apache.org/licenses/LICENSE-2.0
+--
+--   Unless required by applicable law or agreed to in writing, software
+--   distributed under the License is distributed on an "AS IS" BASIS,
+--   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+--   See the License for the specific language governing permissions and
+--   limitations under the License.
+--
+-- The converter itself (rspamd-kam-rules) is MIT-licensed.
+-- ---------------------------------------------------------------------------
+
 local rspamd_expression = require "rspamd_expression"
 local rspamd_logger = require "rspamd_logger"
 local rspamd_regexp = require "rspamd_regexp"

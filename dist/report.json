@@ -695,8 +695,8 @@
       "text": "header          __WLHTMLATTACH          eval:check_from_in_list('WLHTMLATTACH')"
     }
   ],
-  "output_bytes": 627780,
-  "output_sha256": "dfbba0be267e8160d3895db19f3e99111fed2803cf0ab43511835d2528de63a3",
+  "output_bytes": 629085,
+  "output_sha256": "fb6299f056701bbe353266ba276ae36d79d53416dbea253f32fcf7c2e28b1134",
   "source_bytes": 617387,
   "source_sha256": "3574ef42ef91ff06e1d4b4037bb07fa0886f048144a0b8811c78b273a0f88e6a",
   "source_url": "https://mcgrail.com/downloads/KAM.cf"

@@ -388,12 +388,10 @@
       "PDS_OTHER_BAD_TLD"
     ],
     "KAM_INSURE": [
-      "CBJ_GiveMeABreak",
-      "FROM_FREEMAIL"
+      "CBJ_GiveMeABreak"
     ],
     "KAM_INSURE2": [
-      "CBJ_GiveMeABreak",
-      "FROM_FREEMAIL"
+      "CBJ_GiveMeABreak"
     ],
     "KAM_INVEST": [
       "EXTRACTTEXT",
@@ -696,8 +694,8 @@
     }
   ],
   "output_bytes": 629116,
-  "output_sha256": "7fcc301650927d69b84ce56353ab39755f1b8ae9f937054217e088e0a916ff5c",
-  "source_bytes": 617579,
-  "source_sha256": "56a44506867441b252e5f9f7632352e5e3148063c0974da0793e152182cd596d",
+  "output_sha256": "c21e77c191882e0bcb602d608dea6a0a9a27f21d8dd8897268ed9eeb47ada845",
+  "source_bytes": 617693,
+  "source_sha256": "56a9833100be9784a491c322aa7db2d59fec309d79174ac94a06d6149d211139",
   "source_url": "https://mcgrail.com/downloads/KAM.cf"
 }

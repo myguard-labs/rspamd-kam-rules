@@ -145,6 +145,35 @@ class ConversionTests(unittest.TestCase):
         with self.assertRaisesRegex(kam_rspamd.ConversionError, "SHA-256 mismatch"):
             kam_rspamd.convert(source, "test", 1, 1, expected_sha256="0" * 64)
 
+    def test_local_rules_merged_into_output(self):
+        source = b"body UPSTREAM /up/\nscore UPSTREAM 1\n"
+        local = b"rawbody LOCAL_RULE /(?:<br\\/?>){8}/mi\nscore LOCAL_RULE 2.0\n"
+        converted, report = kam_rspamd.convert(
+            source, "test", min_bytes=1, min_rules=2, local_rules=local
+        )
+        text = converted.decode()
+        self.assertIn("UPSTREAM", text)
+        self.assertIn("LOCAL_RULE", text)
+        self.assertEqual(report["converted_rule_count"], 2)
+        self.assertIsNotNone(report["local_rules_sha256"])
+
+    def test_local_rules_excluded_from_source_sha_gate(self):
+        # SHA gate must verify the pristine upstream source only, so the local
+        # supplement never trips update-if-changed.sh's upstream-change check.
+        source = b"body UPSTREAM /up/\nscore UPSTREAM 1\n"
+        local = b"rawbody LOCAL_RULE /x/\nscore LOCAL_RULE 1\n"
+        digest = hashlib.sha256(source).hexdigest()
+        converted, report = kam_rspamd.convert(
+            source, "test", min_bytes=1, min_rules=2,
+            expected_sha256=digest, local_rules=local,
+        )
+        self.assertEqual(report["source_sha256"], digest)
+        self.assertIn("LOCAL_RULE", converted.decode())
+
+    def test_local_rules_none_leaves_report_field_null(self):
+        _, report = kam_rspamd.convert(b"body X /x/\nscore X 1\n", "test", 1, 1)
+        self.assertIsNone(report["local_rules_sha256"])
+
     def test_generated_runtime_disables_failed_regexps(self):
         converted, _ = kam_rspamd.convert(b"body BAD /(/\nscore BAD 1\n", "test", 1, 1)
         text = converted.decode()

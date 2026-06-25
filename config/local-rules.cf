@@ -1,0 +1,23 @@
+# Local supplement rules merged into the generated kam.lua after upstream KAM.cf.
+# Same SpamAssassin directive syntax (body/rawbody/header/uri/meta/describe/score).
+# NOTE: editing this file alone does NOT trip update-if-changed.sh (that gate
+# watches the upstream KAM.cf SHA only) — run `python3 kam_rspamd.py` to regen.
+
+# CBJ_GiveMeABreak — consecutive HTML break/padding obfuscation (PCCC form).
+# Upstream KAM metas (KAM_AUTO, KAM_INSURE*, KAM_WARRANTY*) depend on this symbol
+# but KAM.cf does not define it, so without this block they drop. Must be rawbody:
+# the <br>/<tr>/<p> tags are stripped from the normalized `body`, surviving only raw.
+
+# HTML <br>
+rawbody __CBJ_GiveMeABreak1 /(?:<\/?br ?\/?>[\s\r\n]{0,4}){8}/mi
+# NEWLINES — DISABLED: SA Message.pm collapses long blank-line runs (bug 3712,
+# fixed 3.4.1) so it never matches reliably, and it false-positives on newsletters
+# and quoted replies with heavy whitespace. Kept out of the meta AND the build.
+#rawbody __CBJ_GiveMeABreak2 /(?:[\r\n]){8}/mi
+# EMPTY TABLE ROWS
+rawbody __CBJ_GiveMeABreak3 /(?:<tr><td><\/td><\/tr>[\r\n]{0,4}){4}/mi
+# EMPTY PARAGRAPHS
+rawbody __CBJ_GiveMeABreak4 /(?:<p[^>]*>&nbsp;<\/p>\s*){4}/mi
+meta     CBJ_GiveMeABreak (__CBJ_GiveMeABreak1 + __CBJ_GiveMeABreak3 + __CBJ_GiveMeABreak4 >= 1)
+describe CBJ_GiveMeABreak Messages with consecutive break characters
+score    CBJ_GiveMeABreak 2.0

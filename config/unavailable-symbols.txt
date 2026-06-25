@@ -1,5 +1,6 @@
 # Present in KAM.cf, but not registered by Rspamd on the mailscreen stack.
-CBJ_GiveMeABreak
+# CBJ_GiveMeABreak (meta) + __CBJ_GiveMeABreak1/3/4 now supplied via
+# config/local-rules.cf; __CBJ_GiveMeABreak2 intentionally disabled there.
 KAM_BODY_MARKETINGBL_PCCC
 KAM_DMARC_NONE
 KAM_DMARC_QUARANTINE
@@ -10,8 +11,6 @@ KAM_RAPTOR_ALTERED
 KAM_RAPTOR_EXTERNAL
 KAM_RPTR_SUSPECT
 PCCC_BAD_FREE_URI
-__CBJ_GiveMeABreak1
-__CBJ_GiveMeABreak2
 __KAM_HAS_10_URIS
 __KAM_PAYPAL2A
 __KAM_URIBL_PCCC

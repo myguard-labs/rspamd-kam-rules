@@ -1,15 +1,15 @@
 {
-  "converted_rule_count": 3249,
+  "converted_rule_count": 3261,
   "converted_rule_types": {
     "body": 1179,
     "full": 2,
     "header": 1117,
-    "meta": 690,
+    "meta": 699,
     "mimeheader": 38,
-    "rawbody": 67,
+    "rawbody": 70,
     "uri": 156
   },
-  "dropped_meta_count": 180,
+  "dropped_meta_count": 172,
   "dropped_metas": {
     "GB_BADJS": [
       "T_HTML_ATTACH",
@@ -20,7 +20,6 @@
       "GOOG_REDIR_DOCUSIGN"
     ],
     "GB_EBIKE": [
-      "CBJ_GiveMeABreak",
       "NEW_PRODUCTS",
       "YOUR_DELIVERY_ADDRESS",
       "__DOS_DIRECT_TO_MX",
@@ -62,10 +61,6 @@
     "GB_FROM_NAME_FREEMAIL": [
       "__GB_FROM_ADDR_FREEMAIL",
       "__GB_FROM_NAME_FREEMAIL"
-    ],
-    "GB_GMAIL_NUM": [
-      "KAM_DMARC_NONE",
-      "KAM_DMARC_QUARANTINE"
     ],
     "GB_HTML_FORM": [
       "T_HTML_ATTACH",
@@ -130,9 +125,6 @@
     ],
     "KAM_ASCII_DIVIDERS": [
       "HTML_MESSAGE"
-    ],
-    "KAM_AUTO": [
-      "CBJ_GiveMeABreak"
     ],
     "KAM_AUTONEW2": [
       "KAM_ASCII_DIVIDERS"
@@ -227,10 +219,6 @@
     ],
     "KAM_CRYPTODRIVE": [
       "__URI_GOOGLE_DRV"
-    ],
-    "KAM_DANGEROUSXLS": [
-      "KAM_OLEMACRO_ENCRYPTED",
-      "KAM_OLEMACRO_RENAME"
     ],
     "KAM_DATING": [
       "FREEMAIL_FORGED_REPLYTO"
@@ -387,12 +375,6 @@
     "KAM_IMAGEONLY": [
       "PDS_OTHER_BAD_TLD"
     ],
-    "KAM_INSURE": [
-      "CBJ_GiveMeABreak"
-    ],
-    "KAM_INSURE2": [
-      "CBJ_GiveMeABreak"
-    ],
     "KAM_INVEST": [
       "EXTRACTTEXT",
       "LOTS_OF_MONEY"
@@ -404,7 +386,6 @@
       "KAM_RAPTOR_ALTERED"
     ],
     "KAM_LINEPADDING": [
-      "__CBJ_GiveMeABreak1",
       "__CBJ_GiveMeABreak2"
     ],
     "KAM_LINKBAIT": [
@@ -591,15 +572,6 @@
     "KAM_VM_HTML": [
       "KAM_VM"
     ],
-    "KAM_WARRANTY": [
-      "CBJ_GiveMeABreak"
-    ],
-    "KAM_WARRANTY2": [
-      "KAM_WARRANTY"
-    ],
-    "KAM_WARRANTY3": [
-      "CBJ_GiveMeABreak"
-    ],
     "KAM_WEIRDC19": [
       "__KAM_BODY_LENGTH_LT_512"
     ],
@@ -649,14 +621,18 @@
   },
   "external_dependencies": [
     "ARC_SIGNED",
+    "DMARC_NA",
+    "DMARC_POLICY_QUARANTINE",
     "FREEMAIL_FROM",
     "HTML_SHORT_LINK_IMG_1",
+    "OFFICE_MACRO_FLAGS",
     "RDNS_NONE",
     "R_SPF_ALLOW",
     "R_SPF_FAIL",
     "R_SPF_SOFTFAIL"
   ],
-  "external_dependency_count": 7,
+  "external_dependency_count": 10,
+  "local_rules_sha256": "29bb9b69759ee5249798315980561d6969af249fe5de7afd6736c802c971aa1f",
   "omitted_directives": {
     "enlist_addrlist": 1,
     "unsupported_header": 5
@@ -693,8 +669,8 @@
       "text": "header          __WLHTMLATTACH          eval:check_from_in_list('WLHTMLATTACH')"
     }
   ],
-  "output_bytes": 629116,
-  "output_sha256": "add2e624c8ccd0b75a0a6378c26cab268b1163d1f2f53020e1be4392a561a3aa",
+  "output_bytes": 631875,
+  "output_sha256": "7bef7ab900dc5181b8b9f2b546d38fee29f0a01a63001be28eacffc4ad99c42f",
   "source_bytes": 618869,
   "source_sha256": "5e76d925d8affe238b7bc9e51f49b0626ca1880237841106301b90fe91fc7713",
   "source_url": "https://mcgrail.com/downloads/KAM.cf"

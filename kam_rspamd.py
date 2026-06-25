@@ -66,6 +66,10 @@ KNOWN_PLUGINS = {
 SYMBOL_REPLACEMENTS = {
     "BODY_URI_ONLY": "R_EMPTY_IMAGE",
     "DKIM_VALID": "R_DKIM_ALLOW",
+    "KAM_DMARC_NONE": "DMARC_NA",
+    "KAM_DMARC_QUARANTINE": "DMARC_POLICY_QUARANTINE",
+    "KAM_OLEMACRO_ENCRYPTED": "OFFICE_MACRO_FLAGS",
+    "KAM_OLEMACRO_RENAME": "OFFICE_MACRO_FLAGS",
     "SPF_FAIL": "R_SPF_FAIL",
     "SPF_HELO_FAIL": "R_SPF_FAIL",
     "SPF_HELO_PASS": "R_SPF_ALLOW",
@@ -638,9 +642,12 @@ def convert(
     external_symbols: set[str] | None = None,
     unavailable_symbols: set[str] | None = None,
     expected_sha256: str | None = None,
+    local_rules: bytes | None = None,
 ) -> tuple[bytes, dict]:
     if len(source) < min_bytes:
         raise ConversionError(f"source is unexpectedly small: {len(source)} bytes < {min_bytes}")
+    # SHA gate runs on the pristine upstream source only, so update-if-changed.sh
+    # keeps tracking the upstream KAM.cf SHA regardless of any local supplement.
     source_sha256 = hashlib.sha256(source).hexdigest()
     if expected_sha256 is not None:
         expected_sha256 = expected_sha256.lower()
@@ -651,8 +658,9 @@ def convert(
                 f"source SHA-256 mismatch: {source_sha256} != {expected_sha256}"
             )
     external = set(external_symbols or ())
+    combined = source + b"\n" + local_rules if local_rules else source
     rules, omitted, examples, dropped = parse_rules(
-        source,
+        combined,
         external,
         unavailable_symbols or set(),
     )
@@ -664,6 +672,7 @@ def convert(
         "source_url": source_url,
         "source_bytes": len(source),
         "source_sha256": source_sha256,
+        "local_rules_sha256": hashlib.sha256(local_rules).hexdigest() if local_rules else None,
         "output_bytes": len(lua),
         "output_sha256": hashlib.sha256(lua).hexdigest(),
         "converted_rule_count": len(rules),
@@ -709,9 +718,11 @@ def main() -> int:
     parser.add_argument("--expected-sha256")
     parser.add_argument("--external-symbols", type=Path, default=root / "config" / "external-symbols.txt")
     parser.add_argument("--unavailable-symbols", type=Path, default=root / "config" / "unavailable-symbols.txt")
+    parser.add_argument("--local-rules", type=Path, default=root / "config" / "local-rules.cf")
     args = parser.parse_args()
 
     source = args.input.read_bytes() if args.input else download(args.url, args.timeout)
+    local_rules = args.local_rules.read_bytes() if args.local_rules and args.local_rules.exists() else None
     lua, report = convert(
         source,
         args.url,
@@ -720,6 +731,7 @@ def main() -> int:
         read_symbol_file(args.external_symbols),
         read_symbol_file(args.unavailable_symbols),
         args.expected_sha256,
+        local_rules,
     )
     atomic_write(args.output, lua)
     atomic_write(args.report, (json.dumps(report, indent=2, sort_keys=True) + "\n").encode())

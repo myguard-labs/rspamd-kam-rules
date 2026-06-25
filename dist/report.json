@@ -625,13 +625,14 @@
     "DMARC_POLICY_QUARANTINE",
     "FREEMAIL_FROM",
     "HTML_SHORT_LINK_IMG_1",
-    "OFFICE_MACRO_FLAGS",
+    "MIME_BAD_EXTENSION",
+    "OLETOOLS_ENCRYPTED",
     "RDNS_NONE",
     "R_SPF_ALLOW",
     "R_SPF_FAIL",
     "R_SPF_SOFTFAIL"
   ],
-  "external_dependency_count": 10,
+  "external_dependency_count": 11,
   "local_rules_sha256": "29bb9b69759ee5249798315980561d6969af249fe5de7afd6736c802c971aa1f",
   "omitted_directives": {
     "enlist_addrlist": 1,
@@ -669,8 +670,8 @@
       "text": "header          __WLHTMLATTACH          eval:check_from_in_list('WLHTMLATTACH')"
     }
   ],
-  "output_bytes": 631875,
-  "output_sha256": "7bef7ab900dc5181b8b9f2b546d38fee29f0a01a63001be28eacffc4ad99c42f",
+  "output_bytes": 631903,
+  "output_sha256": "0b46ee110e03275fb050c7bba4498ef0e9e4138669191f7c305ccccda345ae6a",
   "source_bytes": 618869,
   "source_sha256": "5e76d925d8affe238b7bc9e51f49b0626ca1880237841106301b90fe91fc7713",
   "source_url": "https://mcgrail.com/downloads/KAM.cf"

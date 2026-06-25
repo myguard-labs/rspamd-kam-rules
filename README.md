@@ -124,6 +124,11 @@ Two config files describe the target Rspamd:
   (everything your instance can raise). KAM-defined symbols are excluded.
 - `config/unavailable-symbols.txt` — KAM symbols you *know* aren't registered on your
   stack, listed so dependent metas get pruned.
+- `config/local-rules.cf` — optional supplement in SpamAssassin syntax, appended after
+  upstream KAM.cf and compiled into the same `kam.lua`. Use it to define site-local
+  rules or to supply a missing symbol that upstream metas depend on. Override the path
+  with `--local-rules <file>`. The upstream-change SHA gate ignores this file, so editing
+  it alone won't trip `update-if-changed.sh` — rerun `python3 kam_rspamd.py` to regenerate.
 
 Regenerate the symbol dump whenever you change stacks, then rebuild.
 

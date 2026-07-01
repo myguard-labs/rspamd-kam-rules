@@ -22,7 +22,7 @@ REGEX_TYPES = {"body", "full", "header", "mimeheader", "rawbody", "uri"}
 PROJECT_NAME = "rspamd-kam-rules"
 PROJECT_COPYRIGHT = "Copyright (c) 2026 eilandert / myguard.nl"
 PROJECT_LICENSE = "MIT (converter) — generated rules are Apache-2.0, see below"
-PROJECT_HOMEPAGE = "https://github.com/eilandert/rspamd-kam-rules"
+PROJECT_HOMEPAGE = "https://github.com/myguard-labs/rspamd-kam-rules"
 # Profile overview of our other Rspamd modules (olefy, yarad, gyzor, mailstrix, …).
 PROJECT_OVERVIEW = "https://github.com/eilandert"
 # Terse deploy recipe carried inside both artifacts so a downloaded file is
@@ -151,7 +151,7 @@ class Rule:
 def download(url: str, timeout: float) -> bytes:
     request = urllib.request.Request(
         url,
-        headers={"User-Agent": "rspamd-kam-rules/2.0 (+https://github.com/eilandert/rspamd-kam-rules)"},
+        headers={"User-Agent": "rspamd-kam-rules/2.0 (+https://github.com/myguard-labs/rspamd-kam-rules)"},
     )
     with urllib.request.urlopen(request, timeout=timeout) as response:
         return response.read()
@@ -808,7 +808,7 @@ rspamd_logger.infox(
 DEFAULT_MAP_PATH = "/etc/rspamd/kam_rules.map"
 DEFAULT_CACHE_PATH = "/var/lib/rspamd/kam_rules.map"
 DEFAULT_MAP_URL = (
-    "https://raw.githubusercontent.com/eilandert/rspamd-kam-rules/main/dist/kam_rules.map"
+    "https://raw.githubusercontent.com/myguard-labs/rspamd-kam-rules/main/dist/kam_rules.map"
 )
 
 

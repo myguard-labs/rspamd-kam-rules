@@ -2,7 +2,7 @@
 -- rspamd-kam-rules — KAM.cf compiled to a native Rspamd Lua plugin.
 -- Copyright (c) 2026 eilandert / myguard.nl
 -- License: MIT (converter) — generated rules are Apache-2.0, see below
--- Home:    https://github.com/eilandert/rspamd-kam-rules
+-- Home:    https://github.com/myguard-labs/rspamd-kam-rules
 -- More Rspamd modules (olefy, yarad, gyzor, mailstrix, …): https://github.com/eilandert
 --
 -- Quick start:
@@ -38,7 +38,7 @@ local rspamd_util = require "rspamd_util"
 local opts = rspamd_config:get_all_opt('kam') or {}
 local kam_map_path = opts.map_path or [=[/etc/rspamd/kam_rules.map]=]
 local kam_cache_path = opts.cache_path or [=[/var/lib/rspamd/kam_rules.map]=]
-local kam_map_url = opts.map_url or [=[https://raw.githubusercontent.com/eilandert/rspamd-kam-rules/main/dist/kam_rules.map]=]
+local kam_map_url = opts.map_url or [=[https://raw.githubusercontent.com/myguard-labs/rspamd-kam-rules/main/dist/kam_rules.map]=]
 
 local rules = {}
 local replacements = {}

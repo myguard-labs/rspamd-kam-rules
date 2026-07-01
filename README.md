@@ -72,10 +72,10 @@ load to register symbols and build the Hyperscan DB.
 ```bash
 # The plugin (static runtime) goes in plugins.d …
 sudo wget -O /etc/rspamd/plugins.d/kam.lua \
-  https://raw.githubusercontent.com/eilandert/rspamd-kam-rules/main/dist/kam.lua
+  https://raw.githubusercontent.com/myguard-labs/rspamd-kam-rules/main/dist/kam.lua
 # … and the rule map at the path the plugin reads at startup.
 sudo wget -O /etc/rspamd/kam_rules.map \
-  https://raw.githubusercontent.com/eilandert/rspamd-kam-rules/main/dist/kam_rules.map
+  https://raw.githubusercontent.com/myguard-labs/rspamd-kam-rules/main/dist/kam_rules.map
 sudo chmod 0644 /etc/rspamd/plugins.d/kam.lua /etc/rspamd/kam_rules.map
 ```
 
@@ -99,7 +99,7 @@ and uncomment `max_score` (see [Capping the score](#capping-the-score)):
 
 ```bash
 sudo wget -O /etc/rspamd/local.d/groups.conf \
-  https://raw.githubusercontent.com/eilandert/rspamd-kam-rules/main/examples/groups.conf
+  https://raw.githubusercontent.com/myguard-labs/rspamd-kam-rules/main/examples/groups.conf
 ```
 
 Then validate and reload:
@@ -145,7 +145,7 @@ back to pulling the map yourself:
 
 ```bash
 sudo wget -O /etc/rspamd/kam_rules.map \
-  https://raw.githubusercontent.com/eilandert/rspamd-kam-rules/main/dist/kam_rules.map
+  https://raw.githubusercontent.com/myguard-labs/rspamd-kam-rules/main/dist/kam_rules.map
 sudo rspamadm configtest && sudo systemctl reload rspamd
 ```
 

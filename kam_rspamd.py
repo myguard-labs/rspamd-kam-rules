@@ -1160,11 +1160,29 @@ def main() -> int:
     parser.add_argument("--expected-sha256")
     parser.add_argument("--external-symbols", type=Path, default=root / "config" / "external-symbols.txt")
     parser.add_argument("--unavailable-symbols", type=Path, default=root / "config" / "unavailable-symbols.txt")
-    parser.add_argument("--local-rules", type=Path, default=root / "config" / "local-rules.cf")
+    parser.add_argument(
+        "--local-rules",
+        type=Path,
+        action="append",
+        help="supplement .cf merged after the upstream source; repeatable, "
+        "concatenated in order (default: config/{local-rules,KAM_redirectors,nonKAMrules}.cf)",
+    )
     args = parser.parse_args()
+    if args.local_rules is None:
+        args.local_rules = [
+            root / "config" / "local-rules.cf",
+            root / "config" / "KAM_redirectors.cf",
+            root / "config" / "nonKAMrules.cf",
+        ]
 
     source = args.input.read_bytes() if args.input else download(args.url, args.timeout)
-    local_rules = args.local_rules.read_bytes() if args.local_rules and args.local_rules.exists() else None
+    # A missing supplement must fail loudly: silently skipping one would shrink
+    # the ruleset with no signal beyond a shifted local_rules_sha256.
+    missing = [str(path) for path in args.local_rules if not path.exists()]
+    if missing:
+        parser.error(f"local-rules file(s) not found: {', '.join(missing)}")
+    local_chunks = [path.read_bytes() for path in args.local_rules]
+    local_rules = b"\n".join(local_chunks) if local_chunks else None
     lua, mapdata, report = convert(
         source,
         args.url,

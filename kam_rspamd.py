@@ -201,6 +201,7 @@ class Rule:
     header: str | None = None
     header_mode: str | None = None
     negate: bool = False
+    if_unset: str | None = None
     description: str = ""
     score: float = 0.0
     tflags: set[str] = field(default_factory=set)
@@ -417,6 +418,14 @@ def parse_rules(
                 header_parts = header_spec.split(":")
                 header = header_parts[0]
                 header_mode = header_parts[1] if len(header_parts) > 1 else None
+            # SA `[if-unset: X]` trailing modifier: fallback value used when the
+            # header is absent. Strip it off the value and carry it on the rule.
+            if_unset = None
+            if directive in {"header", "mimeheader"}:
+                unset_match = re.search(r"\s*\[if-unset:\s*(.*?)\s*\]\s*\Z", value)
+                if unset_match:
+                    if_unset = unset_match.group(1)
+                    value = value[: unset_match.start()]
             expression = extract_regex(value)
             if not expression:
                 omit(number, f"unsupported_{directive}", line)
@@ -432,6 +441,7 @@ def parse_rules(
                 header=header,
                 header_mode=header_mode,
                 negate=negate,
+                if_unset=if_unset,
             )
         elif directive not in {
             "priority",
@@ -517,7 +527,13 @@ def lua_string(value: str) -> str:
     return f"[{level}[{value}]{level}]"
 
 
-LUA_RUNTIME = """local rules = {}
+LUA_RUNTIME = """-- Reject a self-update that parses to fewer than this many valid rules — a
+-- truncated download or error page must not clobber the good cache. Well below
+-- the real count (thousands) but far above anything a broken response yields.
+-- Overridable via kam { min_update_rules = N } (tests point it low).
+local KAM_MIN_RULES = tonumber(opts.min_update_rules) or 500
+
+local rules = {}
 local replacements = {}
 local external_dependencies = {}
 local expressions = {}
@@ -553,11 +569,15 @@ local SCAN_TYPE = {
 }
 
 -- A header rule is "native" (combined-DB) only when it is a single concrete
--- header with no addr/name transform. ALL / ToCc / MESSAGEID multi-header and
--- addr/name modes drop to the slow per-value Lua path.
+-- header with no addr/name transform. ALL / ToCc / MESSAGEID multi-header,
+-- addr/name modes, the EnvelopeFrom pseudo-header (SMTP envelope sender, not a
+-- MIME header) and [if-unset:] rules (must fire on an ABSENT header, which a
+-- header-DB scan can never do) drop to the slow per-value Lua path.
 local function header_is_native(rule)
   if rule.header_mode == 'addr' or rule.header_mode == 'name' then return false end
   if rule.header == 'ALL' or rule.header == 'ToCc' or rule.header == 'MESSAGEID' then return false end
+  if rule.header == 'EnvelopeFrom' then return false end
+  if rule.if_unset ~= nil then return false end
   return true
 end
 
@@ -614,6 +634,23 @@ end
 -- every later non-blank line is one rule object keyed by its `name`. Malformed
 -- lines and entries with an invalid name are skipped, not fatal — a single bad
 -- line never takes the whole ruleset down.
+
+-- Schema gate per rule object: the map is read from disk (and self-updated over
+-- HTTP), so never hand a malformed entry to compile_rule — a nil expression
+-- reaching rspamd_regexp.create would abort the whole config load.
+local VALID_KINDS = {
+  meta = true, body = true, rawbody = true, full = true,
+  uri = true, header = true, mimeheader = true,
+}
+local function valid_rule_object(obj)
+  if not VALID_KINDS[obj.kind] then return false end
+  if type(obj.expression) ~= 'string' or obj.expression == '' then return false end
+  if obj.score ~= nil and type(obj.score) ~= 'number' then return false end
+  if (obj.kind == 'header' or obj.kind == 'mimeheader')
+      and type(obj.header) ~= 'string' then return false end
+  return true
+end
+
 local function parse_map(data)
   local ucl = require 'ucl'
   local parsed_rules, repl, deps = {}, {}, {}
@@ -631,9 +668,15 @@ local function parse_map(data)
           repl = obj.replacements or {}
           deps = obj.external_dependencies or {}
         elseif type(obj.name) == 'string' and valid_name:match(obj.name) then
-          local name = obj.name
-          obj.name = nil
-          parsed_rules[name] = obj
+          if valid_rule_object(obj) then
+            local name = obj.name
+            obj.name = nil
+            obj.score = obj.score or 0
+            parsed_rules[name] = obj
+          else
+            rspamd_logger.errx(rspamd_config,
+              'KAM map: invalid rule object %s; skipped', obj.name)
+          end
         end
       end
     end
@@ -662,11 +705,44 @@ local function match_header_slow(task, rule)
     return rule.multiple and hits or (hits > 0 and 1 or 0)
   end
 
+  -- EnvelopeFrom is SA's pseudo-header for the SMTP envelope sender (MAIL
+  -- FROM), not a MIME header: read it from the task envelope, falling back to
+  -- Return-Path. Same source rspamd's own spamassassin.lua uses.
+  if rule.header == 'EnvelopeFrom' then
+    local candidates = {}
+    local from = task:get_from('smtp')
+    if from and from[1] and from[1].addr then table.insert(candidates, from[1].addr) end
+    if #candidates == 0 then
+      local return_path = task:get_header('Return-Path')
+      if return_path then
+        for _, address in ipairs(rspamd_util.parse_mail_address(return_path) or {}) do
+          if address.addr then table.insert(candidates, address.addr) end
+        end
+      end
+    end
+    local hits = 0
+    if #candidates == 0 and rule.if_unset then
+      hits = rule.re:match(rule.if_unset) and 1 or 0
+    end
+    for _, cand in ipairs(candidates) do
+      if rule.re:match(cand) then
+        hits = hits + 1
+        if not rule.multiple then break end
+        if rule.maxhits and hits >= rule.maxhits then break end
+      end
+    end
+    if rule.negate then
+      return hits > 0 and 0 or 1
+    end
+    return rule.multiple and hits or (hits > 0 and 1 or 0)
+  end
+
   local header_names = { rule.header }
   if rule.header == 'ToCc' then header_names = { 'To', 'Cc', 'Bcc' } end
   if rule.header == 'MESSAGEID' then header_names = { 'Message-ID', 'X-Message-ID', 'Resent-Message-ID' } end
 
   local hits = 0
+  local tested_value = false
   for _, header_name in ipairs(header_names) do
     local values = {}
     if rule.kind == 'mimeheader' then
@@ -690,6 +766,7 @@ local function match_header_slow(task, rule)
         table.insert(candidates, value)
       end
       for _, cand in ipairs(candidates) do
+        tested_value = true
         if rule.re:match(cand, rule.header_mode == 'raw') then
           hits = hits + 1
           if not rule.multiple then break end
@@ -701,6 +778,13 @@ local function match_header_slow(task, rule)
     end
     if not rule.multiple and hits > 0 then break end
     if rule.maxhits and hits >= rule.maxhits then break end
+  end
+
+  -- SA [if-unset: X]: when the header is entirely absent, evaluate the regex
+  -- against the fallback value X instead — the idiom `=~ /^UNSET$/
+  -- [if-unset: UNSET]` fires exactly when the header is missing.
+  if not tested_value and rule.if_unset then
+    hits = rule.re:match(rule.if_unset, rule.header_mode == 'raw') and 1 or 0
   end
 
   -- negate handled with an early return (mirrors the ALL branch above): a
@@ -834,11 +918,32 @@ if kam_map_url and kam_map_url ~= '' then
     description = 'KAM rule map self-update (downloads to cache; reload applies)',
     callback = function(content)
       if not content or #content == 0 then return end
+      -- Validate the fetched map before it can poison the next reload: a
+      -- truncated download, an HTML error page, or a corrupt map must NOT
+      -- overwrite the good cache. Require the `_kam` header sentinel and a sane
+      -- minimum rule count (parse_map skips malformed/invalid entries, so this
+      -- counts only rules that would actually load).
+      local staged = parse_map(content)
+      local staged_count = 0
+      for _ in pairs(staged) do staged_count = staged_count + 1 end
+      if staged_count < KAM_MIN_RULES then
+        rspamd_logger.errx(rspamd_config,
+          'KAM: rejected self-update — only %s valid rules (< %s); keeping current cache',
+          tostring(staged_count), tostring(KAM_MIN_RULES))
+        return
+      end
       -- Skip the write if the cache already holds these exact bytes — avoids
       -- needless churn and log noise when the poll returns an unchanged map.
       local current = read_file(kam_cache_path)
       if current == content then return end
-      local tmp = kam_cache_path .. '.tmp'
+      -- Per-worker temp name so two workers writing at once never share (and
+      -- tear) one .tmp file; os.rename onto the final path is atomic, so the
+      -- last writer wins cleanly. The lock is a best-effort extra guard — its
+      -- absence (e.g. lockfile not yet creatable) must not block the write,
+      -- since the per-worker tmp + atomic rename already make the write safe.
+      -- Unique per-call suffix: a fresh table's address string is distinct for
+      -- each concurrent invocation, no rspamd/os API needed.
+      local tmp = kam_cache_path .. '.tmp.' .. tostring({}):gsub('%W', '')
       local lock = rspamd_util.lock_file(kam_cache_path .. '.lock')
       local fh = io.open(tmp, 'w')
       if not fh then
@@ -948,6 +1053,8 @@ def _map_rule_object(name: str, rule: Rule) -> dict[str, object]:
         obj["header_mode"] = rule.header_mode
     if rule.negate:
         obj["negate"] = True
+    if rule.if_unset is not None:
+        obj["if_unset"] = rule.if_unset
     if "multiple" in rule.tflags:
         obj["multiple"] = True
     # NOTE: SA `nosubject` (exclude Subject from body scan) is a no-op under
@@ -1000,14 +1107,10 @@ def generate_map(
     return ("\n".join(out) + "\n").encode()
 
 
-def generate_lua(
-    source_url: str,
-    source_sha256: str,
-    map_path: str = DEFAULT_MAP_PATH,
-) -> bytes:
+def generate_lua(map_path: str = DEFAULT_MAP_PATH) -> bytes:
     # The lua runtime is static and version-less by design — the ruleset version
-    # (date + source SHA) lives in the map header, not here — so this emits no
-    # generation date.
+    # (date + source SHA) lives in the map header, not here — so this takes no
+    # source metadata and emits no generation date.
     howto = "\n".join(f"-- {line}".rstrip() for line in PROJECT_HOWTO)
     lines = [
         "-- ===========================================================================",
@@ -1081,7 +1184,7 @@ def convert(
     # a single regen is internally consistent. (CI is SHA-gated and only regens
     # when KAM.cf actually changes, so this dates the ruleset version.)
     generated_date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    lua = generate_lua(source_url, source_sha256)
+    lua = generate_lua()
     mapdata = generate_map(rules, dependencies, source_url, source_sha256, generated_date)
     # F5 canary: a regex rule still carrying a `<tag>` token. Most are dead — an
     # unexpanded replace_tag (e.g. <S>, <NUM1>) compiles fine but matches the

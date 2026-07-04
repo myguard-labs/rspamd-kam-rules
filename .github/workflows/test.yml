@@ -74,7 +74,7 @@ jobs:
           elif [[ -z "$STORED_SERIAL" || "$REMOTE_SERIAL" -gt "$STORED_SERIAL" ]]; then
             SERIAL_ADVANCED=true
             echo "Channel serial advanced — fetching KAM.cf"
-            curl -fsSL --retry 3 --retry-delay 2 -o "$SOURCE_FILE" "$KAM_URL"
+            curl -fsSL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o "$SOURCE_FILE" "$KAM_URL"
             SOURCE_SHA=$(sha256sum "$SOURCE_FILE" | awk '{print $1}')
             CURRENT_SHA=$(python3 -c \
               'import json; print(json.load(open("dist/report.json")).get("source_sha256", ""))')

@@ -58,6 +58,40 @@ class ConversionTests(unittest.TestCase):
         self.assertEqual(report["omitted_directives"], {"askdns": 1})
         self.assertIn("group = 'KAM'", text)
 
+    def test_if_unset_modifier_parsed_and_emitted(self):
+        # SA `[if-unset: X]` must be stripped off the regex and carried so the
+        # runtime can fire the rule on an ABSENT header.
+        source = (
+            b"header __MISSING_REF References =~ /^UNSET$/ [if-unset: UNSET]\n"
+            b"body PAD /x/\n"
+        )
+        _, mapdata, _ = kam_rspamd.convert(source, "test", 1, 1)
+        rule = map_rules(mapdata)["__MISSING_REF"]
+        self.assertEqual(rule["if_unset"], "UNSET")
+        # The modifier is gone from the compiled regex, not left as literal text.
+        self.assertNotIn("if-unset", rule["expression"])
+        self.assertEqual(rule["expression"], "/^UNSET$/")
+
+    def test_envelope_from_pseudo_header_stays_off_native_path(self):
+        # EnvelopeFrom is the SMTP envelope sender, not a MIME header — the
+        # runtime resolves it in Lua, so header_is_native must exclude it.
+        source = b"header __ENVFROM_X EnvelopeFrom =~ /paypal/\nbody PAD /x/\n"
+        converted, mapdata, _ = kam_rspamd.convert(source, "test", 1, 1)
+        rule = map_rules(mapdata)["__ENVFROM_X"]
+        self.assertEqual(rule["header"], "EnvelopeFrom")
+        # Runtime guards both the pseudo-header and if_unset off the fast path.
+        self.assertIn("if rule.header == 'EnvelopeFrom' then return false end", converted.decode())
+        self.assertIn("if rule.if_unset ~= nil then return false end", converted.decode())
+
+    def test_map_loader_validates_rule_schema(self):
+        # The Lua loader must schema-gate each rule object (kind/expression/
+        # header/score) before compile_rule, so a corrupt self-updated map can't
+        # abort config load.
+        converted, _, _ = kam_rspamd.convert(FIXTURE.read_bytes(), "test", 1, 1)
+        text = converted.decode()
+        self.assertIn("valid_rule_object", text)
+        self.assertIn("KAM_MIN_RULES", text)
+
     def test_rejects_unbalanced_conditionals(self):
         with self.assertRaises(kam_rspamd.ConversionError):
             kam_rspamd.convert(b"ifplugin Example\nbody X /x/\n", "test", 1, 1)
@@ -295,15 +329,13 @@ class MapAndPluginSplitTests(unittest.TestCase):
         # The daily CI regens map+report WITHOUT --emit-lua by design, so a
         # LUA_RUNTIME edit that forgets to re-emit would leave a stale committed
         # plugin and runtime tests would still pass against it. Guard the invariant.
-        report = json.loads((ROOT / "dist" / "report.json").read_text())
-        regenerated = kam_rspamd.generate_lua(
-            report["source_url"], report["source_sha256"]
-        )
+        regenerated = kam_rspamd.generate_lua()
         committed = (ROOT / "dist" / "kam.lua").read_bytes()
         self.assertEqual(
             committed, regenerated,
             "dist/kam.lua is stale — run `python3 kam_rspamd.py --emit-lua`",
         )
+        report = json.loads((ROOT / "dist" / "report.json").read_text())
         self.assertEqual(report["output_sha256"], hashlib.sha256(committed).hexdigest())
 
     def test_map_header_carries_replacements_and_deps(self):

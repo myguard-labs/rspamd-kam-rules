@@ -214,6 +214,13 @@ source = (
     b"header NEGADDR_RULE From:addr !~ /nomatch@nowhere/i\n"
     b"tflags NEGADDR_RULE multiple\n"
     b"score NEGADDR_RULE 1\n"
+    # EnvelopeFrom pseudo-header slow path (SMTP MAIL FROM, resolved in Lua).
+    b"header ENVFROM_RULE EnvelopeFrom =~ /envsender@example/i\n"
+    b"score ENVFROM_RULE 1\n"
+    # [if-unset:] fires when the header is ABSENT — the matrix message carries
+    # no References header, so this must hit against the fallback value.
+    b"header MISSING_REF_RULE References =~ /^UNSET$/ [if-unset: UNSET]\n"
+    b"score MISSING_REF_RULE 1\n"
     # builtin evals (no external symbol, computed in eval_atom): body-length
     # trio on the short plain matrix message; HTML pair on the html message.
     b"meta BILT_SHORT (__KAM_BODY_LENGTH_LT_128 && __KAM_BODY_LENGTH_LT_512 && __KAM_BODY_LENGTH_LT_1024)\n"
@@ -246,7 +253,14 @@ printf '%s' "$matrix_result" | assert_symbol_score RB_RULE 1      # rawbody nati
 printf '%s' "$matrix_result" | assert_symbol_score FULL_RULE 1    # full/rawmime native
 printf '%s' "$matrix_result" | assert_symbol_score NAME_RULE 1    # header name-mode slow
 printf '%s' "$matrix_result" | assert_symbol_score NEGADDR_RULE 1 # slow-path negate+multiple, hits==0 inverts to 1
+printf '%s' "$matrix_result" | assert_symbol_score MISSING_REF_RULE 1  # if-unset fires on absent References header
 printf '%s' "$matrix_result" | assert_symbol_score BILT_SHORT 1   # builtin body-length evals (75-char body)
+
+# EnvelopeFrom resolves from the SMTP envelope (or Return-Path fallback). The
+# matrix message has no envelope sender, so give this one a Return-Path that the
+# runtime parses as the envelope From.
+envfrom_msg=$'Return-Path: <envsender@example.com>\nFrom: a@example.com\nTo: b@example.com\nSubject: env test\n\nbody'
+scan "$envfrom_msg" | assert_symbol_score ENVFROM_RULE 1          # EnvelopeFrom slow path via Return-Path
 
 # HTML builtin evals need an actual text/html part with a <head> tag.
 html_msg=$'From: a@example.com\nTo: b@example.com\nSubject: html test\nContent-Type: text/html\n\n<html><head><title>x</title></head><body>hello there</body></html>'
@@ -287,6 +301,7 @@ kam {
     map_path = "/etc/rspamd/kam_rules.map";
     cache_path = "/var/lib/rspamd/kam_rules.map";
     map_url = "file:///etc/rspamd/update_src.map";
+    min_update_rules = 1;   # tiny synthetic map; the 500 default would reject it
 }
 EOF
 chmod 0644 "$TMPDIR/update.conf.local"

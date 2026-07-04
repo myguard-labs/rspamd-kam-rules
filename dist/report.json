@@ -1,15 +1,15 @@
 {
-  "converted_rule_count": 3277,
+  "converted_rule_count": 3307,
   "converted_rule_types": {
     "body": 1180,
     "full": 2,
     "header": 1119,
-    "meta": 709,
+    "meta": 739,
     "mimeheader": 39,
     "rawbody": 71,
     "uri": 157
   },
-  "dropped_meta_count": 181,
+  "dropped_meta_count": 151,
   "dropped_metas": {
     "GB_BADJS": [
       "T_HTML_ATTACH",
@@ -22,7 +22,6 @@
     "GB_EBIKE": [
       "NEW_PRODUCTS",
       "YOUR_DELIVERY_ADDRESS",
-      "__DOS_DIRECT_TO_MX",
       "__DOS_DIRECT_TO_MX_UNTRUSTED",
       "__TAG_EXISTS_HEAD",
       "__YOUR_PERSONAL"
@@ -31,26 +30,17 @@
       "GB_EBIKE",
       "YOUR_DELIVERY_ADDRESS"
     ],
-    "GB_EMPTY_CALENDAR": [
-      "EMPTY_MESSAGE"
-    ],
     "GB_EMPTY_IMAGES": [
-      "EMPTY_MESSAGE",
       "__ANY_IMAGE_ATTACH"
     ],
     "GB_ESP_CRIM": [
-      "KAM_SENDGRID",
       "__STY_INVIS_MANY"
     ],
     "GB_FAKE_DOCUSIGN": [
       "MXG_SPOOFED_DOCUSIGN"
     ],
     "GB_FAKE_SIGNED_MICROSOFT": [
-      "DKIM_VALID_AU",
       "KAM_ONMICROSOFT_RF"
-    ],
-    "GB_FAKE_ZOHOINVOICE": [
-      "FREEMAIL_REPLYTO_END_DIGIT"
     ],
     "GB_FREEMAIL_SEO": [
       "__GB_RCPT_EMPTY"
@@ -64,10 +54,6 @@
     ],
     "GB_FROMNAME_SPOOF_FREEMAIL": [
       "PDS_FROMNAME_SPOOFED_EMAIL"
-    ],
-    "GB_FROM_NAME_FREEMAIL": [
-      "__GB_FROM_ADDR_FREEMAIL",
-      "__GB_FROM_NAME_FREEMAIL"
     ],
     "GB_HTML_FORM": [
       "T_HTML_ATTACH",
@@ -104,28 +90,15 @@
     "GB_RETPATH_GOOG_TRIX": [
       "ENVFROM_GOOG_TRIX"
     ],
-    "GB_TO_NAME_FREEMAIL": [
-      "__GB_TO_ADDR_FREEMAIL",
-      "__GB_TO_NAME_FREEMAIL"
-    ],
     "JMQ_CONGRAT": [
       "HK_SPAMMY_FILENAME",
       "KAM_RAPTOR_ALTERED",
       "T_FREEMAIL_DOC_PDF"
     ],
-    "JMQ_IMPORTANT": [
-      "KAM_LAZY_DOMAIN_SECURITY"
-    ],
     "JMQ_WIRE": [
-      "HEADER_FROM_DIFFERENT_DOMAINS",
-      "KAM_LAZY_DOMAIN_SECURITY",
       "LOTS_OF_MONEY"
     ],
-    "KAM_ACCOUNTPHISH": [
-      "KAM_LAZY_DOMAIN_SECURITY"
-    ],
     "KAM_ADMIN": [
-      "HEADER_FROM_DIFFERENT_DOMAINS",
       "HTML_OBFUSCATE_10_20"
     ],
     "KAM_APPLINK": [
@@ -145,8 +118,7 @@
     ],
     "KAM_BAD_DNSWL": [
       "RCVD_IN_BL_SPAMCOP_NET",
-      "RCVD_IN_HOSTKARMA_W",
-      "RCVD_IN_XBL"
+      "RCVD_IN_HOSTKARMA_W"
     ],
     "KAM_BAD_HTML": [
       "T_HTML_ATTACH",
@@ -177,10 +149,6 @@
     "KAM_BIDEST": [
       "KAM_FROM_URIBL_PCCC"
     ],
-    "KAM_BLUEHORNET": [
-      "HEADER_FROM_DIFFERENT_DOMAINS",
-      "SPF_HELO_NONE"
-    ],
     "KAM_BODY_WELCOMELIST_URIBL_PCCC": [
       "__KAM_BODY_WELCOMELIST_URIBL_PCCC"
     ],
@@ -188,8 +156,7 @@
       "__UPGR_MAILBOX"
     ],
     "KAM_BTC": [
-      "__GB_ANY_REDIR",
-      "__TO_UNDISCLOSED"
+      "__GB_ANY_REDIR"
     ],
     "KAM_CAMERA": [
       "__KAM_SUBSCRIPTION_INFO"
@@ -203,9 +170,6 @@
     "KAM_CEP": [
       "__KAM_BODY_LENGTH_LT_1024",
       "__PDF_ATTACH"
-    ],
-    "KAM_CERT": [
-      "__PLUGIN_FROMNAME_SPOOF"
     ],
     "KAM_CHECKFILE2": [
       "T_OBFU_PDF_ATTACH"
@@ -228,14 +192,8 @@
     "KAM_CRIM": [
       "FUZZY_BITCOIN"
     ],
-    "KAM_CRIM2": [
-      "HTML_FONT_LOW_CONTRAST"
-    ],
     "KAM_CRYPTODRIVE": [
       "__URI_GOOGLE_DRV"
-    ],
-    "KAM_DATING": [
-      "FREEMAIL_FORGED_REPLYTO"
     ],
     "KAM_DIGITALWALLET": [
       "HELO_DYNAMIC_DHCP"
@@ -255,9 +213,6 @@
     "KAM_DUJOUR": [
       "KAM_STORAGE_GOOGLE"
     ],
-    "KAM_EXPLOIT": [
-      "KAM_SENDGRID"
-    ],
     "KAM_FACEBOOKMAIL": [
       "DKIM_ADSP_ALL"
     ],
@@ -274,7 +229,6 @@
       "T_HTML_ATTACH"
     ],
     "KAM_FAKE_DELIVER": [
-      "HEADER_FROM_DIFFERENT_DOMAINS",
       "KAM_RAPTOR_ALTERED"
     ],
     "KAM_FAKE_DOCUSIGN": [
@@ -297,9 +251,6 @@
     "KAM_FAKE_INVOICEMS": [
       "KAM_ONMICROSOFT"
     ],
-    "KAM_FAKE_MT": [
-      "__HAS_PHP_ORIG_SCRIPT"
-    ],
     "KAM_FAKE_PAY_UPDATE": [
       "KAM_RAPTOR_EXTERNAL"
     ],
@@ -321,7 +272,6 @@
       "__GB_ANY_REDIR"
     ],
     "KAM_FAKE_SHAREPOINT": [
-      "GOOG_REDIR_NOTRDNS",
       "KAM_STORAGE_GOOGLE"
     ],
     "KAM_FAKE_SHAREPOINTLINK": [
@@ -341,27 +291,16 @@
       "FORGED_GMAIL_RCVD",
       "__FREEMAIL_DOC_PDF"
     ],
-    "KAM_GARAGE": [
-      "HTML_FONT_LOW_CONTRAST"
-    ],
-    "KAM_GARAGE2": [
-      "HTML_FONT_LOW_CONTRAST",
-      "KAM_GARAGE"
-    ],
     "KAM_GB_INVALID_FROM": [
-      "ALL_TRUSTED",
-      "NO_RELAYS",
       "__BOUNCE_CTYPE"
     ],
     "KAM_GIRLS": [
       "__SINGLE_WORD_SUBJ"
     ],
     "KAM_GOOGLE2": [
-      "HK_SPAMMY_FILENAME",
-      "KAM_LAZY_DOMAIN_SECURITY"
+      "HK_SPAMMY_FILENAME"
     ],
     "KAM_GRABBAG1": [
-      "HTML_FONT_LOW_CONTRAST",
       "T_REMOTE_IMAGE"
     ],
     "KAM_GRABBAG2": [
@@ -377,14 +316,10 @@
       "HTML_MIME_NO_HTML_TAG"
     ],
     "KAM_GRABBAG9": [
-      "FREEMAIL_ENVFROM_END_DIGIT",
       "MALFORMED_FREEMAIL"
     ],
     "KAM_HEALTH2": [
       "HTML_MESSAGE"
-    ],
-    "KAM_HOSE": [
-      "DKIM_INVALID"
     ],
     "KAM_IMAGEONLY": [
       "PDS_OTHER_BAD_TLD"
@@ -399,15 +334,10 @@
     "KAM_JURY": [
       "KAM_RAPTOR_ALTERED"
     ],
-    "KAM_LAZY_DOMAIN_SECURITY": [
-      "__DKIM_EXISTS",
-      "__KAM_SPF_NONE"
-    ],
     "KAM_LINEPADDING": [
       "__CBJ_GiveMeABreak2"
     ],
     "KAM_LINKBAIT": [
-      "KAM_LAZY_DOMAIN_SECURITY",
       "__KAM_BODY_LENGTH_LT_512"
     ],
     "KAM_LINKBAIT2": [
@@ -429,36 +359,18 @@
     "KAM_LOTTO3": [
       "LOTS_OF_MONEY"
     ],
-    "KAM_LUNAR": [
-      "MISSING_HEADERS"
-    ],
-    "KAM_LUNAR2": [
-      "MISSING_HEADERS"
-    ],
     "KAM_MAILBOX": [
       "HTML_MIME_NO_HTML_TAG",
-      "KAM_SENDGRID",
       "KAM_SENDGRID2",
       "T_FREEMAIL_DOC_PDF",
-      "T_HTML_ATTACH",
-      "__GB_NN_ALONDE",
-      "__GB_NN_AME",
-      "__GB_NN_BOX",
-      "__GB_NN_CLOUDFL",
-      "__GB_NN_FITBIT"
+      "T_HTML_ATTACH"
     ],
     "KAM_MAILBOX2": [
-      "KAM_MAILBOX",
-      "__GB_NN_ALONDE",
-      "__GB_NN_AME",
-      "__GB_NN_BOX",
-      "__GB_NN_CLOUDFL",
-      "__GB_NN_FITBIT"
+      "KAM_MAILBOX"
     ],
     "KAM_MAILBOX3": [
       "KAM_MAILBOX",
       "KAM_MAILBOX2",
-      "KAM_SENDGRID",
       "KAM_SENDGRID2"
     ],
     "KAM_MARKETINGBL_PCCC": [
@@ -481,11 +393,7 @@
       "DEAR_SOMETHING",
       "LOTS_OF_MONEY"
     ],
-    "KAM_NOCONFIDENCE": [
-      "KAM_LAZY_DOMAIN_SECURITY"
-    ],
     "KAM_NOTIFY2": [
-      "HEADER_FROM_DIFFERENT_DOMAINS",
       "KAM_IFRAME"
     ],
     "KAM_OLEMACRO_ZIP_BOT": [
@@ -498,18 +406,12 @@
     "KAM_ONMICROSOFT_RF": [
       "__AUTOREPLY_ASU"
     ],
-    "KAM_PAPERLESS": [
-      "HEADER_FROM_DIFFERENT_DOMAINS"
-    ],
     "KAM_PASSWORDSCAM": [
       "__PDF_ATTACH",
       "__SINGLE_WORD_SUBJ"
     ],
     "KAM_PAYMENTSCAM2": [
       "DEAR_BENEFICIARY"
-    ],
-    "KAM_PAYPAL3": [
-      "KAM_LAZY_DOMAIN_SECURITY"
     ],
     "KAM_PAYROLL_SCANNER": [
       "KAM_IFRAME",
@@ -530,11 +432,7 @@
     ],
     "KAM_QUITE_BAD_DNSWL": [
       "RCVD_IN_BL_SPAMCOP_NET",
-      "RCVD_IN_HOSTKARMA_W",
-      "RCVD_IN_XBL"
-    ],
-    "KAM_RBL": [
-      "RCVD_IN_PBL"
+      "RCVD_IN_HOSTKARMA_W"
     ],
     "KAM_REALLY_FAKE_DELIVER": [
       "KAM_FAKE_DELIVER",
@@ -552,15 +450,7 @@
     "KAM_SANDAL": [
       "__KAM_SUBSCRIPTION_INFO"
     ],
-    "KAM_SEENTHIS": [
-      "KAM_LAZY_DOMAIN_SECURITY"
-    ],
-    "KAM_SENDGRID": [
-      "HEADER_FROM_DIFFERENT_DOMAINS",
-      "SPF_HELO_NONE"
-    ],
     "KAM_SENDGRID2": [
-      "KAM_SENDGRID",
       "TO_IN_SUBJ"
     ],
     "KAM_SEX": [
@@ -583,8 +473,6 @@
     ],
     "KAM_UAH_YAHOOGROUP_SENDER": [
       "FORGED_YAHOO_RCVD",
-      "__DOS_HAS_LIST_UNSUB",
-      "__DOS_HAS_MAILING_LIST",
       "__ML2"
     ],
     "KAM_UKINV": [
@@ -602,40 +490,17 @@
     ],
     "KAM_WEIRDTRICK2": [
       "AC_HTML_NONSENSE_TAGS",
-      "HTML_FONT_LOW_CONTRAST",
       "T_REMOTE_IMAGE"
     ],
     "KAM_WU": [
       "LOTS_OF_MONEY"
     ],
-    "KAM_ZERODAY2": [
-      "KAM_LAZY_DOMAIN_SECURITY"
-    ],
     "KAM_ZERODAY3": [
-      "KAM_ZERODAY2",
       "T_OBFU_DOC_ATTACH"
     ],
     "WORD_INVIS_MANY": [
       "__BODY_TEXT_LINE",
       "__WORD_INVIS_2"
-    ],
-    "__GB_NN_ALONDE": [
-      "DKIM_VALID_AU",
-      "DMARC_PASS"
-    ],
-    "__GB_NN_AME": [
-      "DMARC_PASS"
-    ],
-    "__GB_NN_BOX": [
-      "DMARC_PASS"
-    ],
-    "__GB_NN_CLOUDFL": [
-      "DKIM_VALID_AU",
-      "DKIM_VALID_EF"
-    ],
-    "__GB_NN_FITBIT": [
-      "DKIM_VALID_AU",
-      "DMARC_PASS"
     ],
     "__GB_RCPT_EMPTY": [
       "__HAS_TO"
@@ -651,25 +516,41 @@
   },
   "external_dependencies": [
     "ARC_SIGNED",
+    "COMPLETELY_EMPTY",
     "DBL_SPAM",
+    "DKIM_SIGNED",
     "DMARC_NA",
+    "DMARC_POLICY_ALLOW",
     "DMARC_POLICY_QUARANTINE",
     "FORGED_OUTLOOK_HTML",
+    "FORGED_SENDER",
     "FREEMAIL_FROM",
+    "FREEMAIL_REPLYTO",
+    "FREEMAIL_REPLYTO_NEQ_FROM",
+    "FREEMAIL_TO",
+    "HAS_X_PHP_SCRIPT",
     "HTML_SHORT_LINK_IMG_1",
     "MIME_BAD_EXTENSION",
+    "MISSING_TO",
     "OLETOOLS_ENCRYPTED",
+    "RBL_SPAMHAUS_PBL",
     "RDNS_NONE",
+    "R_DKIM_ALLOW",
+    "R_DKIM_REJECT",
+    "R_EMPTY_IMAGE",
     "R_SPF_ALLOW",
     "R_SPF_FAIL",
+    "R_SPF_NA",
     "R_SPF_SOFTFAIL",
+    "R_WHITE_ON_WHITE",
+    "SPOOF_DISPLAY_NAME",
     "URIBL_BLACK"
   ],
-  "external_dependency_count": 14,
+  "external_dependency_count": 30,
   "generated_date": "2026-07-04",
   "local_rules_sha256": "29bb9b69759ee5249798315980561d6969af249fe5de7afd6736c802c971aa1f",
-  "map_bytes": 616716,
-  "map_sha256": "f3dc0503e1dab6e6b1b5903699f31c3e3246b90ce5d6c4f618f9f3c8867111cb",
+  "map_bytes": 624074,
+  "map_sha256": "7030dd66b6ac96df6883857c16a40dadf98d06715ba484a9504291b6f31e2234",
   "omitted_directives": {
     "clear_uridnsbl_skip_domain": 2,
     "enlist_addrlist": 1,

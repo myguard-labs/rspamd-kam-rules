@@ -24,16 +24,15 @@ PROJECT_COPYRIGHT = "Copyright (c) 2026 eilandert / myguard.nl"
 PROJECT_LICENSE = "MIT (converter) — generated rules are Apache-2.0, see below"
 PROJECT_HOMEPAGE = "https://github.com/myguard-labs/rspamd-kam-rules"
 # Profile overview of our other Rspamd modules (olefy, yarad, gyzor, mailstrix, …).
-PROJECT_OVERVIEW = "https://github.com/eilandert"
+PROJECT_OVERVIEW = "https://github.com/myguard-labs"
 # Terse deploy recipe carried inside both artifacts so a downloaded file is
 # self-documenting. Kept in sync with README "Install".
 PROJECT_HOWTO = [
     "Quick start:",
     "  1. wget kam.lua       -> /etc/rspamd/plugins.d/kam.lua",
-    "  2. wget kam_rules.map -> /etc/rspamd/kam_rules.map",
-    "  3. add to rspamd.conf.local:  kam { enabled = true; }   (see examples/kam.conf)",
-    "  4. (optional) cap scoring: examples/groups.conf -> /etc/rspamd/local.d/groups.conf",
-    "  5. rspamadm configtest && systemctl reload rspamd",
+    "  2. add to rspamd.conf.local:  kam { enabled = true; }   (see examples/kam.conf)",
+    "  3. (optional) cap scoring: examples/groups.conf -> /etc/rspamd/local.d/groups.conf",
+    "  4. rspamadm configtest && systemctl reload rspamd",
     "Self-update: rspamd polls map_url (github by default) every map_watch_interval",
     "and writes a fresh map to cache_path (/var/lib/rspamd, rspamd-writable). A",
     "'systemctl reload rspamd' timer then re-registers it (native regexps register",

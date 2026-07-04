@@ -3,14 +3,13 @@
 -- Copyright (c) 2026 eilandert / myguard.nl
 -- License: MIT (converter) — generated rules are Apache-2.0, see below
 -- Home:    https://github.com/myguard-labs/rspamd-kam-rules
--- More Rspamd modules (olefy, yarad, gyzor, mailstrix, …): https://github.com/eilandert
+-- More Rspamd modules (olefy, yarad, gyzor, mailstrix, …): https://github.com/myguard-labs
 --
 -- Quick start:
 --   1. wget kam.lua       -> /etc/rspamd/plugins.d/kam.lua
---   2. wget kam_rules.map -> /etc/rspamd/kam_rules.map
---   3. add to rspamd.conf.local:  kam { enabled = true; }   (see examples/kam.conf)
---   4. (optional) cap scoring: examples/groups.conf -> /etc/rspamd/local.d/groups.conf
---   5. rspamadm configtest && systemctl reload rspamd
+--   2. add to rspamd.conf.local:  kam { enabled = true; }   (see examples/kam.conf)
+--   3. (optional) cap scoring: examples/groups.conf -> /etc/rspamd/local.d/groups.conf
+--   4. rspamadm configtest && systemctl reload rspamd
 -- Self-update: rspamd polls map_url (github by default) every map_watch_interval
 -- and writes a fresh map to cache_path (/var/lib/rspamd, rspamd-writable). A
 -- 'systemctl reload rspamd' timer then re-registers it (native regexps register

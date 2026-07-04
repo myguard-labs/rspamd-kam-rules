@@ -539,8 +539,8 @@
       "text": "util_rb_2tld    page.link"
     }
   ],
-  "output_bytes": 18279,
-  "output_sha256": "68aa9b44be5028a908cd307c6df3f54cba29710c8eb97aea6a59f1a93f915e05",
+  "output_bytes": 18226,
+  "output_sha256": "42cc33c2bcd2a1bbb0960df71b6a13f0a3e2f765c0c789673e89fc218662a969",
   "source_bytes": 618910,
   "source_sha256": "ec2e15c10e53acc9d905834760998fdecae3772f2e50ea64571ac5622efe5d4c",
   "source_url": "https://mcgrail.com/downloads/KAM.cf",

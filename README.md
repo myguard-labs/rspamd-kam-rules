@@ -114,9 +114,22 @@ sudo journalctl -u rspamd --since "5 minutes ago" | grep "generated KAM Lua rule
 ### Staying up to date
 
 `dist/kam_rules.map` is rebuilt **daily at 03:00 UTC** by GitHub Actions, but only
-committed when KAM.cf's content actually changes (the workflow compares its SHA-256
-against `dist/report.json`). `dist/kam.lua` is static — it changes only when the runtime
-code does, not on a rule update.
+committed when the KAM ruleset actually changes. The workflow's change signal is the
+KAM sa-update **channel serial, published in DNS** — a single TXT lookup keyed by the
+SpamAssassin version reversed (SA 4.0.0 → `0.0.4`), the same scheme
+`updates.spamassassin.org` uses:
+
+```sh
+dig +short TXT 0.0.4.kam.sa-channels.mcgrail.com   # => "1782987265"
+```
+
+The serial we last built against is tracked in `dist/kam.serial`. Each run compares the
+DNS serial to that file; only when the channel serial is **strictly newer** does CI fetch
+`https://mcgrail.com/downloads/KAM.cf` and regenerate. If the serial advanced but the
+downloaded file is byte-identical (an upstream re-touch), CI records the new serial
+without a needless rule rebuild. An unresolvable/empty TXT answer is treated as "no
+change" so a transient DNS blip never forces a rebuild. `dist/kam.lua` is static — it
+changes only when the runtime code does, not on a rule update.
 
 **The plugin updates itself.** Rspamd polls `map_url` (the published map on GitHub by
 default) every `map_watch_interval` (default 5 minutes) and, when it changes, atomically
@@ -155,19 +168,27 @@ poll-disabled case.
 
 ### Checking for a newer upstream
 
-KAM.cf carries **no version number** — upstream is tracked purely by the SHA-256 of the
-file. To answer "is there a newer version upstream?", compare the SHA recorded in the
-last build against the live file:
+The KAM channel publishes a serial in DNS, so the quickest "is there a newer version
+upstream?" check is a TXT lookup compared against `dist/kam.serial`:
 
 ```bash
-# SHA of the KAM.cf this build was pinned to
-python3 -c 'import json; print(json.load(open("dist/report.json"))["source_sha256"])'
+# serial this build was made against
+cat dist/kam.serial
 
-# SHA of the current upstream file
+# current channel serial (published in DNS)
+dig +short TXT 0.0.4.kam.sa-channels.mcgrail.com | tr -d '"'
+```
+
+Serial **newer** → upstream changed. The `KAM.cf` file itself carries no version number,
+so once you know a rebuild is due you can still confirm the exact content changed by
+SHA-256 (`report.json` records the SHA the build was pinned to):
+
+```bash
+python3 -c 'import json; print(json.load(open("dist/report.json"))["source_sha256"])'
 curl -fsSL https://mcgrail.com/downloads/KAM.cf | sha256sum
 ```
 
-Hashes **match** → up to date, nothing to do. Hashes **differ** → upstream changed; run
+Serial **equal** → up to date, nothing to do. Serial **newer** → upstream changed; run
 `bash update-if-changed.sh` (or `python3 kam_rspamd.py`) to fetch, reconvert, and refresh
 `dist/`. The script does this comparison itself and no-ops when the SHAs already match, so
 running it on a cron is the hands-off way to stay current.

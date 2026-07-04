@@ -1,15 +1,15 @@
 {
-  "converted_rule_count": 3572,
+  "converted_rule_count": 3668,
   "converted_rule_types": {
-    "body": 1264,
-    "full": 2,
-    "header": 1173,
-    "meta": 843,
-    "mimeheader": 53,
-    "rawbody": 75,
-    "uri": 162
+    "body": 1269,
+    "full": 4,
+    "header": 1186,
+    "meta": 862,
+    "mimeheader": 54,
+    "rawbody": 82,
+    "uri": 211
   },
-  "dropped_meta_count": 70,
+  "dropped_meta_count": 67,
   "dropped_metas": {
     "GB_BADJS": [
       "UNICODE_OBFU_ASC"
@@ -29,9 +29,6 @@
     ],
     "GB_INVOICE4": [
       "PCCC_BAD_FREE_URI"
-    ],
-    "GB_LOOKERSTUDIO": [
-      "__GB_ANY_REDIR"
     ],
     "GB_PAYPAL_BTC_INV": [
       "__KAM_PAYPAL2A"
@@ -76,9 +73,6 @@
     "KAM_BODY_WELCOMELIST_URIBL_PCCC": [
       "__KAM_BODY_WELCOMELIST_URIBL_PCCC"
     ],
-    "KAM_BTC": [
-      "__GB_ANY_REDIR"
-    ],
     "KAM_CAM_DOMAIN": [
       "KAM_SEMFRESH"
     ],
@@ -122,15 +116,13 @@
       "KAM_FAKE_PAY_UPDATE",
       "KAM_RAPTOR_EXTERNAL"
     ],
-    "KAM_FAKE_SECURITY": [
-      "__GB_ANY_REDIR"
-    ],
-    "KAM_FAKE_SHARE": [
-      "__GB_ANY_REDIR"
-    ],
     "KAM_GAMBLING": [
       "FORGED_GMAIL_RCVD",
       "__FREEMAIL_DOC_PDF"
+    ],
+    "KAM_GOOGLE_FRESH_REDIR": [
+      "FROM_FMBLA_NEWDOM",
+      "SEM_FRESH"
     ],
     "KAM_GRABBAG1": [
       "T_REMOTE_IMAGE"
@@ -144,9 +136,6 @@
     "KAM_GRABBAG7": [
       "HTML_MIME_NO_HTML_TAG"
     ],
-    "KAM_GRABBAG9": [
-      "MALFORMED_FREEMAIL"
-    ],
     "KAM_IMAGEONLY": [
       "PDS_OTHER_BAD_TLD"
     ],
@@ -155,9 +144,6 @@
     ],
     "KAM_JURY": [
       "KAM_RAPTOR_ALTERED"
-    ],
-    "KAM_LINEPADDING": [
-      "__CBJ_GiveMeABreak2"
     ],
     "KAM_LIST": [
       "EXTRACTTEXT"
@@ -236,6 +222,15 @@
     "KAM_WEIRDTRICK2": [
       "T_REMOTE_IMAGE"
     ],
+    "MSGID_MULTIPLE_AT_OUTLOOK": [
+      "MSGID_MULTIPLE_AT",
+      "MSGID_OUTLOOK_INVALID",
+      "__ANY_OUTLOOK_MUA"
+    ],
+    "PDS_FROMNAME_SPOOFED_EMAIL": [
+      "__RP_MATCHES_RCVD",
+      "__VIA_RESIGNER"
+    ],
     "__KAM_HAS_10_URIS": [],
     "__KAM_URIBL_PCCC": [
       "KAM_BODY_URIBL_PCCC",
@@ -251,6 +246,7 @@
     "DMARC_POLICY_QUARANTINE",
     "FORGED_OUTLOOK_HTML",
     "FORGED_SENDER",
+    "FREEMAIL_ENVFROM",
     "FREEMAIL_FROM",
     "FREEMAIL_REPLYTO",
     "FREEMAIL_REPLYTO_NEQ_FROM",
@@ -275,19 +271,24 @@
     "R_SPF_FAIL",
     "R_SPF_NA",
     "R_SPF_SOFTFAIL",
+    "R_UNDISC_RCPT",
     "R_WHITE_ON_WHITE",
     "SPOOF_DISPLAY_NAME",
+    "SUBJ_ALL_CAPS",
     "URIBL_BLACK",
     "URIBL_RED"
   ],
-  "external_dependency_count": 36,
+  "external_dependency_count": 39,
   "generated_date": "2026-07-04",
-  "local_rules_sha256": "3f63df123f9ad05ffb7bc77b1344214090e9508c2da57138cbf785ce206e1cc9",
-  "map_bytes": 780893,
-  "map_sha256": "2516e9e61211565f47a5f52a632b9396a357c9128c039116c8642d991e1e4f08",
+  "local_rules_sha256": "8e34b1e3d1162e5ee89f0a216bd6c75aaf4774becb54b3866ef25fd01a08ebec",
+  "map_bytes": 799195,
+  "map_sha256": "a8d07c5d8f2af1b410a183d4eba9b2b777e7367002ca8c43e0e50b3e97de3c51",
   "omitted_directives": {
     "clear_uridnsbl_skip_domain": 2,
     "enlist_addrlist": 1,
+    "fns_add_addrlist": 1,
+    "fns_ignore_dkim": 1,
+    "fns_ignore_headers": 1,
     "olemacro_download_marker": 1,
     "olemacro_extended_scan": 1,
     "olemacro_exts": 1,
@@ -296,8 +297,10 @@
     "olemacro_skip_exts": 1,
     "parse_dkim_uris": 1,
     "unsupported_body": 12,
-    "unsupported_header": 9,
-    "urirhssub": 5
+    "unsupported_header": 15,
+    "urirhssub": 5,
+    "util_rb_2tld": 1,
+    "util_rb_3tld": 1
   },
   "omitted_examples": [
     {
@@ -479,6 +482,61 @@
       "directive": "unsupported_header",
       "line": 7781,
       "text": "header          __WLHTMLATTACH          eval:check_from_in_list('WLHTMLATTACH')"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 11624,
+      "text": "header __RCVD_IN_HOSTKARMA eval:check_rbl('HOSTKARMA-lastexternal','hostkarma.junkemailfilter.com.')"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 11628,
+      "text": "header RCVD_IN_HOSTKARMA_W eval:check_rbl_sub('HOSTKARMA-lastexternal', '127.0.0.1')"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 11633,
+      "text": "header RCVD_IN_HOSTKARMA_BL eval:check_rbl_sub('HOSTKARMA-lastexternal', '127.0.0.2')"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 11638,
+      "text": "header RCVD_IN_HOSTKARMA_BR eval:check_rbl_sub('HOSTKARMA-lastexternal', '127.0.0.4')"
+    },
+    {
+      "directive": "fns_ignore_dkim",
+      "line": 11765,
+      "text": "fns_ignore_dkim linkedin.com googlegroups.com yahoogroups.com yahoogroups.de"
+    },
+    {
+      "directive": "fns_ignore_headers",
+      "line": 11768,
+      "text": "fns_ignore_headers List-Id List-Post Mailing-List X-Forwarded-For"
+    },
+    {
+      "directive": "fns_add_addrlist",
+      "line": 11771,
+      "text": "fns_add_addrlist   (GMAIL)  *@gmail.com *@googlemail.com"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 11774,
+      "text": "header   __PLUGIN_FROMNAME_SPOOF eval:check_fromname_spoof()"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 11777,
+      "text": "header   __PLUGIN_FROMNAME_EQUALS_TO eval:check_fromname_equals_to()"
+    },
+    {
+      "directive": "util_rb_3tld",
+      "line": 11801,
+      "text": "util_rb_3tld    ct.sendgrid.net"
+    },
+    {
+      "directive": "util_rb_2tld",
+      "line": 11802,
+      "text": "util_rb_2tld    page.link"
     }
   ],
   "output_bytes": 18279,
@@ -486,10 +544,11 @@
   "source_bytes": 618910,
   "source_sha256": "ec2e15c10e53acc9d905834760998fdecae3772f2e50ea64571ac5622efe5d4c",
   "source_url": "https://mcgrail.com/downloads/KAM.cf",
-  "unexpanded_tag_rule_count": 11,
+  "unexpanded_tag_rule_count": 12,
   "unexpanded_tag_rules": [
     "FUZZY_SECURITY",
     "FUZZY_WALLET",
+    "UAH_VIAGRA_IMAGE",
     "__CBJ_GiveMeABreak3",
     "__GB_PAYPAL_PHONE",
     "__GB_REGEX_BR",

@@ -34,7 +34,7 @@ it:
 - **Remaps symbols** to Rspamd equivalents — `SPF_PASS` → `R_SPF_ALLOW`, `DKIM_VALID` →
   `R_DKIM_ALLOW`, the `URIBL_*` family → SURBL/DBL — so metas resolve and fire.
 - **Prunes dead metas** — any meta whose dependencies your Rspamd can't provide is
-  dropped (70 in the current run) and its missing symbols recorded in the report.
+  dropped (67 in the current run) and its missing symbols recorded in the report.
 - **Preserves semantics** — regex flags, header modes (`addr`/`name`/`raw`/`case`),
   `replace_tag`/`replace_rules` expansion, and `tflags multiple maxhits=N` scoring.
 - **Skips the unsupported** — `askdns`, `eval:` plugin functions and friends go to the
@@ -49,19 +49,20 @@ SpamAssassin name charset and no Lua code.
 
 ## What gets converted
 
-Of KAM.cf's ~10,600 lines, the current run converts **3,572 rules**:
+Of the KAM channel's ~11,600 lines (KAM.cf + KAM_redirectors.cf +
+nonKAMrules.cf snapshots in `config/`), the current run converts **3,668 rules**:
 
 | Type | Count | Catches |
 |---|---|---|
-| body | 1,264 | message-text patterns |
-| header | 1,173 | Subject / From / Message-ID etc. |
-| meta | 843 | combined-signal verdicts |
-| uri | 162 | malicious redirectors, phishing domains |
-| rawbody | 75 | base64-obfuscated payloads pre-decode |
-| mimeheader | 53 | forged attachments |
-| full | 2 | whole RFC 822 message |
+| body | 1,269 | message-text patterns |
+| header | 1,186 | Subject / From / Message-ID etc. |
+| meta | 862 | combined-signal verdicts |
+| uri | 211 | malicious redirectors, phishing domains |
+| rawbody | 82 | base64-obfuscated payloads pre-decode |
+| mimeheader | 54 | forged attachments |
+| full | 4 | whole RFC 822 message |
 
-A further **70 meta rules are dropped** because they depend on symbols the target
+A further **67 meta rules are dropped** because they depend on symbols the target
 Rspamd doesn't provide (SA-plugin symbols, DNS lists, `eval:` functions).
 
 ## Install

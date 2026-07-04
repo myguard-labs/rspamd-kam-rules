@@ -554,6 +554,35 @@ class HelperFunctionTests(unittest.TestCase):
         for symbol in kam_rspamd.PLUGIN_EVAL_SYMBOLS:
             self.assertIn(symbol, text)
 
+    def test_cli_local_rules_repeatable_and_missing_fails(self):
+        # Two --local-rules files concatenate in order; a missing path is a
+        # hard CLI error (a silently skipped supplement would shrink the map).
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            (base / "one.cf").write_bytes(b"body FROM_ONE /one/\nscore FROM_ONE 1\n")
+            (base / "two.cf").write_bytes(b"body FROM_TWO /two/\nscore FROM_TWO 1\n")
+            (base / "src.cf").write_bytes(b"body UPSTREAM /up/\nscore UPSTREAM 1\n")
+            argv = [
+                "python3", str(ROOT / "kam_rspamd.py"),
+                "--input", str(base / "src.cf"), "--url", "fixture://multi",
+                "--map", str(base / "kam.map"), "--report", str(base / "r.json"),
+                "--min-bytes", "1", "--min-rules", "1",
+                "--local-rules", str(base / "one.cf"),
+                "--local-rules", str(base / "two.cf"),
+            ]
+            subprocess.run(argv, check=True)
+            names = {
+                json.loads(line)["name"]
+                for line in (base / "kam.map").read_text().splitlines()[1:]
+                if line.strip()
+            }
+            self.assertLessEqual({"UPSTREAM", "FROM_ONE", "FROM_TWO"}, names)
+
+            argv[-1] = str(base / "nonexistent.cf")
+            result = subprocess.run(argv, capture_output=True, text=True)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("not found", result.stderr)
+
     def test_report_flags_unexpanded_tag_rules(self):
         # A regex rule whose <tag> is never expanded (not in replace_rules) keeps
         # the literal tag, fails to compile at load, and is disabled silently;

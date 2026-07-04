@@ -166,6 +166,17 @@ SYMBOL_REPLACEMENTS = {
     "URIBL_SBL_A": "URIBL_SBL",
     "URIBL_WS_SURBL": "WS_SURBL_MULTI",
 }
+# SA eval: atoms the Lua runtime implements natively (builtin_evals table in
+# LUA_RUNTIME). They count as available for meta resolution but are NOT
+# external dependencies — no symbol is registered for them; eval_atom computes
+# them on demand. Keep this set in sync with builtin_evals in the Lua.
+PLUGIN_EVAL_SYMBOLS = {
+    "HTML_MESSAGE",  # eval:html_test — any HTML text part
+    "__KAM_BODY_LENGTH_LT_128",  # eval:check_body_length('128')
+    "__KAM_BODY_LENGTH_LT_512",
+    "__KAM_BODY_LENGTH_LT_1024",
+    "__TAG_EXISTS_HEAD",  # eval:html_tag_exists('head')
+}
 for suffix, target in {
     "04": "HTML_SHORT_LINK_IMG_1",
     "08": "HTML_SHORT_LINK_IMG_1",
@@ -703,6 +714,40 @@ local function match_header_slow(task, rule)
   return rule.multiple and hits or (hits > 0 and 1 or 0)
 end
 
+-- Builtin evaluators for the handful of SA eval: atoms that map cleanly onto
+-- the rspamd Lua API (SA: check_body_length / html_test / html_tag_exists).
+-- Mirrors PLUGIN_EVAL_SYMBOLS in the generator: available to metas, but no
+-- registered symbol — eval_atom computes them on demand (task-cached).
+-- Approximation of SA check_body_length: sums ALL text parts, so a
+-- multipart/alternative message counts both alternatives and looks longer
+-- than SA's single rendered body — the LT_* atoms then under-fire, which is
+-- the conservative direction (misses a short-body signal, never invents one).
+local function sa_body_length(task)
+  local total = 0
+  for _, part in ipairs(task:get_text_parts() or {}) do
+    total = total + (part:get_length() or 0)
+  end
+  return total
+end
+local builtin_evals = {
+  HTML_MESSAGE = function(task)
+    for _, part in ipairs(task:get_text_parts() or {}) do
+      if part:is_html() then return 1 end
+    end
+    return 0
+  end,
+  __KAM_BODY_LENGTH_LT_128 = function(task) return sa_body_length(task) < 128 and 1 or 0 end,
+  __KAM_BODY_LENGTH_LT_512 = function(task) return sa_body_length(task) < 512 and 1 or 0 end,
+  __KAM_BODY_LENGTH_LT_1024 = function(task) return sa_body_length(task) < 1024 and 1 or 0 end,
+  __TAG_EXISTS_HEAD = function(task)
+    for _, part in ipairs(task:get_text_parts() or {}) do
+      local html = part:is_html() and part:get_html()
+      if html and html:has_tag('head') then return 1 end
+    end
+    return 0
+  end,
+}
+
 local function eval_atom(name, task)
   local cache = task:cache_get('kam_lua_results')
   if not cache then cache = {}; task:cache_set('kam_lua_results', cache) end
@@ -711,7 +756,12 @@ local function eval_atom(name, task)
   local rule = rules[name]
   local result = 0
   if not rule then
-    result = task:has_symbol(replacements[name] or name) and 1 or 0
+    local builtin = builtin_evals[name]
+    if builtin then
+      result = builtin(task)
+    else
+      result = task:has_symbol(replacements[name] or name) and 1 or 0
+    end
   elseif rule.disabled then
     result = 0
   elseif rule.kind == 'meta' then
@@ -939,6 +989,7 @@ def generate_map(
         "_kam_credits": KAM_CREDITS,
         "_kam_license": KAM_LICENSE,
         "_sa_lift_provenance": SA_LIFT_PROVENANCE,
+        "_builtin_evals": sorted(PLUGIN_EVAL_SYMBOLS),
         "replacements": dict(sorted(SYMBOL_REPLACEMENTS.items())),
         "external_dependencies": sorted(external_dependencies),
     }
@@ -1014,7 +1065,10 @@ def convert(
             raise ConversionError(
                 f"source SHA-256 mismatch: {source_sha256} != {expected_sha256}"
             )
-    external = set(external_symbols or ())
+    # Builtin Lua evals count as available so metas over them survive, but they
+    # are excluded from external_dependencies: no symbol exists to register a
+    # dependency on — eval_atom computes them inline.
+    external = set(external_symbols or ()) | PLUGIN_EVAL_SYMBOLS
     combined = source + b"\n" + local_rules if local_rules else source
     rules, omitted, examples, dropped = parse_rules(
         combined,
@@ -1023,7 +1077,7 @@ def convert(
     )
     if len(rules) < min_rules:
         raise ConversionError(f"too few converted rules: {len(rules)} < {min_rules}")
-    dependencies = external_meta_dependencies(rules, external)
+    dependencies = external_meta_dependencies(rules, external) - PLUGIN_EVAL_SYMBOLS
     # Stamp map + lua with ONE shared date so the two artifacts never disagree and
     # a single regen is internally consistent. (CI is SHA-gated and only regens
     # when KAM.cf actually changes, so this dates the ruleset version.)

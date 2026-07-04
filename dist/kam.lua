@@ -236,6 +236,40 @@ local function match_header_slow(task, rule)
   return rule.multiple and hits or (hits > 0 and 1 or 0)
 end
 
+-- Builtin evaluators for the handful of SA eval: atoms that map cleanly onto
+-- the rspamd Lua API (SA: check_body_length / html_test / html_tag_exists).
+-- Mirrors PLUGIN_EVAL_SYMBOLS in the generator: available to metas, but no
+-- registered symbol — eval_atom computes them on demand (task-cached).
+-- Approximation of SA check_body_length: sums ALL text parts, so a
+-- multipart/alternative message counts both alternatives and looks longer
+-- than SA's single rendered body — the LT_* atoms then under-fire, which is
+-- the conservative direction (misses a short-body signal, never invents one).
+local function sa_body_length(task)
+  local total = 0
+  for _, part in ipairs(task:get_text_parts() or {}) do
+    total = total + (part:get_length() or 0)
+  end
+  return total
+end
+local builtin_evals = {
+  HTML_MESSAGE = function(task)
+    for _, part in ipairs(task:get_text_parts() or {}) do
+      if part:is_html() then return 1 end
+    end
+    return 0
+  end,
+  __KAM_BODY_LENGTH_LT_128 = function(task) return sa_body_length(task) < 128 and 1 or 0 end,
+  __KAM_BODY_LENGTH_LT_512 = function(task) return sa_body_length(task) < 512 and 1 or 0 end,
+  __KAM_BODY_LENGTH_LT_1024 = function(task) return sa_body_length(task) < 1024 and 1 or 0 end,
+  __TAG_EXISTS_HEAD = function(task)
+    for _, part in ipairs(task:get_text_parts() or {}) do
+      local html = part:is_html() and part:get_html()
+      if html and html:has_tag('head') then return 1 end
+    end
+    return 0
+  end,
+}
+
 local function eval_atom(name, task)
   local cache = task:cache_get('kam_lua_results')
   if not cache then cache = {}; task:cache_set('kam_lua_results', cache) end
@@ -244,7 +278,12 @@ local function eval_atom(name, task)
   local rule = rules[name]
   local result = 0
   if not rule then
-    result = task:has_symbol(replacements[name] or name) and 1 or 0
+    local builtin = builtin_evals[name]
+    if builtin then
+      result = builtin(task)
+    else
+      result = task:has_symbol(replacements[name] or name) and 1 or 0
+    end
   elseif rule.disabled then
     result = 0
   elseif rule.kind == 'meta' then

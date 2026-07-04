@@ -534,6 +534,26 @@ class HelperFunctionTests(unittest.TestCase):
         self.assertNotIn("__MH_EXISTS", rules)
         self.assertEqual(omitted["unsupported_mimeheader"], 1)
 
+    def test_builtin_evals_satisfy_metas_without_external_deps(self):
+        # A meta over a builtin-eval atom (HTML_MESSAGE et al) survives without
+        # the symbol being external, and the atom is NOT an external dependency
+        # (no symbol exists to register a dependency on — eval_atom computes it).
+        source = (
+            b"body LOCAL /x/\n"
+            b"meta USES_BUILTIN (LOCAL && HTML_MESSAGE && __KAM_BODY_LENGTH_LT_128)\n"
+            b"score USES_BUILTIN 1.0\n"
+        )
+        converted, mapdata, report = kam_rspamd.convert(source, "test", 1, 1)
+        self.assertIn("USES_BUILTIN", map_rules(mapdata))
+        self.assertEqual(report["external_dependencies"], [])
+        header = map_header(mapdata)
+        self.assertEqual(header["_builtin_evals"], sorted(kam_rspamd.PLUGIN_EVAL_SYMBOLS))
+        # The Lua runtime carries the builtin implementations.
+        text = converted.decode()
+        self.assertIn("local builtin_evals", text)
+        for symbol in kam_rspamd.PLUGIN_EVAL_SYMBOLS:
+            self.assertIn(symbol, text)
+
     def test_report_flags_unexpanded_tag_rules(self):
         # A regex rule whose <tag> is never expanded (not in replace_rules) keeps
         # the literal tag, fails to compile at load, and is disabled silently;

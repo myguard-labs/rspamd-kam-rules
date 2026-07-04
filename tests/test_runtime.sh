@@ -214,6 +214,12 @@ source = (
     b"header NEGADDR_RULE From:addr !~ /nomatch@nowhere/i\n"
     b"tflags NEGADDR_RULE multiple\n"
     b"score NEGADDR_RULE 1\n"
+    # builtin evals (no external symbol, computed in eval_atom): body-length
+    # trio on the short plain matrix message; HTML pair on the html message.
+    b"meta BILT_SHORT (__KAM_BODY_LENGTH_LT_128 && __KAM_BODY_LENGTH_LT_512 && __KAM_BODY_LENGTH_LT_1024)\n"
+    b"score BILT_SHORT 1\n"
+    b"meta BILT_HTML (HTML_MESSAGE && __TAG_EXISTS_HEAD)\n"
+    b"score BILT_HTML 1\n"
 )
 converted, mapdata, _ = kam_rspamd.convert(
     source, "fixture://matrix", min_bytes=1, min_rules=1,
@@ -240,6 +246,12 @@ printf '%s' "$matrix_result" | assert_symbol_score RB_RULE 1      # rawbody nati
 printf '%s' "$matrix_result" | assert_symbol_score FULL_RULE 1    # full/rawmime native
 printf '%s' "$matrix_result" | assert_symbol_score NAME_RULE 1    # header name-mode slow
 printf '%s' "$matrix_result" | assert_symbol_score NEGADDR_RULE 1 # slow-path negate+multiple, hits==0 inverts to 1
+printf '%s' "$matrix_result" | assert_symbol_score BILT_SHORT 1   # builtin body-length evals (75-char body)
+
+# HTML builtin evals need an actual text/html part with a <head> tag.
+html_msg=$'From: a@example.com\nTo: b@example.com\nSubject: html test\nContent-Type: text/html\n\n<html><head><title>x</title></head><body>hello there</body></html>'
+scan "$html_msg" | assert_symbol_score BILT_HTML 1                # builtin HTML_MESSAGE + __TAG_EXISTS_HEAD
+echo "builtin eval symbols verified"
 
 # --- C1 self-update: download-only watch writes the cache copy ---------------
 # Point map_url at a file:// source holding a DIFFERENT map and confirm rspamd's

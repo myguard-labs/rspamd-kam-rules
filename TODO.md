@@ -9,3 +9,8 @@
 - [ ] Collision guard: local-rules/SA-lift names silently shadow same-named KAM.cf
       rules (last-write-wins in parse_rules) — surface an overridden_rules report
       field if a future KAM.cf adds a name the supplement already defines.
+- [ ] sa_body_length sums all text parts — multipart/alternative double-counts vs
+      SA's rendered single body (conservative: LT_* under-fire). Consider skipping
+      the plain alternative when an html sibling exists.
+- [ ] Converter warn when a map/local rule name collides with PLUGIN_EVAL_SYMBOLS
+      (rules[name] correctly wins over the builtin, but silently).

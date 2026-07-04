@@ -1,27 +1,18 @@
 {
-  "converted_rule_count": 3556,
+  "converted_rule_count": 3572,
   "converted_rule_types": {
     "body": 1264,
     "full": 2,
     "header": 1173,
-    "meta": 827,
+    "meta": 843,
     "mimeheader": 53,
     "rawbody": 75,
     "uri": 162
   },
-  "dropped_meta_count": 86,
+  "dropped_meta_count": 70,
   "dropped_metas": {
     "GB_BADJS": [
       "UNICODE_OBFU_ASC"
-    ],
-    "GB_EBIKE": [
-      "__TAG_EXISTS_HEAD"
-    ],
-    "GB_EBIKE_ADDR": [
-      "GB_EBIKE"
-    ],
-    "GB_FREEMAIL_TEXTCOLOR": [
-      "__KAM_BODY_LENGTH_LT_1024"
     ],
     "GB_FROMNAME_SPOOF_EQUALS_TO": [
       "PDS_FROMNAME_SPOOFED_EMAIL",
@@ -62,18 +53,6 @@
     "KAM_ADMIN": [
       "HTML_OBFUSCATE_10_20"
     ],
-    "KAM_APPLINK": [
-      "__KAM_BODY_LENGTH_LT_512"
-    ],
-    "KAM_ARREST": [
-      "__KAM_BODY_LENGTH_LT_128"
-    ],
-    "KAM_ASCII_DIVIDERS": [
-      "HTML_MESSAGE"
-    ],
-    "KAM_AUTONEW2": [
-      "KAM_ASCII_DIVIDERS"
-    ],
     "KAM_BAD_DNSWL": [
       "RCVD_IN_BL_SPAMCOP_NET",
       "RCVD_IN_HOSTKARMA_W"
@@ -106,14 +85,8 @@
     "KAM_CARD": [
       "KAM_RPTR_SUSPECT"
     ],
-    "KAM_CEP": [
-      "__KAM_BODY_LENGTH_LT_1024"
-    ],
     "KAM_COLLEGE": [
       "__KAM_URIBL_PCCC"
-    ],
-    "KAM_COMPROMISED": [
-      "__KAM_BODY_LENGTH_LT_128"
     ],
     "KAM_CREDIT2": [
       "__KAM_URIBL_PCCC"
@@ -174,9 +147,6 @@
     "KAM_GRABBAG9": [
       "MALFORMED_FREEMAIL"
     ],
-    "KAM_HEALTH2": [
-      "HTML_MESSAGE"
-    ],
     "KAM_IMAGEONLY": [
       "PDS_OTHER_BAD_TLD"
     ],
@@ -188,15 +158,6 @@
     ],
     "KAM_LINEPADDING": [
       "__CBJ_GiveMeABreak2"
-    ],
-    "KAM_LINKBAIT": [
-      "__KAM_BODY_LENGTH_LT_512"
-    ],
-    "KAM_LINKBAIT2": [
-      "KAM_LINKBAIT"
-    ],
-    "KAM_LINKBAIT3": [
-      "__KAM_BODY_LENGTH_LT_512"
     ],
     "KAM_LIST": [
       "EXTRACTTEXT"
@@ -227,9 +188,6 @@
     ],
     "KAM_MATCH": [
       "HTML_IMAGE_RATIO_06"
-    ],
-    "KAM_NEWS": [
-      "__KAM_BODY_LENGTH_LT_128"
     ],
     "KAM_NOTIFY2": [
       "KAM_IFRAME"
@@ -262,9 +220,6 @@
     "KAM_SEX": [
       "__HTML_IMG_ONLY"
     ],
-    "KAM_STOCKG": [
-      "HTML_MESSAGE"
-    ],
     "KAM_UAH_YAHOOGROUP_SENDER": [
       "FORGED_YAHOO_RCVD"
     ],
@@ -277,9 +232,6 @@
     ],
     "KAM_VM_HTML": [
       "KAM_VM"
-    ],
-    "KAM_WEIRDC19": [
-      "__KAM_BODY_LENGTH_LT_512"
     ],
     "KAM_WEIRDTRICK2": [
       "T_REMOTE_IMAGE"
@@ -306,7 +258,11 @@
     "HAS_GOOGLE_REDIR",
     "HAS_X_PHP_SCRIPT",
     "HTML_SHORT_LINK_IMG_1",
+    "HTML_SHORT_LINK_IMG_2",
+    "HTML_SHORT_LINK_IMG_3",
     "MIME_BAD_EXTENSION",
+    "MISSING_DATE",
+    "MISSING_SUBJECT",
     "MISSING_TO",
     "OLETOOLS_ENCRYPTED",
     "RBL_SPAMHAUS_PBL",
@@ -324,11 +280,11 @@
     "URIBL_BLACK",
     "URIBL_RED"
   ],
-  "external_dependency_count": 32,
+  "external_dependency_count": 36,
   "generated_date": "2026-07-04",
   "local_rules_sha256": "3f63df123f9ad05ffb7bc77b1344214090e9508c2da57138cbf785ce206e1cc9",
-  "map_bytes": 777137,
-  "map_sha256": "8298bf4390722c60ef42af041a531a51674426bce1110385252a9a0f359ffaac",
+  "map_bytes": 780893,
+  "map_sha256": "2516e9e61211565f47a5f52a632b9396a357c9128c039116c8642d991e1e4f08",
   "omitted_directives": {
     "clear_uridnsbl_skip_domain": 2,
     "enlist_addrlist": 1,
@@ -525,8 +481,8 @@
       "text": "header          __WLHTMLATTACH          eval:check_from_in_list('WLHTMLATTACH')"
     }
   ],
-  "output_bytes": 16680,
-  "output_sha256": "9aa903e464dde723dc6f8244a6b0f20c0308347bdc9312be41960e6e16abe0a0",
+  "output_bytes": 18279,
+  "output_sha256": "68aa9b44be5028a908cd307c6df3f54cba29710c8eb97aea6a59f1a93f915e05",
   "source_bytes": 618910,
   "source_sha256": "ec2e15c10e53acc9d905834760998fdecae3772f2e50ea64571ac5622efe5d4c",
   "source_url": "https://mcgrail.com/downloads/KAM.cf",

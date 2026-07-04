@@ -1,49 +1,24 @@
 {
-  "converted_rule_count": 3307,
+  "converted_rule_count": 3556,
   "converted_rule_types": {
-    "body": 1180,
+    "body": 1264,
     "full": 2,
-    "header": 1119,
-    "meta": 739,
-    "mimeheader": 39,
-    "rawbody": 71,
-    "uri": 157
+    "header": 1173,
+    "meta": 827,
+    "mimeheader": 53,
+    "rawbody": 75,
+    "uri": 162
   },
-  "dropped_meta_count": 151,
+  "dropped_meta_count": 86,
   "dropped_metas": {
     "GB_BADJS": [
-      "T_HTML_ATTACH",
-      "T_OBFU_HTML_ATTACH",
       "UNICODE_OBFU_ASC"
     ],
-    "GB_DOCUSIGN_G_SHARE": [
-      "GOOG_REDIR_DOCUSIGN"
-    ],
     "GB_EBIKE": [
-      "NEW_PRODUCTS",
-      "YOUR_DELIVERY_ADDRESS",
-      "__DOS_DIRECT_TO_MX_UNTRUSTED",
-      "__TAG_EXISTS_HEAD",
-      "__YOUR_PERSONAL"
+      "__TAG_EXISTS_HEAD"
     ],
     "GB_EBIKE_ADDR": [
-      "GB_EBIKE",
-      "YOUR_DELIVERY_ADDRESS"
-    ],
-    "GB_EMPTY_IMAGES": [
-      "__ANY_IMAGE_ATTACH"
-    ],
-    "GB_ESP_CRIM": [
-      "__STY_INVIS_MANY"
-    ],
-    "GB_FAKE_DOCUSIGN": [
-      "MXG_SPOOFED_DOCUSIGN"
-    ],
-    "GB_FAKE_SIGNED_MICROSOFT": [
-      "KAM_ONMICROSOFT_RF"
-    ],
-    "GB_FREEMAIL_SEO": [
-      "__GB_RCPT_EMPTY"
+      "GB_EBIKE"
     ],
     "GB_FREEMAIL_TEXTCOLOR": [
       "__KAM_BODY_LENGTH_LT_1024"
@@ -56,16 +31,10 @@
       "PDS_FROMNAME_SPOOFED_EMAIL"
     ],
     "GB_HTML_FORM": [
-      "T_HTML_ATTACH",
-      "T_OBFU_HTML_ATTACH",
       "UNICODE_OBFU_ASC"
     ],
     "GB_INVALID_FROM_NOTLS": [
-      "KAM_GB_INVALID_FROM",
       "KAM_NOTLS"
-    ],
-    "GB_INVOICE3": [
-      "__WORD_INVIS_2"
     ],
     "GB_INVOICE4": [
       "PCCC_BAD_FREE_URI"
@@ -76,12 +45,8 @@
     "GB_PAYPAL_BTC_INV": [
       "__KAM_PAYPAL2A"
     ],
-    "GB_PAYPAL_BTC_PHONE": [
-      "MONEY_NOHTML"
-    ],
     "GB_PAYPAL_OBFU_PHONE": [
-      "FROM_PAYPAL_SPOOF",
-      "FUZZY_PAYPAL"
+      "FROM_PAYPAL_SPOOF"
     ],
     "GB_REGEX_BR_SPOOF": [
       "PDS_FROMNAME_SPOOFED_EMAIL",
@@ -91,12 +56,8 @@
       "ENVFROM_GOOG_TRIX"
     ],
     "JMQ_CONGRAT": [
-      "HK_SPAMMY_FILENAME",
       "KAM_RAPTOR_ALTERED",
       "T_FREEMAIL_DOC_PDF"
-    ],
-    "JMQ_WIRE": [
-      "LOTS_OF_MONEY"
     ],
     "KAM_ADMIN": [
       "HTML_OBFUSCATE_10_20"
@@ -113,38 +74,22 @@
     "KAM_AUTONEW2": [
       "KAM_ASCII_DIVIDERS"
     ],
-    "KAM_BADPO2": [
-      "T_HTML_ATTACH"
-    ],
     "KAM_BAD_DNSWL": [
       "RCVD_IN_BL_SPAMCOP_NET",
       "RCVD_IN_HOSTKARMA_W"
     ],
     "KAM_BAD_HTML": [
-      "T_HTML_ATTACH",
       "UNWANTED_LANGUAGE_BODY"
     ],
-    "KAM_BAD_SCAN": [
-      "T_HTML_ATTACH"
-    ],
-    "KAM_BANK": [
-      "LOTS_OF_MONEY"
-    ],
-    "KAM_BANK2": [
-      "LOTS_OF_MONEY"
-    ],
     "KAM_BENEFICIARY": [
-      "EXTRACTTEXT",
-      "LOTS_OF_MONEY"
+      "EXTRACTTEXT"
     ],
     "KAM_BENEFICIARY2": [
-      "DEAR_BENEFICIARY",
       "GMD_PDF_EMPTY_BODY"
     ],
     "KAM_BENEFICIARYLOW": [
       "EXTRACTTEXT",
-      "KAM_BENEFICIARY",
-      "LOTS_OF_MONEY"
+      "KAM_BENEFICIARY"
     ],
     "KAM_BIDEST": [
       "KAM_FROM_URIBL_PCCC"
@@ -152,14 +97,8 @@
     "KAM_BODY_WELCOMELIST_URIBL_PCCC": [
       "__KAM_BODY_WELCOMELIST_URIBL_PCCC"
     ],
-    "KAM_BOXPHISH": [
-      "__UPGR_MAILBOX"
-    ],
     "KAM_BTC": [
       "__GB_ANY_REDIR"
-    ],
-    "KAM_CAMERA": [
-      "__KAM_SUBSCRIPTION_INFO"
     ],
     "KAM_CAM_DOMAIN": [
       "KAM_SEMFRESH"
@@ -168,11 +107,7 @@
       "KAM_RPTR_SUSPECT"
     ],
     "KAM_CEP": [
-      "__KAM_BODY_LENGTH_LT_1024",
-      "__PDF_ATTACH"
-    ],
-    "KAM_CHECKFILE2": [
-      "T_OBFU_PDF_ATTACH"
+      "__KAM_BODY_LENGTH_LT_1024"
     ],
     "KAM_COLLEGE": [
       "__KAM_URIBL_PCCC"
@@ -180,76 +115,31 @@
     "KAM_COMPROMISED": [
       "__KAM_BODY_LENGTH_LT_128"
     ],
-    "KAM_COVID": [
-      "LOTS_OF_MONEY"
-    ],
-    "KAM_COVID2": [
-      "LOTS_OF_MONEY"
-    ],
     "KAM_CREDIT2": [
       "__KAM_URIBL_PCCC"
-    ],
-    "KAM_CRIM": [
-      "FUZZY_BITCOIN"
-    ],
-    "KAM_CRYPTODRIVE": [
-      "__URI_GOOGLE_DRV"
-    ],
-    "KAM_DIGITALWALLET": [
-      "HELO_DYNAMIC_DHCP"
     ],
     "KAM_DIRECTDEPOSIT": [
       "KAM_RAPTOR_EXTERNAL"
     ],
-    "KAM_DOCUSIGN": [
-      "LOTS_OF_MONEY"
-    ],
     "KAM_DOMAINBROKER": [
       "KAM_BODY_MARKETINGBL_PCCC"
-    ],
-    "KAM_DRONE2": [
-      "__KAM_SUBSCRIPTION_INFO"
-    ],
-    "KAM_DUJOUR": [
-      "KAM_STORAGE_GOOGLE"
     ],
     "KAM_FACEBOOKMAIL": [
       "DKIM_ADSP_ALL"
     ],
-    "KAM_FAKEFORM": [
-      "LOTS_OF_MONEY"
-    ],
-    "KAM_FAKEWEST": [
-      "LOTS_OF_MONEY"
-    ],
     "KAM_FAKE_AGING": [
       "KAM_RAPTOR_EXTERNAL"
-    ],
-    "KAM_FAKE_BENEFIT": [
-      "T_HTML_ATTACH"
     ],
     "KAM_FAKE_DELIVER": [
       "KAM_RAPTOR_ALTERED"
     ],
-    "KAM_FAKE_DOCUSIGN": [
-      "T_HTML_ATTACH"
-    ],
-    "KAM_FAKE_FAX": [
-      "T_HTML_ATTACH"
-    ],
     "KAM_FAKE_FAX2": [
-      "GB_BADJS",
-      "KAM_FAKE_FAX",
-      "T_HTML_ATTACH"
+      "GB_BADJS"
     ],
     "KAM_FAKE_INVOICE": [
       "KAM_RAPTOR_ALTERED",
       "OLEMACRO_URI_TARGET",
-      "T_HTML_ATTACH",
       "__WLHTMLATTACH"
-    ],
-    "KAM_FAKE_INVOICEMS": [
-      "KAM_ONMICROSOFT"
     ],
     "KAM_FAKE_PAY_UPDATE": [
       "KAM_RAPTOR_EXTERNAL"
@@ -259,52 +149,18 @@
       "KAM_FAKE_PAY_UPDATE",
       "KAM_RAPTOR_EXTERNAL"
     ],
-    "KAM_FAKE_PO": [
-      "T_HTML_ATTACH"
-    ],
-    "KAM_FAKE_REWARDS": [
-      "KAM_STORAGE_GOOGLE"
-    ],
     "KAM_FAKE_SECURITY": [
       "__GB_ANY_REDIR"
     ],
     "KAM_FAKE_SHARE": [
       "__GB_ANY_REDIR"
     ],
-    "KAM_FAKE_SHAREPOINT": [
-      "KAM_STORAGE_GOOGLE"
-    ],
-    "KAM_FAKE_SHAREPOINTLINK": [
-      "KAM_FAKE_SHAREPOINT",
-      "KAM_STORAGE_GOOGLE"
-    ],
-    "KAM_FAKE_SHAREPOINT_PRODUCTS": [
-      "KAM_FAKE_SHAREPOINT"
-    ],
-    "KAM_FAT": [
-      "__KAM_SUBSCRIPTION_INFO"
-    ],
-    "KAM_FEDEX": [
-      "T_HTML_ATTACH"
-    ],
     "KAM_GAMBLING": [
       "FORGED_GMAIL_RCVD",
       "__FREEMAIL_DOC_PDF"
     ],
-    "KAM_GB_INVALID_FROM": [
-      "__BOUNCE_CTYPE"
-    ],
-    "KAM_GIRLS": [
-      "__SINGLE_WORD_SUBJ"
-    ],
-    "KAM_GOOGLE2": [
-      "HK_SPAMMY_FILENAME"
-    ],
     "KAM_GRABBAG1": [
       "T_REMOTE_IMAGE"
-    ],
-    "KAM_GRABBAG2": [
-      "AC_HTML_NONSENSE_TAGS"
     ],
     "KAM_GRABBAG3": [
       "__KAM_HAS_10_URIS"
@@ -325,11 +181,7 @@
       "PDS_OTHER_BAD_TLD"
     ],
     "KAM_INVEST": [
-      "EXTRACTTEXT",
-      "LOTS_OF_MONEY"
-    ],
-    "KAM_INVOICEPO": [
-      "T_HTML_ATTACH"
+      "EXTRACTTEXT"
     ],
     "KAM_JURY": [
       "KAM_RAPTOR_ALTERED"
@@ -356,14 +208,10 @@
       "EXTRACTTEXT",
       "KAM_LIST3"
     ],
-    "KAM_LOTTO3": [
-      "LOTS_OF_MONEY"
-    ],
     "KAM_MAILBOX": [
       "HTML_MIME_NO_HTML_TAG",
       "KAM_SENDGRID2",
-      "T_FREEMAIL_DOC_PDF",
-      "T_HTML_ATTACH"
+      "T_FREEMAIL_DOC_PDF"
     ],
     "KAM_MAILBOX2": [
       "KAM_MAILBOX"
@@ -380,18 +228,8 @@
     "KAM_MATCH": [
       "HTML_IMAGE_RATIO_06"
     ],
-    "KAM_MILLIONAIRE": [
-      "LOTS_OF_MONEY"
-    ],
     "KAM_NEWS": [
       "__KAM_BODY_LENGTH_LT_128"
-    ],
-    "KAM_NIGERIAN": [
-      "LOTS_OF_MONEY"
-    ],
-    "KAM_NIGERIAN3": [
-      "DEAR_SOMETHING",
-      "LOTS_OF_MONEY"
     ],
     "KAM_NOTIFY2": [
       "KAM_IFRAME"
@@ -400,35 +238,12 @@
       "KAM_OLEMACRO_ZIP_PW",
       "PDS_FROMNAME_SPOOFED_EMAIL"
     ],
-    "KAM_ONMICROSOFT": [
-      "__AUTOREPLY_ASU"
-    ],
-    "KAM_ONMICROSOFT_RF": [
-      "__AUTOREPLY_ASU"
-    ],
-    "KAM_PASSWORDSCAM": [
-      "__PDF_ATTACH",
-      "__SINGLE_WORD_SUBJ"
-    ],
-    "KAM_PAYMENTSCAM2": [
-      "DEAR_BENEFICIARY"
-    ],
     "KAM_PAYROLL_SCANNER": [
-      "KAM_IFRAME",
-      "T_HTML_ATTACH"
+      "KAM_IFRAME"
     ],
     "KAM_PHISHCP4": [
       "KAM_MAILBOX",
       "KAM_MAILBOX2"
-    ],
-    "KAM_PHOTOPHISH": [
-      "__HAS_ANY_URI"
-    ],
-    "KAM_PHOTOPHISHLOW": [
-      "__HAS_ANY_URI"
-    ],
-    "KAM_PRIV": [
-      "T_HTML_ATTACH"
     ],
     "KAM_QUITE_BAD_DNSWL": [
       "RCVD_IN_BL_SPAMCOP_NET",
@@ -438,17 +253,8 @@
       "KAM_FAKE_DELIVER",
       "KAM_RPTR_PASSED"
     ],
-    "KAM_REFI": [
-      "AC_HTML_NONSENSE_TAGS"
-    ],
-    "KAM_REFI2": [
-      "AC_HTML_NONSENSE_TAGS"
-    ],
     "KAM_SALE": [
       "BODY_8BITS"
-    ],
-    "KAM_SANDAL": [
-      "__KAM_SUBSCRIPTION_INFO"
     ],
     "KAM_SENDGRID2": [
       "TO_IN_SUBJ"
@@ -456,24 +262,11 @@
     "KAM_SEX": [
       "__HTML_IMG_ONLY"
     ],
-    "KAM_SIGN": [
-      "KAM_STORAGE_GOOGLE"
-    ],
     "KAM_STOCKG": [
       "HTML_MESSAGE"
     ],
-    "KAM_STORAGE_GOOGLE": [
-      "__URI_GOOG_STO_IMG"
-    ],
-    "KAM_TEMPORARYLINK": [
-      "__AUTOREPLY_ASU"
-    ],
-    "KAM_TEMPORARYLINK_RF": [
-      "__AUTOREPLY_ASU"
-    ],
     "KAM_UAH_YAHOOGROUP_SENDER": [
-      "FORGED_YAHOO_RCVD",
-      "__ML2"
+      "FORGED_YAHOO_RCVD"
     ],
     "KAM_UKINV": [
       "HTML_OBFUSCATE_10_20",
@@ -489,26 +282,9 @@
       "__KAM_BODY_LENGTH_LT_512"
     ],
     "KAM_WEIRDTRICK2": [
-      "AC_HTML_NONSENSE_TAGS",
       "T_REMOTE_IMAGE"
     ],
-    "KAM_WU": [
-      "LOTS_OF_MONEY"
-    ],
-    "KAM_ZERODAY3": [
-      "T_OBFU_DOC_ATTACH"
-    ],
-    "WORD_INVIS_MANY": [
-      "__BODY_TEXT_LINE",
-      "__WORD_INVIS_2"
-    ],
-    "__GB_RCPT_EMPTY": [
-      "__HAS_TO"
-    ],
     "__KAM_HAS_10_URIS": [],
-    "__KAM_SUBSCRIPTION_INFO": [
-      "__SUBSCRIPTION_INFO"
-    ],
     "__KAM_URIBL_PCCC": [
       "KAM_BODY_URIBL_PCCC",
       "KAM_FROM_URIBL_PCCC"
@@ -518,7 +294,6 @@
     "ARC_SIGNED",
     "COMPLETELY_EMPTY",
     "DBL_SPAM",
-    "DKIM_SIGNED",
     "DMARC_NA",
     "DMARC_POLICY_ALLOW",
     "DMARC_POLICY_QUARANTINE",
@@ -528,12 +303,14 @@
     "FREEMAIL_REPLYTO",
     "FREEMAIL_REPLYTO_NEQ_FROM",
     "FREEMAIL_TO",
+    "HAS_GOOGLE_REDIR",
     "HAS_X_PHP_SCRIPT",
     "HTML_SHORT_LINK_IMG_1",
     "MIME_BAD_EXTENSION",
     "MISSING_TO",
     "OLETOOLS_ENCRYPTED",
     "RBL_SPAMHAUS_PBL",
+    "RCVD_COUNT_ZERO",
     "RDNS_NONE",
     "R_DKIM_ALLOW",
     "R_DKIM_REJECT",
@@ -544,13 +321,14 @@
     "R_SPF_SOFTFAIL",
     "R_WHITE_ON_WHITE",
     "SPOOF_DISPLAY_NAME",
-    "URIBL_BLACK"
+    "URIBL_BLACK",
+    "URIBL_RED"
   ],
-  "external_dependency_count": 30,
+  "external_dependency_count": 32,
   "generated_date": "2026-07-04",
-  "local_rules_sha256": "29bb9b69759ee5249798315980561d6969af249fe5de7afd6736c802c971aa1f",
-  "map_bytes": 624074,
-  "map_sha256": "7030dd66b6ac96df6883857c16a40dadf98d06715ba484a9504291b6f31e2234",
+  "local_rules_sha256": "3f63df123f9ad05ffb7bc77b1344214090e9508c2da57138cbf785ce206e1cc9",
+  "map_bytes": 777137,
+  "map_sha256": "8298bf4390722c60ef42af041a531a51674426bce1110385252a9a0f359ffaac",
   "omitted_directives": {
     "clear_uridnsbl_skip_domain": 2,
     "enlist_addrlist": 1,
@@ -752,18 +530,14 @@
   "source_bytes": 618910,
   "source_sha256": "ec2e15c10e53acc9d905834760998fdecae3772f2e50ea64571ac5622efe5d4c",
   "source_url": "https://mcgrail.com/downloads/KAM.cf",
-  "unexpanded_tag_rule_count": 15,
+  "unexpanded_tag_rule_count": 11,
   "unexpanded_tag_rules": [
     "FUZZY_SECURITY",
     "FUZZY_WALLET",
     "__CBJ_GiveMeABreak3",
-    "__GB_FAKE_HOTEL",
-    "__GB_OBFU_BANK",
     "__GB_PAYPAL_PHONE",
     "__GB_REGEX_BR",
     "__KAM_BIGSMALL",
-    "__KAM_CRIM5",
-    "__KAM_CRIM6",
     "__KAM_FAKE_GOOGLEGROUP2",
     "__KAM_H1QNUM1",
     "__KAM_HTMLNOISE1",

@@ -519,6 +519,21 @@ class HelperFunctionTests(unittest.TestCase):
         names = [line.split()[1] for _, line in kam_rspamd.active_lines(text)]
         self.assertEqual(names, ["GATED"])
 
+    def test_header_exists_rule(self):
+        # SA `header NAME exists:Hdr` converts to a `^` presence regex on that
+        # header; the form is header-only (mimeheader exists stays unsupported).
+        rules, omitted, _, _ = kam_rspamd.parse_rules(
+            b"header __HAS_TO exists:To\n"
+            b"mimeheader __MH_EXISTS exists:Content-Type\n",
+            set(),
+            set(),
+        )
+        rule = rules["__HAS_TO"]
+        self.assertEqual((rule.kind, rule.header, rule.expression), ("header", "To", "^"))
+        self.assertFalse(rule.negate)
+        self.assertNotIn("__MH_EXISTS", rules)
+        self.assertEqual(omitted["unsupported_mimeheader"], 1)
+
     def test_report_flags_unexpanded_tag_rules(self):
         # A regex rule whose <tag> is never expanded (not in replace_rules) keeps
         # the literal tag, fails to compile at load, and is disabled silently;

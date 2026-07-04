@@ -46,24 +46,55 @@ jobs:
       - name: Check if KAM.cf has updates
         id: check
         run: |
+          set -euo pipefail
           KAM_URL="https://mcgrail.com/downloads/KAM.cf"
           SOURCE_FILE="$RUNNER_TEMP/KAM.cf"
 
-          curl -fsSL --retry 3 --retry-delay 2 -o "$SOURCE_FILE" "$KAM_URL"
-          SOURCE_SHA=$(sha256sum "$SOURCE_FILE" | awk '{print $1}')
-          CURRENT_SHA=$(python3 -c \
-            'import json; print(json.load(open("dist/report.json")).get("source_sha256", ""))')
+          # Primary change signal: the KAM sa-update channel publishes its
+          # ruleset serial as a DNS TXT record, keyed by the SpamAssassin
+          # version REVERSED (SA 4.0.0 -> "0.0.4"), same scheme as
+          # updates.spamassassin.org. One cheap lookup tells us whether the
+          # channel advanced — no need to download KAM.cf just to hash it.
+          #   dig +short TXT 0.0.4.kam.sa-channels.mcgrail.com  =>  "1782987265"
+          SERIAL_NAME="0.0.4.kam.sa-channels.mcgrail.com"
+          REMOTE_SERIAL=$(dig +short TXT "$SERIAL_NAME" | tr -d '"' | tr -dc '0-9')
+          STORED_SERIAL=$(tr -dc '0-9' < dist/kam.serial 2>/dev/null || echo "")
 
-          echo "Downloaded source SHA-256: $SOURCE_SHA"
-          echo "source_file=$SOURCE_FILE" >> "$GITHUB_OUTPUT"
-          echo "source_sha=$SOURCE_SHA" >> "$GITHUB_OUTPUT"
-          if [[ "$SOURCE_SHA" == "$CURRENT_SHA" ]]; then
-            echo "No content changes detected"
-            echo "changed=false" >> "$GITHUB_OUTPUT"
+          echo "DNS channel serial ($SERIAL_NAME): ${REMOTE_SERIAL:-<none>}"
+          echo "Stored serial (dist/kam.serial): ${STORED_SERIAL:-<none>}"
+
+          # Fail closed: a missing/garbage TXT answer must NOT read as "no
+          # update" forever, but also must not trigger a needless rebuild. Treat
+          # an empty remote serial as "no change" (transient DNS/upstream), and
+          # only rebuild when the channel serial is strictly newer than ours.
+          CHANGED=false
+          SERIAL_ADVANCED=false
+          if [[ -z "$REMOTE_SERIAL" ]]; then
+            echo "No channel serial resolved (transient?) — skipping update"
+          elif [[ -z "$STORED_SERIAL" || "$REMOTE_SERIAL" -gt "$STORED_SERIAL" ]]; then
+            SERIAL_ADVANCED=true
+            echo "Channel serial advanced — fetching KAM.cf"
+            curl -fsSL --retry 3 --retry-delay 2 -o "$SOURCE_FILE" "$KAM_URL"
+            SOURCE_SHA=$(sha256sum "$SOURCE_FILE" | awk '{print $1}')
+            CURRENT_SHA=$(python3 -c \
+              'import json; print(json.load(open("dist/report.json")).get("source_sha256", ""))')
+            echo "Downloaded source SHA-256: $SOURCE_SHA"
+            echo "source_file=$SOURCE_FILE" >> "$GITHUB_OUTPUT"
+            echo "source_sha=$SOURCE_SHA" >> "$GITHUB_OUTPUT"
+            # Serial bumped but bytes identical (upstream re-touch): record the
+            # new serial without a pointless rule rebuild.
+            if [[ "$SOURCE_SHA" == "$CURRENT_SHA" ]]; then
+              echo "Serial advanced but KAM.cf content unchanged — recording serial only"
+            else
+              CHANGED=true
+            fi
           else
-            echo "Content changed"
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+            echo "Channel serial not newer than stored — no update"
           fi
+
+          echo "remote_serial=$REMOTE_SERIAL" >> "$GITHUB_OUTPUT"
+          echo "serial_advanced=$SERIAL_ADVANCED" >> "$GITHUB_OUTPUT"
+          echo "changed=$CHANGED" >> "$GITHUB_OUTPUT"
 
       - name: Update KAM rules
         if: steps.check.outputs.changed == 'true'
@@ -79,8 +110,15 @@ jobs:
           python3 -m unittest discover -s tests -v
           bash tests/test_runtime.sh
 
+      - name: Record channel serial
+        # Runs whenever the channel advanced past our stored serial, even if the
+        # rule content was byte-identical (upstream re-touch). Writing the new
+        # serial stops the next run from re-fetching the same tarball forever.
+        if: steps.check.outputs.serial_advanced == 'true'
+        run: |
+          echo "${{ steps.check.outputs.remote_serial }}" > dist/kam.serial
+
       - name: Commit and push if changed
-        if: steps.check.outputs.changed == 'true'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -88,6 +126,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: update KAM rules from upstream"
+            git commit -m "chore: update KAM rules from upstream (channel serial ${{ steps.check.outputs.remote_serial }})"
             git push
           fi

@@ -62,6 +62,11 @@ KAM_LICENSE = [
     "BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, express or implied.",
     "The converter (rspamd-kam-rules) itself is MIT-licensed.",
 ]
+SA_LIFT_PROVENANCE = [
+    "Some rule definitions are lifted from Apache SpamAssassin trunk",
+    "(rules/ + rulesrc/), Apache-2.0, to satisfy KAM.cf meta dependencies.",
+    "See the SA-lift section of config/local-rules.cf for the per-rule source.",
+]
 
 # kam.lua is a thin runtime; the full KAM.cf credits + Apache notice live in the
 # map header (_kam_credits / _kam_license) so they travel with the rules. This
@@ -382,10 +387,20 @@ def parse_rules(
                 continue
             header = header_mode = None
             negate = False
+            if directive == "header":
+                exists = re.match(r"exists:(\S+)\Z", value)
+                if exists:
+                    # SA `header NAME exists:Hdr` is a pure presence test. `^`
+                    # matches every value including the empty string, so the
+                    # rule fires iff the header is present.
+                    rules[name] = Rule(
+                        name=name, kind=directive, expression="^", header=exists.group(1)
+                    )
+                    continue
             if directive in {"header", "mimeheader"}:
                 match = re.match(r"(\S+)\s*([=!])~\s*(.+)", value)
                 if not match:
-                    omit(number, "unsupported_header", line)
+                    omit(number, f"unsupported_{directive}", line)
                     continue
                 header_spec, operator, value = match.groups()
                 negate = operator == "!"
@@ -923,6 +938,7 @@ def generate_map(
         "_generated": generated_date,
         "_kam_credits": KAM_CREDITS,
         "_kam_license": KAM_LICENSE,
+        "_sa_lift_provenance": SA_LIFT_PROVENANCE,
         "replacements": dict(sorted(SYMBOL_REPLACEMENTS.items())),
         "external_dependencies": sorted(external_dependencies),
     }

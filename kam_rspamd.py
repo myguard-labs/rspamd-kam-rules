@@ -101,8 +101,41 @@ KNOWN_PLUGINS = {
 SA_VERSION = 4.000000
 _VERSION_GATE = re.compile(r"if\s+\(?\s*version\s*(>=|>|<=|<|==|!=)\s*([\d.]+)\s*\)?\s*\Z")
 SYMBOL_REPLACEMENTS = {
+    # 2026-07-04 pristine remap table (targets verified present in the
+    # rspamd/rspamd:4.1.0 image; see memory kam-channel-file-analysis.md).
+    # APPROX-flagged mappings conflate a nuance (helo/mfrom, name/addr,
+    # alignment) but only widen/narrow a signal that feeds the same metas.
+    "ALL_TRUSTED": "RCVD_COUNT_ZERO",  # APPROX: only used in negated guards
     "BODY_URI_ONLY": "R_EMPTY_IMAGE",
+    "DKIM_INVALID": "R_DKIM_REJECT",
     "DKIM_VALID": "R_DKIM_ALLOW",
+    "DKIM_VALID_AU": "R_DKIM_ALLOW",  # APPROX: alignment lost
+    "DKIM_VALID_EF": "R_DKIM_ALLOW",  # APPROX: alignment lost
+    "DMARC_PASS": "DMARC_POLICY_ALLOW",
+    "EMPTY_MESSAGE": "COMPLETELY_EMPTY",
+    "FREEMAIL_ENVFROM_END_DIGIT": "FREEMAIL_ENVFROM",  # APPROX
+    "FREEMAIL_FORGED_REPLYTO": "FREEMAIL_REPLYTO_NEQ_FROM",
+    "FREEMAIL_REPLYTO_END_DIGIT": "FREEMAIL_REPLYTO",  # APPROX
+    "GOOG_REDIR_NOTRDNS": "HAS_GOOGLE_REDIR",  # APPROX: RDNS side lost
+    "HEADER_FROM_DIFFERENT_DOMAINS": "FORGED_SENDER",  # APPROX
+    "HTML_FONT_LOW_CONTRAST": "R_WHITE_ON_WHITE",  # APPROX
+    "MISSING_HEADERS": "MISSING_TO",  # SA def = missing To header
+    "NO_RELAYS": "RCVD_COUNT_ZERO",
+    "RCVD_IN_PBL": "RBL_SPAMHAUS_PBL",
+    "RCVD_IN_XBL": "RBL_SPAMHAUS_XBL",
+    "SPF_HELO_NONE": "R_SPF_NA",  # APPROX: helo/mfrom conflated
+    "__DKIM_EXISTS": "DKIM_SIGNED",
+    "__DOS_DIRECT_TO_MX": "DIRECT_TO_MX",
+    "__DOS_HAS_LIST_UNSUB": "HAS_LIST_UNSUB",
+    "__DOS_HAS_MAILING_LIST": "MAILLIST",
+    "__GB_FROM_ADDR_FREEMAIL": "FREEMAIL_FROM",
+    "__GB_FROM_NAME_FREEMAIL": "FREEMAIL_FROM",  # APPROX: name vs addr
+    "__GB_TO_ADDR_FREEMAIL": "FREEMAIL_TO",
+    "__GB_TO_NAME_FREEMAIL": "FREEMAIL_TO",  # APPROX: name vs addr
+    "__HAS_PHP_ORIG_SCRIPT": "HAS_X_PHP_SCRIPT",
+    "__KAM_SPF_NONE": "R_SPF_NA",
+    "__PLUGIN_FROMNAME_SPOOF": "SPOOF_DISPLAY_NAME",
+    "__TO_UNDISCLOSED": "R_UNDISC_RCPT",
     "KAM_DMARC_NONE": "DMARC_NA",
     "KAM_DMARC_QUARANTINE": "DMARC_POLICY_QUARANTINE",
     "KAM_OLEMACRO_ENCRYPTED": "OLETOOLS_ENCRYPTED",

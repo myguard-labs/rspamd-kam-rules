@@ -34,7 +34,7 @@ it:
 - **Remaps symbols** to Rspamd equivalents — `SPF_PASS` → `R_SPF_ALLOW`, `DKIM_VALID` →
   `R_DKIM_ALLOW`, the `URIBL_*` family → SURBL/DBL — so metas resolve and fire.
 - **Prunes dead metas** — any meta whose dependencies your Rspamd can't provide is
-  dropped (181 in the current run) and its missing symbols recorded in the report.
+  dropped (151 in the current run) and its missing symbols recorded in the report.
 - **Preserves semantics** — regex flags, header modes (`addr`/`name`/`raw`/`case`),
   `replace_tag`/`replace_rules` expansion, and `tflags multiple maxhits=N` scoring.
 - **Skips the unsupported** — `askdns`, `eval:` plugin functions and friends go to the
@@ -49,19 +49,19 @@ SpamAssassin name charset and no Lua code.
 
 ## What gets converted
 
-Of KAM.cf's ~10,600 lines, the current run converts **3,277 rules**:
+Of KAM.cf's ~10,600 lines, the current run converts **3,307 rules**:
 
 | Type | Count | Catches |
 |---|---|---|
 | body | 1,180 | message-text patterns |
 | header | 1,119 | Subject / From / Message-ID etc. |
-| meta | 709 | combined-signal verdicts |
+| meta | 739 | combined-signal verdicts |
 | uri | 157 | malicious redirectors, phishing domains |
 | rawbody | 71 | base64-obfuscated payloads pre-decode |
 | mimeheader | 39 | forged attachments |
 | full | 2 | whole RFC 822 message |
 
-A further **181 meta rules are dropped** because they depend on symbols the target
+A further **151 meta rules are dropped** because they depend on symbols the target
 Rspamd doesn't provide (SA-plugin symbols, DNS lists, `eval:` functions).
 
 ## Install

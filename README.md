@@ -34,7 +34,7 @@ it:
 - **Remaps symbols** to Rspamd equivalents — `SPF_PASS` → `R_SPF_ALLOW`, `DKIM_VALID` →
   `R_DKIM_ALLOW`, the `URIBL_*` family → SURBL/DBL — so metas resolve and fire.
 - **Prunes dead metas** — any meta whose dependencies your Rspamd can't provide is
-  dropped (172 in the current run) and its missing symbols recorded in the report.
+  dropped (181 in the current run) and its missing symbols recorded in the report.
 - **Preserves semantics** — regex flags, header modes (`addr`/`name`/`raw`/`case`),
   `replace_tag`/`replace_rules` expansion, and `tflags multiple maxhits=N` scoring.
 - **Skips the unsupported** — `askdns`, `eval:` plugin functions and friends go to the
@@ -49,19 +49,19 @@ SpamAssassin name charset and no Lua code.
 
 ## What gets converted
 
-Of KAM.cf's ~10,600 lines, the current run converts **3,261 rules**:
+Of KAM.cf's ~10,600 lines, the current run converts **3,277 rules**:
 
 | Type | Count | Catches |
 |---|---|---|
-| body | 1,179 | message-text patterns |
-| header | 1,117 | Subject / From / Message-ID etc. |
-| meta | 699 | combined-signal verdicts |
-| uri | 156 | malicious redirectors, phishing domains |
-| rawbody | 70 | base64-obfuscated payloads pre-decode |
-| mimeheader | 38 | forged attachments |
+| body | 1,180 | message-text patterns |
+| header | 1,119 | Subject / From / Message-ID etc. |
+| meta | 709 | combined-signal verdicts |
+| uri | 157 | malicious redirectors, phishing domains |
+| rawbody | 71 | base64-obfuscated payloads pre-decode |
+| mimeheader | 39 | forged attachments |
 | full | 2 | whole RFC 822 message |
 
-A further **172 meta rules are dropped** because they depend on symbols the target
+A further **181 meta rules are dropped** because they depend on symbols the target
 Rspamd doesn't provide (SA-plugin symbols, DNS lists, `eval:` functions).
 
 ## Install
@@ -151,6 +151,25 @@ sudo rspamadm configtest && sudo systemctl reload rspamd
 
 `update-if-changed.sh` automates that manual fetch-compare-reload cycle for the
 poll-disabled case.
+
+### Checking for a newer upstream
+
+KAM.cf carries **no version number** — upstream is tracked purely by the SHA-256 of the
+file. To answer "is there a newer version upstream?", compare the SHA recorded in the
+last build against the live file:
+
+```bash
+# SHA of the KAM.cf this build was pinned to
+python3 -c 'import json; print(json.load(open("dist/report.json"))["source_sha256"])'
+
+# SHA of the current upstream file
+curl -fsSL https://mcgrail.com/downloads/KAM.cf | sha256sum
+```
+
+Hashes **match** → up to date, nothing to do. Hashes **differ** → upstream changed; run
+`bash update-if-changed.sh` (or `python3 kam_rspamd.py`) to fetch, reconvert, and refresh
+`dist/`. The script does this comparison itself and no-ops when the SHAs already match, so
+running it on a cron is the hands-off way to stay current.
 
 ### Capping the score
 

@@ -1,15 +1,15 @@
 {
-  "converted_rule_count": 3261,
+  "converted_rule_count": 3277,
   "converted_rule_types": {
-    "body": 1179,
+    "body": 1180,
     "full": 2,
-    "header": 1117,
-    "meta": 699,
-    "mimeheader": 38,
-    "rawbody": 70,
-    "uri": 156
+    "header": 1119,
+    "meta": 709,
+    "mimeheader": 39,
+    "rawbody": 71,
+    "uri": 157
   },
-  "dropped_meta_count": 172,
+  "dropped_meta_count": 181,
   "dropped_metas": {
     "GB_BADJS": [
       "T_HTML_ATTACH",
@@ -58,6 +58,13 @@
     "GB_FREEMAIL_TEXTCOLOR": [
       "__KAM_BODY_LENGTH_LT_1024"
     ],
+    "GB_FROMNAME_SPOOF_EQUALS_TO": [
+      "PDS_FROMNAME_SPOOFED_EMAIL",
+      "__PLUGIN_FROMNAME_EQUALS_TO"
+    ],
+    "GB_FROMNAME_SPOOF_FREEMAIL": [
+      "PDS_FROMNAME_SPOOFED_EMAIL"
+    ],
     "GB_FROM_NAME_FREEMAIL": [
       "__GB_FROM_ADDR_FREEMAIL",
       "__GB_FROM_NAME_FREEMAIL"
@@ -89,6 +96,10 @@
     "GB_PAYPAL_OBFU_PHONE": [
       "FROM_PAYPAL_SPOOF",
       "FUZZY_PAYPAL"
+    ],
+    "GB_REGEX_BR_SPOOF": [
+      "PDS_FROMNAME_SPOOFED_EMAIL",
+      "__ANY_TEXT_ATTACH_DOC"
     ],
     "GB_RETPATH_GOOG_TRIX": [
       "ENVFROM_GOOG_TRIX"
@@ -169,6 +180,9 @@
     "KAM_BLUEHORNET": [
       "HEADER_FROM_DIFFERENT_DOMAINS",
       "SPF_HELO_NONE"
+    ],
+    "KAM_BODY_WELCOMELIST_URIBL_PCCC": [
+      "__KAM_BODY_WELCOMELIST_URIBL_PCCC"
     ],
     "KAM_BOXPHISH": [
       "__UPGR_MAILBOX"
@@ -385,13 +399,16 @@
     "KAM_JURY": [
       "KAM_RAPTOR_ALTERED"
     ],
+    "KAM_LAZY_DOMAIN_SECURITY": [
+      "__DKIM_EXISTS",
+      "__KAM_SPF_NONE"
+    ],
     "KAM_LINEPADDING": [
       "__CBJ_GiveMeABreak2"
     ],
     "KAM_LINKBAIT": [
       "KAM_LAZY_DOMAIN_SECURITY",
-      "__KAM_BODY_LENGTH_LT_512",
-      "__KAM_COUNT_URIS"
+      "__KAM_BODY_LENGTH_LT_512"
     ],
     "KAM_LINKBAIT2": [
       "KAM_LINKBAIT"
@@ -444,6 +461,10 @@
       "KAM_SENDGRID",
       "KAM_SENDGRID2"
     ],
+    "KAM_MARKETINGBL_PCCC": [
+      "KAM_BODY_MARKETINGBL_PCCC",
+      "KAM_FROM_MARKETINGBL_PCCC"
+    ],
     "KAM_MATCH": [
       "HTML_IMAGE_RATIO_06"
     ],
@@ -466,6 +487,10 @@
     "KAM_NOTIFY2": [
       "HEADER_FROM_DIFFERENT_DOMAINS",
       "KAM_IFRAME"
+    ],
+    "KAM_OLEMACRO_ZIP_BOT": [
+      "KAM_OLEMACRO_ZIP_PW",
+      "PDS_FROMNAME_SPOOFED_EMAIL"
     ],
     "KAM_ONMICROSOFT": [
       "__AUTOREPLY_ASU"
@@ -615,14 +640,21 @@
     "__GB_RCPT_EMPTY": [
       "__HAS_TO"
     ],
+    "__KAM_HAS_10_URIS": [],
     "__KAM_SUBSCRIPTION_INFO": [
       "__SUBSCRIPTION_INFO"
+    ],
+    "__KAM_URIBL_PCCC": [
+      "KAM_BODY_URIBL_PCCC",
+      "KAM_FROM_URIBL_PCCC"
     ]
   },
   "external_dependencies": [
     "ARC_SIGNED",
+    "DBL_SPAM",
     "DMARC_NA",
     "DMARC_POLICY_QUARANTINE",
+    "FORGED_OUTLOOK_HTML",
     "FREEMAIL_FROM",
     "HTML_SHORT_LINK_IMG_1",
     "MIME_BAD_EXTENSION",
@@ -630,18 +662,104 @@
     "RDNS_NONE",
     "R_SPF_ALLOW",
     "R_SPF_FAIL",
-    "R_SPF_SOFTFAIL"
+    "R_SPF_SOFTFAIL",
+    "URIBL_BLACK"
   ],
-  "external_dependency_count": 11,
-  "generated_date": "2026-06-30",
+  "external_dependency_count": 14,
+  "generated_date": "2026-07-04",
   "local_rules_sha256": "29bb9b69759ee5249798315980561d6969af249fe5de7afd6736c802c971aa1f",
-  "map_bytes": 614510,
-  "map_sha256": "c5988e11fc8ed9c6fc79cb2b5e6d4a3e1a88a1ca0cdafa1b0e3b5135fa28f7a2",
+  "map_bytes": 616716,
+  "map_sha256": "f3dc0503e1dab6e6b1b5903699f31c3e3246b90ce5d6c4f618f9f3c8867111cb",
   "omitted_directives": {
+    "clear_uridnsbl_skip_domain": 2,
     "enlist_addrlist": 1,
-    "unsupported_header": 5
+    "olemacro_download_marker": 1,
+    "olemacro_extended_scan": 1,
+    "olemacro_exts": 1,
+    "olemacro_max_file": 1,
+    "olemacro_num_mime": 1,
+    "olemacro_skip_exts": 1,
+    "parse_dkim_uris": 1,
+    "unsupported_body": 12,
+    "unsupported_header": 9,
+    "urirhssub": 5
   },
   "omitted_examples": [
+    {
+      "directive": "parse_dkim_uris",
+      "line": 1814,
+      "text": "parse_dkim_uris 1"
+    },
+    {
+      "directive": "urirhssub",
+      "line": 1842,
+      "text": "urirhssub  KAM_BODY_URIBL_PCCC    wild.pccc.com. A 127.0.0.4"
+    },
+    {
+      "directive": "unsupported_body",
+      "line": 1843,
+      "text": "body       KAM_BODY_URIBL_PCCC    eval:check_uridnsbl('KAM_URIBL_PCCC')"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 1851,
+      "text": "header     KAM_FROM_URIBL_PCCC    eval:check_rbl_from_domain('pccc-from-uribl', 'wild.pccc.com.', '127.0.0.4')"
+    },
+    {
+      "directive": "urirhssub",
+      "line": 1857,
+      "text": "urirhssub  PCCC_BAD_FREE_URI        wild.pccc.com. A 127.0.0.6"
+    },
+    {
+      "directive": "unsupported_body",
+      "line": 1858,
+      "text": "body       PCCC_BAD_FREE_URI        eval:check_uridnsbl('PCCC_BAD_FREE_URI')"
+    },
+    {
+      "directive": "urirhssub",
+      "line": 1864,
+      "text": "urirhssub  KAM_BODY_MARKETINGBL_PCCC    wild.pccc.com. A 127.0.0.32"
+    },
+    {
+      "directive": "unsupported_body",
+      "line": 1865,
+      "text": "body       KAM_BODY_MARKETINGBL_PCCC    eval:check_uridnsbl('KAM_MARKETINGBL_PCCC')"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 1872,
+      "text": "header     KAM_FROM_MARKETINGBL_PCCC    eval:check_rbl_from_domain('pccc-marketing', 'wild.pccc.com.', '127.0.0.32')"
+    },
+    {
+      "directive": "urirhssub",
+      "line": 1886,
+      "text": "urirhssub  KAM_BODY_COMPROMISED_URIBL_PCCC    wild.pccc.com. A 127.0.1.2"
+    },
+    {
+      "directive": "unsupported_body",
+      "line": 1887,
+      "text": "body       KAM_BODY_COMPROMISED_URIBL_PCCC    eval:check_uridnsbl('KAM_URIBL2_PCCC')"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 1893,
+      "text": "header     KAM_FROM_COMPROMISED_URIBL_PCCC    eval:check_rbl_from_domain('pccc-compromised-uribl', 'wild.pccc.com.', '127.0.1.2')"
+    },
+    {
+      "directive": "urirhssub",
+      "line": 1901,
+      "text": "urirhssub  __KAM_BODY_WELCOMELIST_URIBL_PCCC  wild.pccc.com. A 127.0.1.8"
+    },
+    {
+      "directive": "unsupported_body",
+      "line": 1902,
+      "text": "body       __KAM_BODY_WELCOMELIST_URIBL_PCCC  eval:check_uridnsbl('KAM_URIBL2_PCCC')"
+    },
+    {
+      "directive": "unsupported_header",
+      "line": 5136,
+      "text": "header   __KAM_SPF_NONE    eval:check_for_spf_none()"
+    },
     {
       "directive": "unsupported_header",
       "line": 6477,
@@ -663,6 +781,81 @@
       "text": "header   __GB_FROM_NAME_FREEMAIL  eval:check_freemail_header('From:name')"
     },
     {
+      "directive": "clear_uridnsbl_skip_domain",
+      "line": 6497,
+      "text": "clear_uridnsbl_skip_domain googleapis.com"
+    },
+    {
+      "directive": "clear_uridnsbl_skip_domain",
+      "line": 6499,
+      "text": "clear_uridnsbl_skip_domain t.co"
+    },
+    {
+      "directive": "olemacro_num_mime",
+      "line": 6692,
+      "text": "olemacro_num_mime 10"
+    },
+    {
+      "directive": "olemacro_max_file",
+      "line": 6693,
+      "text": "olemacro_max_file 2048000"
+    },
+    {
+      "directive": "olemacro_skip_exts",
+      "line": 6695,
+      "text": "olemacro_skip_exts (?:dotx|potx|ppsx|pptx|psd|sldx|xltx|oxps)$"
+    },
+    {
+      "directive": "unsupported_body",
+      "line": 6699,
+      "text": "body     KAM_OLEMACRO eval:check_olemacro()"
+    },
+    {
+      "directive": "unsupported_body",
+      "line": 6703,
+      "text": "body     KAM_OLEMACRO_MALICE eval:check_olemacro_malice()"
+    },
+    {
+      "directive": "unsupported_body",
+      "line": 6707,
+      "text": "body     KAM_OLEMACRO_ENCRYPTED eval:check_olemacro_encrypted()"
+    },
+    {
+      "directive": "olemacro_extended_scan",
+      "line": 6712,
+      "text": "olemacro_extended_scan 1"
+    },
+    {
+      "directive": "olemacro_exts",
+      "line": 6713,
+      "text": "olemacro_exts ((?:doc|docx|dot|one|pot|ppa|pps|ppt|rtf|sldm|xl|xla|xls|xlsx|xlt|xltx|xslb)$)"
+    },
+    {
+      "directive": "unsupported_body",
+      "line": 6714,
+      "text": "body     KAM_OLEMACRO_RENAME eval:check_olemacro_renamed()"
+    },
+    {
+      "directive": "olemacro_download_marker",
+      "line": 6725,
+      "text": "olemacro_download_marker ((?:cmd(?:\\.exe)? \\/c ms\\^h\\^ta ht\\^tps?:\\/\\^\\/)|SysWow.{1,15}\\s.{1,5}RETURN|RET.{1,4}URN.{1,25}\\.exe|powershell\\s+Invoke\\-WebRequest)"
+    },
+    {
+      "directive": "unsupported_body",
+      "line": 6728,
+      "text": "body     GB_OLEMACRO_DOWNLOAD_EXE eval:check_olemacro_download_exe()"
+    },
+    {
+      "directive": "unsupported_body",
+      "line": 6735,
+      "text": "body     KAM_OLEMACRO_ZIP_PW eval:check_olemacro_zip_password()"
+    },
+    {
+      "directive": "unsupported_body",
+      "line": 6739,
+      "text": "body     KAM_OLEMACRO_CSV eval:check_olemacro_csv()"
+    },
+    {
       "directive": "enlist_addrlist",
       "line": 7780,
       "text": "enlist_addrlist (WLHTMLATTACH)          *@pearson.com"
@@ -673,12 +866,12 @@
       "text": "header          __WLHTMLATTACH          eval:check_from_in_list('WLHTMLATTACH')"
     }
   ],
-  "output_bytes": 16674,
+  "output_bytes": 16680,
   "output_sha256": "9aa903e464dde723dc6f8244a6b0f20c0308347bdc9312be41960e6e16abe0a0",
   "source_bytes": 618910,
   "source_sha256": "ec2e15c10e53acc9d905834760998fdecae3772f2e50ea64571ac5622efe5d4c",
   "source_url": "https://mcgrail.com/downloads/KAM.cf",
-  "unexpanded_tag_rule_count": 14,
+  "unexpanded_tag_rule_count": 15,
   "unexpanded_tag_rules": [
     "FUZZY_SECURITY",
     "FUZZY_WALLET",
@@ -686,6 +879,7 @@
     "__GB_FAKE_HOTEL",
     "__GB_OBFU_BANK",
     "__GB_PAYPAL_PHONE",
+    "__GB_REGEX_BR",
     "__KAM_BIGSMALL",
     "__KAM_CRIM5",
     "__KAM_CRIM6",

@@ -478,6 +478,47 @@ class HelperFunctionTests(unittest.TestCase):
         names = [line.split()[1] for _, line in kam_rspamd.active_lines(text)]
         self.assertEqual(names, ["ACTIVE"])
 
+    def test_active_lines_version_gates(self):
+        # `if (version >= X)` evaluates against SA_VERSION (4.0): the modern
+        # branch converts, the legacy `else` branch drops — and vice versa for
+        # a future version gate. `if can(...)` stays a conservative drop.
+        text = (
+            "if (version >= 3.004002)\n"
+            "body MODERN /x/\n"
+            "else\n"
+            "body LEGACY /y/\n"
+            "endif\n"
+            "if (version >= 4.000000)\n"
+            "body SA4 /z/\n"
+            "endif\n"
+            "if (version > 4.000000)\n"
+            "body FUTURE /f/\n"
+            "else\n"
+            "body CURRENT /c/\n"
+            "endif\n"
+            "if can(Mail::SpamAssassin::Plugin::OLEVBMacro::has_olemacro)\n"
+            "body CAPGATED /g/\n"
+            "endif\n"
+        )
+        names = [line.split()[1] for _, line in kam_rspamd.active_lines(text)]
+        self.assertEqual(names, ["MODERN", "SA4", "CURRENT"])
+
+    def test_active_lines_widened_plugin_gates(self):
+        # DKIM/SPF gated blocks now convert their plain-regex rules and metas
+        # (evals inside still drop individually at the rule parser).
+        text = (
+            "ifplugin Mail::SpamAssassin::Plugin::DKIM\n"
+            "ifplugin Mail::SpamAssassin::Plugin::SPF\n"
+            "body GATED /x/\n"
+            "endif\n"
+            "endif\n"
+            "ifplugin Mail::SpamAssassin::Plugin::RaptorOnly\n"
+            "body APPLIANCE /y/\n"
+            "endif\n"
+        )
+        names = [line.split()[1] for _, line in kam_rspamd.active_lines(text)]
+        self.assertEqual(names, ["GATED"])
+
     def test_report_flags_unexpanded_tag_rules(self):
         # A regex rule whose <tag> is never expanded (not in replace_rules) keeps
         # the literal tag, fails to compile at load, and is disabled silently;

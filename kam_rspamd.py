@@ -80,15 +80,26 @@ KAM_LICENSE_POINTER = """\
 VALID_NAME = re.compile(r"[A-Za-z0-9_]+\Z")
 KNOWN_PLUGINS = {
     "Mail::SpamAssassin::Plugin::BodyEval",
+    "Mail::SpamAssassin::Plugin::DKIM",
+    "Mail::SpamAssassin::Plugin::Dmarc",
     "Mail::SpamAssassin::Plugin::FreeMail",
+    "Mail::SpamAssassin::Plugin::FromNameSpoof",
     "Mail::SpamAssassin::Plugin::HeaderEval",
     "Mail::SpamAssassin::Plugin::HTMLEval",
     "Mail::SpamAssassin::Plugin::MIMEEval",
     "Mail::SpamAssassin::Plugin::MIMEHeader",
+    "Mail::SpamAssassin::Plugin::OLEVBMacro",
     "Mail::SpamAssassin::Plugin::RelayEval",
     "Mail::SpamAssassin::Plugin::ReplaceTags",
+    "Mail::SpamAssassin::Plugin::SPF",
+    "Mail::SpamAssassin::Plugin::URIDNSBL",
     "Mail::SpamAssassin::Plugin::WLBLEval",
 }
+# `if (version >= X)` gates are evaluated against this SpamAssassin version.
+# KAM.cf targets SA4 features behind these gates; rspamd covers the same
+# feature surface, so the modern branch is the right one to convert.
+SA_VERSION = 4.000000
+_VERSION_GATE = re.compile(r"if\s+\(?\s*version\s*(>=|>|<=|<|==|!=)\s*([\d.]+)\s*\)?\s*\Z")
 SYMBOL_REPLACEMENTS = {
     "BODY_URI_ONLY": "R_EMPTY_IMAGE",
     "DKIM_VALID": "R_DKIM_ALLOW",
@@ -184,12 +195,23 @@ def active_lines(text: str) -> list[tuple[int, str]]:
             continue
         if stripped.startswith("if "):
             plugin = re.match(r"if\s+(!?)plugin\(([^)]+)\)", stripped)
+            version = _VERSION_GATE.match(stripped)
             if plugin:
                 # `if plugin(X)` is true when X is loaded; `if !plugin(X)` is the
-                # inverse. Capability (`if can(...)`) and `if version` guards are
-                # not modelled, so their blocks stay inactive (conservative drop).
+                # inverse. Capability (`if can(...)`) guards are not modelled, so
+                # their blocks stay inactive (conservative drop).
                 known = plugin.group(2) in KNOWN_PLUGINS
                 condition = (not known) if plugin.group(1) else known
+            elif version:
+                op, wanted = version.group(1), float(version.group(2))
+                condition = {
+                    ">=": SA_VERSION >= wanted,
+                    ">": SA_VERSION > wanted,
+                    "<=": SA_VERSION <= wanted,
+                    "<": SA_VERSION < wanted,
+                    "==": SA_VERSION == wanted,
+                    "!=": SA_VERSION != wanted,
+                }[op]
             else:
                 condition = False
             stack.append((active, condition))

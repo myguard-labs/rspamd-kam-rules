@@ -281,10 +281,10 @@
   ],
   "external_dependency_count": 39,
   "generated_date": "2026-07-05",
-  "generated_utc": "2026-07-05T01:55:19Z",
+  "generated_utc": "2026-07-05T11:41:06Z",
   "local_rules_sha256": "8e34b1e3d1162e5ee89f0a216bd6c75aaf4774becb54b3866ef25fd01a08ebec",
   "map_bytes": 799291,
-  "map_sha256": "d4f412dd8dfb46d618c7a7a424ace332ab1748ce40d7f50b702a151b52d12359",
+  "map_sha256": "a3ad31c2d56dc5e1b5ba874c5d9e3af0fea5f136dedab25aeb81f15ca1ce6907",
   "omitted_directives": {
     "clear_uridnsbl_skip_domain": 2,
     "enlist_addrlist": 1,

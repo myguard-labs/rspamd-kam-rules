@@ -1,5 +1,14 @@
 # Present in KAM.cf, but not registered by Rspamd on the mailscreen stack.
-CBJ_GiveMeABreak
+# CBJ_GiveMeABreak (meta) + __CBJ_GiveMeABreak1/3/4 now supplied via
+# config/local-rules.cf; __CBJ_GiveMeABreak2 intentionally disabled there.
+#
+# PRECEDENCE: SYMBOL_REPLACEMENTS (kam_rspamd.py) wins over this list. Four
+# entries below (KAM_DMARC_NONE, KAM_DMARC_QUARANTINE, KAM_OLEMACRO_ENCRYPTED,
+# KAM_OLEMACRO_RENAME) are also remapped to live Rspamd-native symbols
+# (DMARC_NA, DMARC_POLICY_QUARANTINE, OLETOOLS_ENCRYPTED, MIME_BAD_EXTENSION).
+# Listing them here means "no KAM rule provides this name"; the remap means a
+# DEPENDENT meta still resolves via the native target — and only if that target
+# is actually in external-symbols.txt, so it stays self-correcting.
 KAM_BODY_MARKETINGBL_PCCC
 KAM_DMARC_NONE
 KAM_DMARC_QUARANTINE
@@ -10,8 +19,6 @@ KAM_RAPTOR_ALTERED
 KAM_RAPTOR_EXTERNAL
 KAM_RPTR_SUSPECT
 PCCC_BAD_FREE_URI
-__CBJ_GiveMeABreak1
-__CBJ_GiveMeABreak2
 __KAM_HAS_10_URIS
 __KAM_PAYPAL2A
 __KAM_URIBL_PCCC

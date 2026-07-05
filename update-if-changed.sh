@@ -15,7 +15,7 @@ log() {
 }
 
 log "Checking KAM.cf for updates..."
-if ! curl -fsSL --retry 3 --retry-delay 2 -o "$SOURCE_FILE" "$KAM_URL"; then
+if ! curl -fsSL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o "$SOURCE_FILE" "$KAM_URL"; then
     log "ERROR: Could not download $KAM_URL"
     exit 1
 fi
@@ -41,13 +41,21 @@ if python3 kam_rspamd.py \
 
     # Optional: auto-deploy to rspamd
     # Uncomment the following lines to auto-deploy:
+    # Deploy the rule map — the thin plugin (dist/kam.lua) is static and only
+    # changes on a runtime-code change (regenerate it with --emit-lua), so an
+    # upstream KAM.cf change ships the map alone.
     # log "Deploying to rspamd..."
-    # sudo install -m 0644 dist/kam.lua /etc/rspamd/plugins.d/kam.lua
-    # Merge config/kam.conf into /etc/rspamd/rspamd.conf.local once.
-    # sudo rspamadm configtest && sudo systemctl restart rspamd
-    # log "Deployed and restarted rspamd"
+    # sudo install -m 0644 dist/kam_rules.map /etc/rspamd/kam_rules.map
+    # Merge examples/kam.conf into /etc/rspamd/rspamd.conf.local once.
+    # The plugin registers native regexps (combined Hyperscan DB) at config load,
+    # so a full reconfigure is required to pick up an updated map:
+    #   `systemctl reload rspamd` (SIGHUP) re-runs plugin init.
+    #   `rspamadm control reload` does NOT — it reloads maps/stats only, not Lua
+    #   plugin registration, so it would silently keep the old rules.
+    # sudo rspamadm configtest && sudo systemctl reload rspamd
+    # log "Deployed and reloaded rspamd"
 
-    log "Update complete. New rules available in dist/kam.lua"
+    log "Update complete. New rules in dist/kam_rules.map (kam.lua unchanged)"
 else
     log "ERROR: Compilation failed"
     exit 1

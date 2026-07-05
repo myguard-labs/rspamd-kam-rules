@@ -1,0 +1,429 @@
+# Local supplement rules merged into the generated kam.lua after upstream KAM.cf.
+# Same SpamAssassin directive syntax (body/rawbody/header/uri/meta/describe/score).
+# NOTE: editing this file alone does NOT trip update-if-changed.sh (that gate
+# watches the upstream KAM.cf SHA only) — run `python3 kam_rspamd.py` to regen.
+
+# CBJ_GiveMeABreak — consecutive HTML break/padding obfuscation (PCCC form).
+# Upstream KAM metas (KAM_AUTO, KAM_INSURE*, KAM_WARRANTY*) depend on this symbol
+# but KAM.cf does not define it, so without this block they drop. Must be rawbody:
+# the <br>/<tr>/<p> tags are stripped from the normalized `body`, surviving only raw.
+
+# HTML <br>
+rawbody __CBJ_GiveMeABreak1 /(?:<\/?br ?\/?>[\s\r\n]{0,4}){8}/mi
+# NEWLINES — DISABLED: SA Message.pm collapses long blank-line runs (bug 3712,
+# fixed 3.4.1) so it never matches reliably, and it false-positives on newsletters
+# and quoted replies with heavy whitespace. Kept out of the meta AND the build.
+#rawbody __CBJ_GiveMeABreak2 /(?:[\r\n]){8}/mi
+# EMPTY TABLE ROWS
+rawbody __CBJ_GiveMeABreak3 /(?:<tr><td><\/td><\/tr>[\r\n]{0,4}){4}/mi
+# EMPTY PARAGRAPHS
+rawbody __CBJ_GiveMeABreak4 /(?:<p[^>]*>&nbsp;<\/p>\s*){4}/mi
+meta     CBJ_GiveMeABreak (__CBJ_GiveMeABreak1 + __CBJ_GiveMeABreak3 + __CBJ_GiveMeABreak4 >= 1)
+describe CBJ_GiveMeABreak Messages with consecutive break characters
+score    CBJ_GiveMeABreak 2.0
+
+# --- SA-lift supplement (2026-07-04) ---------------------------------------
+# 185 rule definitions lifted verbatim from Apache SpamAssassin trunk
+# (rules/ + rulesrc/, Apache-2.0) — plain-regex atoms and metas that KAM.cf
+# metas depend on but which live in SA stock/sandbox files the converter
+# doesn't read. One-time snapshot; source file noted per rule. Deliberately
+# unscored: they exist to feed KAM metas, not to score on their own.
+# 20_mailing_list.cf
+rawbody AC_HTML_NONSENSE_TAGS /(?:<[A-Za-z0-9]{4,}>\s*){10}/
+# 20_lotsa_money.cf
+body DEAR_BENEFICIARY /\b(?:De[ae]r\s|At+(?:ention|n):?\s?)(?:\S+\s)?Ben[ei]ficiary\b/i
+# 20_phrases.cf
+body DEAR_SOMETHING /\bDear (?:IT\W|Internet|candidate|sirs?|madam|investor|travell?er|car shopper|web)\b/i
+# 70_other.cf
+body DEAR_WINNER /\bdear.{1,20}winner/i
+# 20_misc_testing.cf
+body FUZZY_BITCOIN /(?=<B>)(?!bit[-\s]?coin)<B>[-\s]?<I>[-\s]?<T>[-\s]?<C>[-\s]?<O>[-\s]?<I>[-\s]?<N>/i
+# 20_misc_testing.cf
+body FUZZY_PAYPAL /(?:^|\W)(?=<P>)(?!pay[-\s]?pal)<P><A><Y>[-\s]?<P><A><L>(?:$|\W)/i
+# 20_misc_testing.cf
+uri GOOG_REDIR_DOCUSIGN m;://(?:[^/]+\.)?google\.(?:com|(?:com?\.)?[a-z][a-z])/url\?.*q=https?://www\.docusign\.com/;i
+# 20_fake_helo_tests.cf
+meta HELO_DYNAMIC_DHCP (__HELO_DYNAMIC_DHCP && !HELO_STATIC_HOST)
+# 20_fake_helo_tests.cf
+meta HELO_STATIC_HOST (__HELO_STATIC_ROGERS || __HELO_STATIC_SENDGRID || __HELO_STATIC_COMCAST || __HELO_STATIC_SALESFORCE || __HELO_STATIC_MAILGUN || __HELO_STATIC_QQ)
+# 20_hk.cf
+meta HK_SPAMMY_FILENAME __HK_SPAMMY_CTFN || __HK_SPAMMY_CDFN
+# 20_lotsa_money.cf
+meta LOTS_OF_MONEY (__LOTSA_MONEY_00 || __LOTSA_MONEY_01 || __LOTSA_MONEY_02 || __LOTSA_MONEY_03 || __LOTSA_MONEY_04 || __LOTSA_MONEY_05) && !__TRAVEL_ITINERARY
+# 20_lotsa_money.cf
+meta MONEY_NOHTML LOTS_OF_MONEY && __CT_TEXT_PLAIN 
+# 20_misc.cf
+meta MXG_SPOOFED_DOCUSIGN __MXG_SPOOFED_DOCUSIGN01 && !__MXG_SPOOFED_DOCUSIGN02 && !__VIA_ML
+# 20_misc_testing.cf
+meta NEW_PRODUCTS __NEW_PRODUCTS && !__STY_INVIS_MANY 
+# 20_misc_testing.cf
+meta T_HTML_ATTACH __HTML_ATTACH_01 || __HTML_ATTACH_02
+# 20_misc_testing.cf
+mimeheader T_OBFU_DOC_ATTACH Content-Type =~ m,\bapplication/octet-stream\b.+\.(?:doc|rtf)\b,i
+# 20_misc_testing.cf
+meta T_OBFU_HTML_ATTACH __OBFU_HTML_ATTACH && !__DOS_LINK 
+# 20_misc_testing.cf
+mimeheader T_OBFU_PDF_ATTACH Content-Type =~ m,\bapplication/octet-stream\b.+\.pdf\b,i
+# 20_misc_testing.cf
+body YOUR_DELIVERY_ADDRESS /(?:(?:respond|reply|answer) (?:to )?(?:our|this) ?e?mail (?:[\w,]+\s){0,10}(?:with|and send(?: us)?)|we(?: will|'ll| would) need|we need to know|let us know|(?:send|provide|tell|inform|contact)(?: us)?(?: of|with)?|confirm|indicate)(?: t?he (?:order )?quantity and)? (?:your |the )?(?:detailed |specific |exact )?(?:(?:delivery |shipping |mailing |shipment |receiving )?(?:address|location)(?:\s?[,.;]|(?: and| so)? we| if you)|address (?:for|of) (?:shipping|delivery|shipment))|(?:provide|give) us (?:with |details of )(?:the |your )?address,? (?:and )?we will contact (?:the )?(?:warehouse|logistics|storage(?: facility))|your (?:mailing|shipping) address to (?:arrange|set ?up) (?:shipment|delivery) (?:(?:for|to) you|of th)|provide your address details|contact us with your address|share your address with us/i
+# 20_lotsa_money.cf
+meta __AFRICAN_STATE (__NIGERIA || __IVORY_COAST || __BURKINA_FASO || __GHANA || __BENIN || __AFR_UNION)
+# 20_lotsa_money.cf
+body __AFR_UNION /\bafrican\sunion\b/i
+# 20_basic.cf
+mimeheader __ANY_IMAGE_ATTACH Content-Type =~ /\bimage\//i
+# 20_lotsa_money.cf
+body __ATM_CARD /\b(?:your|the|this|through|via|by\smeans\sof\|that\sa|issue\s(?:(?:to|for)\s)?you\sa)[\s\(](?:\w{1,20}\s)?(?:atm|debit|(?:money[\s-]?gram\s)?fast\scash)(?:\smaster|swift|value?|cash)?[\s\)]card/i
+# 20_vbounce.cf
+header __AUTOREPLY_ASU Auto-Submitted =~ /\bauto-(?:replied|generated)(?! \(rejected\))/i
+# 20_lotsa_money.cf
+body __AUTO_ACCIDENT /auto(?:mobile)? accident/i
+# 20_lotsa_money.cf
+body __BACK_SCRATCH /\bmutual+y?\s(?:benefi(?:t|cial)|interest)\b/i
+# 20_lotsa_money.cf
+body __BANK_DRAFT /\bbank\sdraft/i
+# 20_lotsa_money.cf
+body __BENIN /\bb(?:e|=E9|[\xe9]|[\xc3][\xa9])nin\b/i
+# 20_misc_testing.cf
+body __BODY_TEXT_LINE /^\s*\S/
+# 20_vbounce.cf
+header __BOUNCE_CTYPE Content-Type =~ /\bmultipart\/report\b/
+# 20_lotsa_money.cf
+body __BURKINA_FASO /\bburkina\s?faso\b/i
+# 20_lotsa_money.cf
+body __CONTACT_YOU /\b(?:contact(?:ing)\syou|vous\scontacter?)\b/i
+# 20_lotsa_money.cf
+body __COURIER /\bcourier\s(?:company|service)\b/i
+# 20_head_tests.cf
+header __CT_TEXT_PLAIN Content-Type =~ /^text\/plain\b/i
+# 20_lotsa_money.cf
+body __DEAD_PARENT /\b(?:my|meu)\s(?:(?:deceased|dead)\s(?:father|mother|husband)|(?:father|dad|mother|mom|husband|marido)(?:'?s)?\s(?:death|died|passed\saway|murder|was\s(?:killed|murdered|poisoned)|faleceu))/i
+# 20_lotsa_money.cf
+body __DEAL /\b(?:(?:business|financial|this|the|mutual|die(?:se)?r?|cette|profitable)\s(?:deal|transa[ck]tion|proposal|off[er]{2}|venture|suggestion|partnership)|your\spartnership)/i
+# 20_lotsa_money.cf
+body __DECEASED /\b(?:the|my|your|der|du|le|meu?)\s(?:deceased|late|verstorbenen|d(?:i|e|=E9|[\xe9]|[\xc3][\xa9])funto?|d(?:e|=E9|[\xe9]|[\xc3][\xa9])nt|falecido)\b/i
+# 20_lotsa_money.cf
+body __DESTROY_ME /\b(?:destroy|hunt|quemar)\sm[eyi]\b/i
+# 20_lotsa_money.cf
+body __DIPLOMATIC /\bdiplomatic\b/i
+# 20_trust.cf
+header __DKIM_EXISTS exists:DKIM-Signature
+# 20_misc_testing.cf
+meta __DOC_ATTACH (__DOC_ATTACH_MT || __DOC_ATTACH_FN1 || __DOC_ATTACH_FN2)
+# 20_misc_testing.cf
+mimeheader __DOC_ATTACH_FN1 Content-Type =~ /="[^"]+\.(?:docx?|rtf)"/i
+# 20_misc_testing.cf
+mimeheader __DOC_ATTACH_FN2 Content-Disposition =~ /="[^"]+\.(?:docx?|rtf)"/i
+# 20_misc_testing.cf
+mimeheader __DOC_ATTACH_MT Content-Type =~ m,\bapplication/(?:msword|rtf|vnd\.ms-word|vnd\.openxmlformats-officedocument\.wordprocessingml\.document)\b,i
+# 20_lotsa_money.cf
+body __DORMANT_ACCT /\b(?:(?:dormant|abandoned|left\s?over)\s(?:account|fund|transaction|sum|deposit)|fonds\sdorment)/i
+# 70_other.cf
+meta __DOS_DIRECT_TO_MX __DOS_SINGLE_EXT_RELAY && !__DOS_HAS_LIST_ID && !__DOS_HAS_LIST_UNSUB && !__DOS_HAS_MAILING_LIST && !__DOS_RELAYED_EXT
+# 70_other.cf
+meta __DOS_DIRECT_TO_MX_UNTRUSTED __DOS_DIRECT_TO_MX && !ALL_TRUSTED
+# 70_other.cf
+header __DOS_HAS_LIST_ID exists:List-ID
+# 70_other.cf
+header __DOS_HAS_LIST_UNSUB exists:List-Unsubscribe
+# 70_other.cf
+header __DOS_HAS_MAILING_LIST exists:Mailing-List
+# 70_other.cf
+body __DOS_LINK /\blink\b/
+# 70_other.cf
+header __DOS_RELAYED_EXT ALL-EXTERNAL =~ /(?:^|\n)[Rr][eE][cC][eE][iI][vV][eE][dD]:\s.+\n[Rr][eE][cC][eE][iI][vV][eE][dD]:\s/s
+# 70_other.cf
+header __DOS_SINGLE_EXT_RELAY X-Spam-Relays-External =~ /^\[ [^\]]+ \]$/
+# 20_lotsa_money.cf
+body __EARLY_DEMISE /\buntimely\sdeath\b/i
+# 20_misc_testing.cf
+header __ENVFROM_GOOG_TRIX EnvelopeFrom =~ /(?:@|=)trix\.bounces\.google\.com(?:$|=)/
+# 20_lotsa_money.cf
+body __EX_CUSTOMER /\b(?:(?:dead|deceased|late|verstorbenen|death\sof\sthe)\s(?:[ck]lient|customer|ac+ount|invest[eo]r|beneficiary|depositor|mr\.|kunde|engr?\.?)|titulaire\sdu\scompte\sest\sd(?:e|=E9|[\xe9]|[\xc3][\xa9])c(?:e|=E9|[\xe9]|[\xc3][\xa9])d(?:e|=E9|[\xe9]|[\xc3][\xa9])|invest[eo]r\sdied|(?:e|=E9|[\xe9]|[\xc3][\xa9])tranger\sd(?:e|=E9|[\xe9]|[\xc3][\xa9])c(?:e|=E9|[\xe9]|[\xc3][\xa9])d(?:e|=E9|[\xe9]|[\xc3][\xa9])|(?:[ck]lient|customer|ac+ount|invest[eo]r|beneficiary|mr\.|kunde|engr?\.?)\s(?:[a-z]{1,10}\s)?(?:dead|deceased|verstorbenen))/i
+# 20_lotsa_money.cf
+body __FOUND_YOU /\b(?:I|we)\sfound\syour?\b/i
+# 20_advance_fee.cf
+body __FRAUD_AON /\b(?:confidential|private|alternate|alternative) (?:(?:e-? *)?mail)\b/i
+# 20_advance_fee.cf
+body __FRAUD_AUM /\bthe desk of\b/i
+# 20_advance_fee.cf
+body __FRAUD_AXF /magnanimity/i
+# 20_advance_fee.cf
+body __FRAUD_BEP /\b(?:bank of nigeria|central bank of|trust bank|apex bank|amalgamated bank)\b/i
+# 20_advance_fee.cf
+body __FRAUD_BGP /\battached to ticket number\b/i
+# 20_advance_fee.cf
+body __FRAUD_CKF /computer ballot system/i
+# 20_advance_fee.cf
+body __FRAUD_DPR /\b(?:(?:respond|reply) (?:urgently|immediately)|(?:urgent|immediate|earliest) (?:reply|response))\b/i
+# 20_advance_fee.cf
+body __FRAUD_FVU /award notification/i
+# 20_advance_fee.cf
+body __FRAUD_GBW /god gives .{1,10}second chance/i
+# 20_advance_fee.cf
+body __FRAUD_IPK /\b(?:in|to|visit) your country\b/i
+# 20_advance_fee.cf
+body __FRAUD_IRT /\b(?:compliments? of the|dear friend|dear sir|yours faithfully|season'?s greetings)\b/i
+# 20_advance_fee.cf
+body __FRAUD_JNB /\boperat(?:e|ing)\b[^.]{0,99}\b(?:for(?:ei|ie)gn|off-? ?shore|over-? ?seas?) (?:bank )?accounts?\b/i
+# 20_advance_fee.cf
+body __FRAUD_JYG /\bgive\s+you .{0,15}(?:fund|money|total|sum|contact|percent)\b/i
+# 20_advance_fee.cf
+body __FRAUD_MCQ /\btransaction\b.{1,30}\b(?:magnitude|diplomatic|strict|absolute|secret|confiden(?:tial|ce)|guarantee)/i
+# 20_advance_fee.cf
+body __FRAUD_MLY /\b(?:reply|respond)\b[^.]{0,50}\b(?:to|through)\b[^.]{0,50}\@\b/i
+# 20_advance_fee.cf
+body __FRAUD_MQO /foreign (?:business partner|customer)/i
+# 20_advance_fee.cf
+body __FRAUD_NEB /(?:government|bank) of nigeria/i
+# 20_advance_fee.cf
+body __FRAUD_QFY /\bover-? *(?:invoiced?|cost(?:s|ing)?)\b/i
+# 20_advance_fee.cf
+body __FRAUD_QXX /\b(?:my name is|i am) (?:mrs?|engr|barrister|dr|prince(?:ss)?)[. ]/i
+# 20_advance_fee.cf
+body __FRAUD_SNT /\blocate(?: .{1,20})? extended relative/i
+# 20_advance_fee.cf
+body __FRAUD_ULK /\baffidavits?\b/i
+# 20_advance_fee.cf
+body __FRAUD_UOQ /vital documents/i
+# 20_advance_fee.cf
+header __FRAUD_VQE Subject =~ /^(?:Re:|\[.{1,10}\])?\s*(?:very )?urgent\s+(?:(?:and|&)\s+)?(?:confidential|assistance|business|attention|reply|response|help)\b/i
+# 20_advance_fee.cf
+body __FRAUD_WDR /\bprivate lawyer\b/i
+# 20_advance_fee.cf
+body __FRAUD_WFC /\bsecur(?:e|ing) (?:the )?(?:funds?|monies)\b/i
+# 20_advance_fee.cf
+body __FRAUD_XJR /(?:who was a|as a|an? honest|you being a|to any) foreigner/i
+# 20_lotsa_money.cf
+body __FRAUD_XWW /\b(?:honest(?:ly)?\sco(?:-?operat(?:e|ion)|llaborat(?:e|ion))|ehrliche\szusammenarbeit|sichere [kc]o+p[eo]ration|col+aboration\swith\sme)\b/i
+# 20_advance_fee.cf
+body __FRAUD_YPO /the total sum/i
+# 20_advance_fee.cf
+body __FRAUD_YQV /nigerian? (?:national|government)/i
+# 20_lotsa_money.cf
+body __GHANA /\bghana\b/i
+# 20_lotsa_money.cf
+body __GIVE_MONEY /\b(?:(?:give\syou\s(?:this\s)?(?:money|fund|inheritance))|(?:donated?\s(?:\w\+\s){0,3}(?:the\ssum\sof|(?:(?:the|this|some)\s(?:money|funds?|inheritance)|to\s)(?:you|(?:(?:the|a)\s)?church|charit(?:y|ies)|humanit\w+|needy|poor|orphan(?:age)?s?|philanthropists\?)))|de vous donner cet argent|faire don de la somme|voudrais en faire don|tego funduszu do dom(?:=F3|[\xf3])w (?:dziecka|wdowy))\b/i
+# 20_basic.cf
+uri __HAS_ANY_URI /^\w+:\/\//
+# 20_head_tests.cf
+header __HAS_CGP_MAPI_IN_MAILER X-Mailer =~ /CommuniGate Pro MAPI/
+# 20_misc_testing.cf
+header __HAS_DOMAINKEY_SIG exists:DomainKey-Signature
+# 10_hasbase.cf
+header __HAS_ERRORS_TO exists:Errors-To
+# 10_hasbase.cf
+header __HAS_IN_REPLY_TO exists:In-Reply-To
+# 10_hasbase.cf
+header __HAS_LIST_ID exists:List-Id
+# 20_head_tests.cf
+header __HAS_MIMEOLE exists:X-MimeOLE
+# 20_head_tests.cf
+header __HAS_MSMAIL_PRI exists:X-MSMail-Priority
+# 20_head_tests.cf
+header __HAS_OFFICE1214_IN_MAILER X-Mailer =~ /^Microsoft (?:Office )?Outlook 1[2456]\.0/
+# 20_head_tests.cf
+header __HAS_SQUIRRELMAIL_IN_MAILER X-Mailer =~ /SquirrelMail\b/
+# 10_hasbase.cf
+header __HAS_TO exists:To
+# 20_misc_testing.cf
+header __HDRS_LCASE ALL =~ /\n(?:Message-id|Content-type|X-MSMail-priority|from|subject|to|cc|Disposition-notification-to):/sm
+# 20_misc_testing.cf
+header __HDR_RCVD_TONLINEDE X-Spam-Relays-External =~ /\srdns=\S+\.t-online\.de\s/
+# 20_fake_helo_tests.cf
+header __HELO_DYNAMIC_DHCP X-Spam-Relays-External =~ /^[^\]]+ helo=\S*(?:(?<!smtp)(?<!a)cm|catv|docsis|cable|dsl|dhcp|cpe|node)\S*\d+[^\d\s]+\d+[^\]]+ auth= /i
+# 20_fake_helo_tests.cf
+header __HELO_STATIC_COMCAST X-Spam-Relays-External =~ /^[^\]]+ helo=\d{1,3}-\d{1,3}-\d{1,3}-\d{1,3}-static\.hfc\.comcastbusiness\.net\s[^\]]+ auth= /i
+# 20_fake_helo_tests.cf
+header __HELO_STATIC_MAILGUN X-Spam-Relays-External =~ /^[^\]]+ helo=v\d+\.v\w+\.\w+\.send\.mailgun\.net\s[^\]]+ auth= /i
+# 20_fake_helo_tests.cf
+header __HELO_STATIC_QQ X-Spam-Relays-External =~ /^[^\]]+ helo=out\d+\-\d+\-\d+\-\d+\.mail\.qq\.com\s[^\]]+ auth= /i
+# 20_fake_helo_tests.cf
+header __HELO_STATIC_ROGERS X-Spam-Relays-External =~ /^[^\]]+ helo=cmr-\d{1,3}-\d{1,3}-\d{1,3}-\d{1,3}\S+\.rogers\.com[^\]]+ auth= /i
+# 20_fake_helo_tests.cf
+header __HELO_STATIC_SALESFORCE X-Spam-Relays-External =~ /^[^\]]+ helo=smtp\-\w+\.core\d\.sfdc\-\w+\.mta\.salesforce\.com\s[^\]]+ auth= /i
+# 20_fake_helo_tests.cf
+header __HELO_STATIC_SENDGRID X-Spam-Relays-External =~ /^[^\]]+ helo=o\d{1,3}-\d{1,3}-\d{1,3}-\d{1,3}\.outbound-mail\.sendgrid\.net\s[^\]]+ auth= /i
+# 20_hk.cf
+mimeheader __HK_SPAMMY_CDFN Content-Disposition =~ /name=.*?(?:lot(?:eri[ej]|t(?:ery|o))|award|prize|winn(?:er|ing)|microsoft|congrat|urgent)/mi
+# 20_hk.cf
+mimeheader __HK_SPAMMY_CTFN Content-Type =~ /name=.*?(?:lot(?:eri[ej]|t(?:ery|o))|award|prize|winn(?:er|ing)|microsoft|congrat|urgent)/mi
+# 20_misc_testing.cf
+mimeheader __HTML_ATTACH_01 Content-Type =~ m,\btext/html\b.+\.[a-z]?html?\b,i
+# 20_misc_testing.cf
+mimeheader __HTML_ATTACH_02 Content-Disposition =~ m,\bfilename="?[^"]+\.[a-z]?html?\b,i
+# 20_lotsa_money.cf
+body __INTL_BANK /\b(?:international\s(?:\w+\s)?bank|banque\sinternationale)\b/i
+# 20_lotsa_money.cf
+body __INVEST_MONEY /\binvest(?:ir)?\s(?:this|ces|d[ae]s|sur ce|de ces)\s(?:money|f[ou]nds?)\b/i
+# 20_lotsa_money.cf
+body __IS_LEGAL /\b(?:(?:(?:this|esta)\s(?:deal|offer|transac[tc]i(?:o|[\xc3][\xb3])n|proposal|exchange|arrangement|work)|it)?\s[ie]s\s(?:(?:guaranteed|completely|absolutely|perfectly|100%|very|fully)\s)?(?:legal|hitch-free|seguro|legitimate)|legitimate\sarrangement|toute?\sl(?:e|=E9|[\xe9]|[\xc3][\xa9])gale)\b/i
+# 20_lotsa_money.cf
+body __IVORY_COAST /\b(?:Cote\s?D.Ivoire|Ivory\s?Coast|Costa\sde\sMarfil)\b/i
+# 20_lotsa_money.cf
+body __I_INHERIT /\b(?:I|eu)\s[a-z\s]{0,30}(?:inherited|herdei)\b/i
+# 20_lotsa_money.cf
+body __I_WILL_YOU /\bwill(?:ed)?\s(?:[a-z\s]{0,20}(?:fortune|money|\$[\d,]+[a-z]{0,9})\s)?to\syou\b/i
+# 20_needed.cf
+body __KAM_LOTTO2 /(?:(?:ticket|serial|lucky) number|secret pin ?code|batch number|reference number|promotion date)/is
+# 20_lotsa_money.cf
+body __LOTSA_MONEY_00 /<CURRENCY>[\s\.]?<NUM_NOT_DATE>[\dOo][,\.][\dOo]{3}(?:(?!\d)|\b)/
+# 20_lotsa_money.cf
+body __LOTSA_MONEY_01 /(?:(?i:sum\sof\s)[\(\[]?|<CURRENCY>\s?)[\s\.]?<NUM_NOT_DATE_IP>[\d.,\sOo]{5,20}[\dOo](?<!\.00)\b/
+# 20_lotsa_money.cf
+body __LOTSA_MONEY_02 /(?<![-\d\#])<NUM_NOT_DATE_IP>[\d.,\sOo]{5,20}[\dOo][\)\]\(]?\s?(?:<CURRENCY>|Pounds|(?i:dollars?|bucks))[\s\b]/
+# 20_lotsa_money.cf
+body __LOTSA_MONEY_03 /(?:(?i:sum\sof\s)[\(\[]?|<CURRENCY>\s?)<NUM_NOT_DATE>[\d.,\sOo]{0,5}[\)\]]?\s?(?i:M(?i:il+)?\b|mil+(?i:io|<O>)n|hund?[re]+a?[dt]|thousand|tausend|milh[\xf5]es)/
+# 20_lotsa_money.cf
+body __LOTSA_MONEY_04 /(?:(?<![-\d])<NUM_NOT_DATE>[\d\.,]{0,4}(?:M|\smilli?one?s|\s?mln)|million(?!s)|mill<O>n|hund?rea?d(?!s)[^\.]{1,25}thousand(?!s)|cents?[^\.]{1,25}mille|hundert[^\.]{1,30}tausend|ientos?[^\.]{1,20}mil|cent[a-z\s]{1,20}mil\s[a-z]{1,20}centos)[^\.\$]{0,50}?(?:(?:U\.?\s?S\.?\s?(?:A\.?\s?)?|united\s?states\s|E\.\s?U\.\s|canad(?:ian|a)\s|(?:ia\s)?de\s)?d(?:[o\xf3]|[\xc3][\xb3])l+are?s?|\bbucks|U\s?S\s?D|G\s?B\s?P|<GB_UK>\spounds?|(?:<GB_UK>\s)?pounds?\ssterling|pounds(?!\sof)|(?:d'\s?)?euros?|francs?)\b/i
+# 20_lotsa_money.cf
+body __LOTSA_MONEY_05 /(?:(?:sum|value|amount)\sof\s)<NUM_NOT_DATE_IP>[\d.,\sO]{7,20}[\dO\.][\)\]\(\s]{0,3}(?:pounds?|dollars?|euros?|bucks)\b/i
+# 20_lotsa_money.cf
+meta __LOTTO_AGENT __LOTTO_AGENT_01 || __LOTTO_AGENT_02
+# 20_lotsa_money.cf
+body __LOTTO_AGENT_01 /\b(?:(?:(?:the|y?our)(?:\s\w{1,20})?|contact|accredited|listed)\sclaim(?:s|ing)?(?:\sprocessing)?|fiducia\w+|reimbursement|(?:prize|international|intl|foreign|win+ing)(?:[\s,.]+(?:rem+it+ance|settlement|payment|payout|award|transfer))+|payment|payout|immunity|(?<!memory\s)grants?(?!\smanager))\s?(?:agent|manager|officer|secretary|director|mgr\b)/i
+# 20_lotsa_money.cf
+body __LOTTO_AGENT_02 /\blot+ery[^\.]{1,40} ticket agent/i
+# 99_zFVGT_FakeReply.cf
+header __MISSING_REF References =~ /^UNSET$/ [if-unset: UNSET]
+# 99_zFVGT_FakeReply.cf
+header __MISSING_REPLY In-Reply-To =~ /^UNSET$/ [if-unset: UNSET]
+# 20_head_tests.cf
+header __ML1 Precedence =~ m{\b(?:list|bulk)\b}i
+# 20_head_tests.cf
+meta __ML2 __HAS_LIST_ID
+# 20_head_tests.cf
+header __ML3 exists:List-Post
+# 20_head_tests.cf
+header __ML4 exists:Mailing-List
+# 20_head_tests.cf
+header __ML5 Return-Path:addr =~ m{^(?:[^\@]+-(?:request|bounces|admin|owner)|owner-[^\@]+)(?:\@|\z)}i
+# 20_lotsa_money.cf
+body __MOVE_MONEY /\b(?:(?:receive|re-?profile|transfer(?:ring|ir|t)?|release|repatriat(?:e|ion)|rapatrier|secure|r(?:e|=E9|[\xe9]|[\xc3][\xa9])clamation|possession|virer|dona(?:te|r)|depositante|dep[\xc3][\xb3]sito)\s(?:th(?:e(?:se)?|is)|d[ae]s|sur ce|de ce[st]|cet|est[eao]s?|del?)|re-?profiling|receive|re-?locat(?:e|ing)(?:\s\w{1,15})?)\s(?:of\s|your\s|the\s){0,2}(?:sums?\sof\s|inheritance\s)?(?:proceeds|funds?|money|balance|account|g[eo]ld|compte|fond[so]{1,2}|dinero|argent)\b/i
+# 20_misc.cf
+header __MXG_SPOOFED_DOCUSIGN01 From:name =~ /docusign/i
+# 20_misc.cf
+header __MXG_SPOOFED_DOCUSIGN02 Received =~ /\bdocusign\.(com|net)\s/i
+# 20_misc_testing.cf
+body __NEW_PRODUCTS /\bhere are new products|(?:We(?: are|'re)|I(?: am|'m)) (?:glad|thrilled|pleased|happy|excited) to (?:present|introduce|share) (?:(?:with you |you to )?our|the)|\b(?:Our company|we) (?:has |have )?(?:(?:recently|just|newly) (?:introduce|release|launche)[ds](?: a| our| the)? (?:new|(?:\w+\s){1,5}below)|a new (?!cat\s|kitten\s|dog\s|puppy\s|pet\s|baby\s|child\s|boy\s|girl\s)(?:\w+\s){1,5} here)|recently,? our company (?:launch|releas)ed|\bI want to recommend a new (?:\w+ ){1,5}(?:we|our)\b|latest version of our (?:stock|product)|\b(?:our|a) new (?:\w+ ){1,3}has (?:recently|just) been released/i
+# 20_lotsa_money.cf
+body __NIGERIA /\bnigeria\b/i
+# 99_zFVGT_FakeReply.cf
+meta __NO_INR_YES_REF (__XM_GNUS || __XM_MSOE5 || __XM_MSOE6 || __XM_MOZ4 || __XM_SKYRI || __XM_WWWMAIL || __UA_GNUS || __UA_KNODE || __UA_MUTT || __UA_PAN || __UA_XNEWS)
+# 20_misc_testing.cf
+mimeheader __OBFU_HTML_ATTACH Content-Type =~ m,\bapplication/octet-stream\b.+\.[a-z]?html?\b,i
+# 20_lotsa_money.cf
+body __PAY_YOU /\bpay\syou\b/
+# 20_misc_testing.cf
+meta __PDF_ATTACH (__PDF_ATTACH_MT || __PDF_ATTACH_FN1 || __PDF_ATTACH_FN2)
+# 20_misc_testing.cf
+mimeheader __PDF_ATTACH_FN1 Content-Type =~ /="[^"]+\.pdf"/i
+# 20_misc_testing.cf
+mimeheader __PDF_ATTACH_FN2 Content-Disposition =~ /="[^"]+\.pdf"/i
+# 20_misc_testing.cf
+mimeheader __PDF_ATTACH_MT Content-Type =~ m,\bapplication/pdf\b,i
+# 20_dynrdns.cf
+header __RDNS_NONE X-Spam-Relays-External =~ /^[^\]]+ rdns= /
+# 20_misc_testing.cf
+header __SINGLE_WORD_SUBJ Subject =~ /^\s*\S{1,60}\s*$/
+# 20_misc_testing.cf
+rawbody __SPAN_BEG_TEXT /[a-z]{2}<(?i:span)\s/
+# 20_misc_testing.cf
+rawbody __STY_INVIS /\bstyle\s*=\s*"[^">]{0,80}(?:(?<!-)visibility\s*:\s*hidden\s*|display\s*:\s*none\s*)[;"!]/i
+# 20_misc_testing.cf
+meta __STY_INVIS_MANY __STY_INVIS > 5
+# 20_misc_testing.cf
+header __SUBJ_HAS_TO_1 ALL =~ /\nTo: (?:[^\n<]{0,80}<)?([^\n\s>,]+)>?\n+(?:[^\n]{1,200}\n+)*Subject: [^\n]{0,100}\1[^a-z0-9]/ism
+# 20_misc_testing.cf
+header __SUBJ_HAS_TO_2 ALL =~ /\nReceived:[^\n]{0,200} for <?([^\n\s>;]+)>?;(?:[^\n]+\n+)*Subject: [^\n]{0,100}\1[^a-z0-9]/ism
+# 20_misc_testing.cf
+header __SUBJ_HAS_TO_3 ALL =~ /\nSubject:(?=[^\n]{0,200}@)[^\n]{0,200}([a-z][a-z0-9_.]{3,80}@(?:[a-z0-9_]{1,80}\.){1,4}[a-z]{2,30})(?:[^\n]+\n+)*To: [^\n]{0,100}\1[^a-z0-9.]/ism
+# 20_khop_lists.cf
+body __SUBSCRIPTION_INFO /\b(?:e?newsletters?|(?:un)?(?:subscrib|register)|you(?:r| are) subscri(?:b|ption)|opt(?:.|ing)?out\b|further info|you do ?n[o']t w(?:ish|ant)|remov\w{1,3}.{1,9}\blists?\b|to your white.?list)/i
+# 20_misc_testing.cf
+body __SYSADMIN /\b(?:help?[- ]?desk|(?:(?:web ?)?mail ?|sys(?:tem )?)admin(?:istrator)|local[- ]host|(?:support|upgrade|management|security|admin(?:istrat(?:or|ion))?) (?:team|center)|message from administrator|university mail server copyright|suporte t(?:=E9|[\xe9]|[\xc3][\xa9])cnico|administrador do sistema)\b/i
+# 20_khop_blessed.cf
+meta __THREADED (!__MISSING_REPLY && !__NO_INR_YES_REF) || (__MISSING_REPLY && !__MISSING_REF)
+# 20_misc_testing.cf
+meta __TO_IN_SUBJ (__SUBJ_HAS_TO_1 || __SUBJ_HAS_TO_2 || __SUBJ_HAS_TO_3)
+# 20_lotsa_money.cf
+body __TO_YOUR_ACCT /\b(?:(?:f[uo]nds|money|f[uo]ndo|dinheiro|bank)\s(?:\w{1,10}\s){0,4}(?:transfer(?:red)?|transferido|sont)|\d+)\s(?:to|para|en)\s(?:your?|sua|votre)\s(?:account|conta|pos+es+ion)/i
+# 20_lotsa_money.cf
+body __TO_YOUR_ORG /\b(?:to|for) your organi[sz]ation\b/i
+# 20_lotsa_money.cf
+body __TRAVEL_ITINERARY /(?:travel|ticketed|your|current) itinerary/i
+# 20_lotsa_money.cf
+body __TRUSTED_CHECK /\b(?:cashier'?s?|certified)\sche(?:ck|que)/i
+# 99_zFVGT_FakeReply.cf
+header __UA_GNUS User-Agent =~ /^Gnus/
+# 99_zFVGT_FakeReply.cf
+header __UA_KNODE User-Agent =~ /^KNode/
+# 99_zFVGT_FakeReply.cf
+header __UA_MUTT User-Agent =~ /^Mutt/
+# 99_zFVGT_FakeReply.cf
+header __UA_PAN User-Agent =~ /^Pan/
+# 99_zFVGT_FakeReply.cf
+header __UA_XNEWS User-Agent =~ /^Xnews/
+# 20_misc_testing.cf
+body __UNICODE_OBFU_ASC /[a-z0-9\s](?:\xd0[\xb0\xb5\xbe]|\xd1[\x80\x81])+[a-z0-9]{1,8}(?:\xd0[\xb0\xb5\xbe]|\xd1[\x80\x81])+[a-z0-9\s]/i
+# 20_misc_testing.cf
+body __UPGR_MAILBOX /\b(?:up(?:g[ra]+d(?:e|ing)|date) (?:(?:[hw]as|and)\s(?:[a-z]+\s){1,5})?(?:o[nf] )?(?:your )?(?:mail\s?box|(?:web ?|e-?)mail)|(?:web ?|e-?)mail Upgrade cuenta|atualiz(?:e|ar) (?:a|sua) caixa de correio|click\S{0,10} (?:here(?:[:\.\s]{0,5}\S{0,10}http\S{10,80})?|below)(?: link)? to (?:(?:complete|finish|increase) )?(?:(?:the|this|your)\s)?(?:up(?:date|grade)|(?:web ?|e-?)?mail(?:\s?box)? (?:size|quota|limit))|utrzymania aktywnego konta|request (?:for )additional storage|you (?:have )?(?:failed|refused) to up(?:date|grade))\b/i
+# 20_misc_testing.cf
+uri __URI_GOOGLE_DOC m,^https?://docs\.google\.com/(?:[^/]+/)*(?:view(?:form)?\?(?:[^&]+&)*(?:id|formkey|usp)=|document/),i
+# 20_misc_testing.cf
+uri __URI_GOOGLE_DRV m,^https?://(?:drive\.google|googledrive)\.com/,i
+# 20_misc_testing.cf
+uri __URI_GOOG_STO_IMG m,^https?://(?:[^./]+.)?(?:firebase)?storage\.googleapis\.com/.*\.(?:png|jpe?g|gif|webp)$,i
+# 20_head_tests.cf
+meta __VIA_ML __ML1 || __ML2 || __ML3 || __ML4 || __ML5
+# 20_lotsa_money.cf
+body __WIRE_XFR /\b(?:wire|telegraph(?:ic)?|bank)\s?transfer/i
+# 20_misc_testing.cf
+rawbody __WORD_INVIS /<(?!style)[a-z]+\s[^>]{1,80}(?:font(?:-size)?\s*:\s*(?:0*[01](?:\.\d+)?(?:px|pt|Q|vw|vh|vmin)|0+(?:\.\d+)?(?:cm|mm|in|pc|em|ex|ch|rem|lh|vmax))\s*[;'a-z]|['"\s;]color\s*:\s*transparent\s*[;'])[^>]{0,80}>\w{1,20}</i
+# 20_misc_testing.cf
+meta __WORD_INVIS_2 __WORD_INVIS > 1
+# 20_lotsa_money.cf
+meta __XFER_MONEY (__WIRE_XFR || __TRUSTED_CHECK || __BANK_DRAFT || __MOVE_MONEY || __TO_YOUR_ACCT || __PAY_YOU || __GIVE_MONEY)
+# 99_zFVGT_FakeReply.cf
+header __XM_GNUS X-Mailer =~ /^Gnus v/
+# 99_zFVGT_FakeReply.cf
+header __XM_MOZ4 X-Mailer =~ /^Mozilla 4/
+# 99_zFVGT_FakeReply.cf
+header __XM_MSOE5 X-Mailer =~ /^Microsoft Outlook Express 5/
+# 99_zFVGT_FakeReply.cf
+header __XM_MSOE6 X-Mailer =~ /^Microsoft Outlook Express 6/
+# 99_zFVGT_FakeReply.cf
+header __XM_SKYRI X-Mailer =~ /^SKYRiXgreen/
+# 99_zFVGT_FakeReply.cf
+header __XM_WWWMAIL X-Mailer =~ /^WWW-Mail \d/
+# 20_misc_testing.cf
+body __YOUR_PERSONAL /(?:^|\s)(?:<Y><O><U><R>\s(?:<P><E><R><S><O><N><A><L>|<P><R><I><V><A><T><E>|<S><O><C><I><A><L>\s<C><O><N><T><A><C><T>|<A><D><D><R><E><S><S>|<F><R><I><E><N><D><S>)\s(?:<I><N><F><O>(?:<R><M><A><T><I><O><N>)?|<D><A><T><A>|<D><E><T><A><I><L><S>|<B><O><O><K>|<S><E><C><R><E><T><S>)|<A><L><L>\s(?:<O><F>\s)?<Y><O><U><R>\s(?:<F><I><L><E><S>|<C><O><N><T><A><C><T><S>|<S><E><C><R><E><T><S>|<C><O><R><R><E><S><P><O><N><D><E><N><C><E>))[\s\.,]/i
+
+# replace_tag definitions for the lifted fuzzy/money rules, from SA trunk
+# rules/25_replace.cf and rulesrc/sandbox/jhardin/20_lotsa_money.cf
+# (Apache-2.0). Expansion only applies to rules named in replace_rules,
+# so these tags cannot alter any other rule.
+replace_tag A (?:[aA\@\xc0\xc1\xc2\xc3\xc4\xc5\xc6\xe4\xe3\xe2\xe0\xe1\xe2\xe3\xe4\xe5\xe6]|[\xb6\xc1\xc4\xcb]|[\xc3][\x80\x81\x82\x83\x84\x85\xa0\xa1\xa2\xa3\xa4\xa5]|[\xc4][\x80\x81\x82\x83\x84\x85]|[\xc9][\x91]|[\xce][\x86\x91\x94\x9b\xac\xb1]|[\xd0][\x90\xb0\xb4]|[\xd1][\xa6\xa7]|[\xd3][\x90\x91\x92\x93]|[\xe1](?:[\x8e][\xaa]|[\xb8][\x80\x81]|[\xba][\x9a\xa0-\xb7]|[\xbc][\x80-\x8f]|[\xbd][\xb0\xb1]|[\xbe][\x80-\x8f\xb0-\xbc])|[\xf0][\x9d](?:[\x90][\x80\x9a\xb4]|[\x91][\x8e\xa8]|[\x92][\x82\x9c\xb6]|[\x93][\x90\xaa]|[\x94][\xb8\x92]|[\x95][\x92]|[\x96][\xa0\xba]|[\x97][\x94\xae]|[\x98][\x88\xa2\xbc]|[\x99][\x96\xb0]|[\x9a][\x8a\xa8]|[\x9b][\x82\xa2\xbc]|[\x9c][\x9c\xb6]|[\x9d][\x96\xb0]|[\x9e][\x90\xaa])|[\xf0][\x9f][\x87][\xa6])
+replace_tag B (?:[bB8\xc2\xe2]|[\xce][\x92\xb2]|[\xcf][\x90\xb8]|[\xc3][\x9f]|[\xc6][\x80\x81\x82\x83\x84\x85]|[\xce][\x92\xb2]|[\xcf][\x90]|[\xd0][\x91\x92\xac\xb1\xb2]|[\xd1][\x8a\x8c\xa2\xa3]|[\xd2][\x8c\x8d]|[\xe1](?:[\xb8][\x82-\x87]|[\xba][\x9e])|[\xf0][\x9d](?:[\x90][\x81\x9b\xb5]|[\x91][\x8f\xa9]|[\x92][\x83\x9d\xb7]|[\x93][\x91\xab]|[\x94][\x85\x9f\xb9]|[\x95][\x93\xad]|[\x96][\x87\xa1\xbb]|[\x97][\x95\xaf]|[\x98][\x89\xa3\xbd]|[\x99][\x97\xb1]|[\x9a][\x8b\xa9]|[\x9b][\x83\xa3\xbd]|[\x9c][\x9d\xb7]|[\x9d][\x97\xb1]|[\x9e][\x91\xab])|[\xf0][\x9f][\x87][\xa7])
+replace_tag C (?:[cCk\xc7\xe7\xf2@]|[\xc3][\x87\xa7]|[\xc4][\x86\x87\x88\x89\x8a\x8b\x8c\x8d]|[\xc6][\x87\x88]|[\xcf][\x82\x9a\x9b\xb2\xb9\xbe]|[\xd0][\xa1]|[\xd1][\x81]|[\xd2][\x80\x81\xaa\xab]|[\xd5][\x87]|&\#(?:1(?:0(?:10|17|2[123]|57|89)|1(?:52|53|94|95)|99)|2(?:31|6[2-9])|39[12]|x(?:3(?:f2|f9|fe)|4(?:21|41|80|81|aa|ab)));|[\xe1](?:[\xb8][\x88\x89])|[\xf0][\x9d](?:[\x90][\x82\x9c\xb6]|[\x91][\x90\xaa]|[\x92][\x84\x9e\xb8]|[\x93][\x92\xac]|[\x94][\x86\xa0\xba]|[\x95][\x94\xae]|[\x96][\x88\xa2\xbc]|[\x97][\x96\xb0]|[\x98][\x8a\xa4\xbe]|[\x99][\x98\xb2]|[\x9a][\x8c]|[\x9b][\x93]|[\x9c][\x8d]|[\x9d][\x87]|[\x9e][\x81])|[\xf0][\x9f][\x87][\xa8])
+replace_tag CURRENCY (?:[\(\[<]?(?:\bU[Ss][D\$]{0,2}|\$(?:US)?|u\s?s\s?d|U\s?S\s?D|CAD|G\s?B\s?P|=[Aa][34]|\xa3|\xe2\x82\xac|&\#16[34];|(?i:pounds\ssterling)|\xa4|EUR(?:OS?)?|(?:d')?[Ee]uro?s?|(?i:eur)\sde|CHF|FCFA|d[\xf3]lares\sde\slos\sE+\.\s?U+\.)[\]\)>]?)
+replace_tag D (?:[dD\xd0]|[\xc3][\x90]|[\xc4][\x8e\x8f\x90\x91]|[\xc6][\x89\x8a]|[\xd4][\x80\x81]|[\xd5][\xaa]|[\xe1](?:[\xb8][\x8a-\x93])|[\xf0][\x9d](?:[\x90][\x83\x9d\xb7]|[\x91][\x91\xab]|[\x92][\x85\x9f\xb9]|[\x93][\x93\xad]|[\x94][\x87\xa1\xbb]|[\x95][\x95\xaf]|[\x96][\x89\xa3\xbd]|[\x97][\x97\xb1]|[\x98][\x8b\xa5\xbf]|[\x99][\x99\xb3]|[\x9a][\x8d])|[\xf0][\x9f][\x87][\xa9])
+replace_tag E (?:[eE3\xb8\xc5\xd3\xdd\xe5\xee]|[\xc3][\x88\x89\x8a\x8b\xa8\xa9\xaa\xab]|[\xc4][\x92\x93\x94\x95\x96\x97\x98\x99\x9a\x9b\xbe]|[\xc8][\x84\x85\x86\x87\xa8\xa9]|[\xc9][\x87]|[\xce][\x88\x95\xa3\xad\xb5\xbe]|[\xcf][\xb5]|[\xd0][\x80\x81\x84\x95\xb5]|[\xd1][\x90\x91\x94\xb3]|[\xd2][\xbc\xbd\xbe\xbf]|[\xd3][\x96\x97\xa9\xab]|[\xd4][\x90\x91]|[\xc8\xc9\xca\xcb\xe8\xe9\xea\xeb\xa4]|&\#(?:1(?:0(?:13|2[458]|45|77)|108|2(?:1[2-5]|3[89]|9[67]))|2(?:0[0-3]|3[2-5]|7[4-9]|8[0-3])|400|51[6-9]|5[58][23]|603|9(?:04|17|[34]1|4[19]));|[\xe2][\x82][\xac]|[\xe1](?:[\xb8][\x94-\x9d]|[\xba][\xb8-\xbf]|[\xbb][\x80-\x87]|[\xbc][\x90-\x9d]|[\xbd][\xb2\xb3]|[\xbf][\x88\x89])|[\xf0][\x9d](?:[\x90][\x84\x9e\xb8]|[\x91][\x92\xac]|[\x92][\x86\xa0\xba]|[\x93][\x94\xae]|[\x94][\xa2\xbc]|[\x95][\x96]|[\x96][\x8a\xa4\xbe]|[\x97][\x98\xb2]|[\x98][\x8c\xa6]|[\x99][\x80\x9a\xb4]|[\x9a][\x8e\xac\xba]|[\x9b][\x86\x9c\xa6\xb4]|[\x9c][\x80\x96\xa0\xae\xba]|[\x9d][\x90\x9a\xa8\xb4]|[\x9e][\x8a\x94\xa2\xae]|[\x9f][\x84])|[\xf0][\x9f][\x87][\xaa])
+replace_tag F (?:[fF]|[\xcf][\x9c\x9d]|[\xd2][\x92\x93]|[\xd3][\xba\xbb]|[\xd4][\xb2]|[\xd5][\xa2]|[\xe1](?:[\xb8][\x9e\x9f]|[\xba][\x9b\x9c\x9d])|[\xf0][\x9d](?:[\x90][\x85\x9f\xb9]|[\x91][\x93\xad]|[\x92][\x87\xa1\xbb]|[\x93][\x95\xaf]|[\x94][\xa3\xbd]|[\x95][\x97\xb1]|[\x96][\x8b\xa5\xbf]|[\x97][\x99\xb3]|[\x98][\x8d\xa7]|[\x99][\x81\x9b\xb5]|[\x9a][\x8f]|[\x9f][\x8a\x8b])|[\xf0][\x9f][\x87][\xab])
+replace_tag GB_UK \b(?:U\.?K\.?|(?:Great\s)?Brit(?:ain|ish)|G\.?B\.?)\b
+replace_tag I (?:[iIl|!1y?\xcc\xcd\xce\xcf\xec\xed\xee\xef\xe9\xba\xc0\xc9\xda\xdf\xfa]|[\xc3][\x8c\x8d\x8e\x8f\xac\xad\xae\xaf]|[\xc4][\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1]|[\xc7][\x8f\x90]|[\xce][\x8a\x90\x99\xaa\xaf\xb9]|[\xcf][\x8a]|[\xd0][\x86\x87]|[\xd1][\x96\x97]|[\xd3][\x80\x8f]|[\xd5][\xac]|&\#(?:1(?:03[01]|11[01]|216|231)|2(?:0[4-7]|16|3[6-9]|9[6-9])|3(?:0[0-5])|4(?:0[67]|6[34])|52[0-3]);|[\xe1](?:[\xb8][\xac-\xaf]|[\xbb][\x88-\x8b]|[\xbc][\xb0-\xbf]|[\xbd][\xb6\xb7]|[\xbf][\x90-\x9b])|[\xf0][\x9d](?:[\x90][\x88\xa2\xbc]|[\x91][\x96\xb0]|[\x92][\x8a\xa4\xbe]|[\x93][\x98\xb2]|[\x94][\xa6]|[\x95][\x80\x9a]|[\x96][\x8e\xa8]|[\x97][\x82\x9c\xb6]|[\x98][\x90\xaa]|[\x99][\x84\x9e\xb8]|[\x9a][\x92\xb0]|[\x9b][\xaa]|[\x9c][\xa4]|[\x9d][\x9e]|[\x9e][\x98])|[\xf0][\x9f][\x87][\xae])
+replace_tag K (?:[kK\xca\xea]|[\xc4][\xb6\xb7\xb8]|[\xc7][\xa8\xa9]|[\xce][\x9a\xba]|[\xd0][\x8c\x9a\xba]|[\xd1][\x9c]|[\xd2][\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1]|[\xd3][\x83\x84]|[\xd4][\x9e\x9f]|&\#(?:31[0-2]|4[08][89]|9(?:22|54|75)|1(?:0(?:36|50|82)|1(?:16|7[89]|8[0-5])|219|220|31[01]));|[\xe1](?:[\xb8][\xb0-\xb5])|[\xf0][\x9d](?:[\x90][\x8a\xa4\xbe]|[\x91][\x98\xb2]|[\x92][\x8c\xa6]|[\x93][\x80\x9a\xb4]|[\x94][\xa8]|[\x95][\x82\x9c]|[\x96][\x90\xaa]|[\x97][\x84\x9e\xb8]|[\x98][\x92\xac]|[\x99][\x86\xa0\xba]|[\x9a][\x94\xb1]|[\x9b][\x8b\xab]|[\x9c][\x85\xa5\xbf]|[\x9d][\x9f\xb9]|[\x9e][\x99\xb3])|[\xf0][\x9f][\x87][\xb0])
+replace_tag L (?:[ilL|!1\xa3]|[\xc4][\xb9\xba\xbb\xbc\xbd\xbe\xbf]|[\xc5][\x80\x81\x82]|[\xc8][\xbd]|[\xce][\x8a\x99\xaa\xaf\xb9]|[\xd3][\x80\x8f]|[\xd4][\xbc]|[\xd5][\xac]|[\xd6][\x82]|&\#(?:1340|3(?:1[3-9]|2[0-2])|573|671|x53c|76);|[\xe1](?:[\xb8][\xb6-\xbd]|[\xbc][\xb8-\xbf]|[\xbf][\x98-\x9b])|[\xf0][\x9d](?:[\x90][\x8b\xa5\xbf]|[\x91][\x99\xb3]|[\x92][\x8d\xa7]|[\x93][\x81\x9b\xb5]|[\x94][\xa9]|[\x95][\x83\x9d]|[\x96][\x91\xab]|[\x97][\x85\x9f\xb9]|[\x98][\x93\xad]|[\x99][\x87\xa1\xbb]|[\x9a][\x95]|[\x9d][\x9e]|[\x9e][\x98]|[\x9f][\x8f\x99\xad\xb7])|[\xf0][\x9f][\x87][\xb1])
+replace_tag M (?:[mM\xcc]|rn|[\xc9][\xb1]|[\xce][\x9c]|[\xcf][\xba\xbb]|[\xd0][\x9c\xbc]|[\xd2][\xa7]|[\xd3][\x8d\x8e]|[\xe1](?:[\xb8][\xbe\xbf]|[\xb9][\x80-\x83])|[\xf0][\x9d](?:[\x90][\x8c\xa6]|[\x91][\x80\x9a\xb4]|[\x92][\x8e\xa8]|[\x93][\x82\x9c\xb6]|[\x94][\xaa]|[\x95][\x84\x9e]|[\x96][\x92\xac]|[\x97][\x86\xa0\xba]|[\x98][\x94\xae]|[\x99][\x88\xa2\xbc]|[\x9a][\x96\xb3]|[\x9b][\xad]|[\x9c][\xa7]|[\x9d][\xa1]|[\x9e][\x9b])|[\xf0][\x9f][\x87][\xb2])
+replace_tag N (?:[nN\xcd\xd0\xd1\xde\xe7\xf0\xf1]|[\xc3][\x91\xb1]|[\xc5][\x83\x84\x85\x86\x87\x88\x89\x8a\x8b]|[\xc9][\xb2\xb3\xb4]|[\xce][\x9d\xae\xb7]|[\xcf][\x80]|[\xd0][\x98\x99\x9f\xb8\xb9\xbb\xbf]|[\xd1][\x9d]|[\xd2][\x8a\x8b]|[\xd3][\x86\xa2\xa3\xa4\xa5]|[\xd4][\xa5]|[\xd5][\x88\x8c\xa4\xa8\xb2\xb8\xbc]|[\xd6][\x80]|[\xe1](?:[\xb9][\x84-\x8b]|[\xbc][\xa0-\xa7]|[\xbd][\xb4\xb5]|[\xbe][\x90-\x97]|[\xbf][\x82-\x87])|[\xf0][\x9d](?:[\x90][\x8d\xa7]|[\x91][\x81\x9b\xb5]|[\x92][\x8f\xa9]|[\x93][\x83\x9d\xb7]|[\x94][\xab]|[\x95][\x85\x9f]|[\x96][\x93\xad]|[\x97][\x87\xa1\xbb]|[\x98][\x95\xaf]|[\x99][\x89\xa3\xbd]|[\x9a][\x97\xb4]|[\x9b][\x88\xae]|[\x9c][\x82\xa8\xbc]|[\x9d][\xa2\xb6]|[\x9e][\x9c\xb0])|[\xf0][\x9f][\x87][\xb3])
+replace_tag NUM_NOT_DATE [1-9](?!\d\d\d\.\d\d\.\d\d\s)(?!\d?\.\d\d?\.\d\d\d\d\s)
+replace_tag NUM_NOT_DATE_IP <NUM_NOT_DATE>(?!\d{0,2}(?:\.0|\.[1-2]\d{0,2}){3}(?:\D|$))
+replace_tag O (?:[goO0u\xbc\xcf\xd2\xd3\xd4\xd5\xd6\xd8\xef\xf0\xf2\xf3\xf4\xf5\xf6\xf8\xfc]|[\xc3][\x92\x93\x94\x95\x96\x98\xb2\xb3\xb4\xb5\xb6\xb8]|[\xc5][\x8c\xbd\xbe\xbf\x90\x91]|[\xce][\x8c\x98\x9f\xbf]|[\xcf][\x8c\x98\x99]|[\xd0][\x9e\xae\xbe]|[\xd1][\xba\xbb]|[\xd3][\xa6\xa7\xa8\xaa]|[\xd4][\x9a]|[\xd5][\x95\xae]|[\xd6][\x85]|[\xd7][\xa1]|[\xe1](?:[\xb9][\x8c-\x93]|[\xbb][\x8c-\xa3]|[\xbd][\x80-\x8d\xb8\xb9]|[\xbf][\xb8\xb9])|[\xf0][\x9d](?:[\x90][\x8e\xa8]|[\x91][\x82\x9c\xb6]|[\x92][\x90\xaa]|[\x93][\x84\x9e\xb8]|[\x94][\xac]|[\x95][\x86\xa0]|[\x96][\x94\xae]|[\x97][\x88\xa2\xbc]|[\x98][\x96\xb0]|[\x99][\x8a\xa4\xbe]|[\x9a][\x98\xb6\xb9]|[\x9b][\x90\x94\xb0]|[\x9c][\x8a\x8e\xa3\xaa\xad\xbd]|[\x9d][\x84\x88\x9d\xa4\xa7\xbe]|[\x9e][\x82\x97\x9e\xa1\xb8\xbb]|[\x9f][\x8e\x98\xa2\xac])|[\xf0][\x9f][\x87][\xb4])
+replace_tag P (?:[pP\xd1\xf1\xfe]|[\xce][\xa1]|[\xcf][\x81\xb7\xb8]|[\xd0][\xa0]|[\xd1][\x80]|[\xd2][\x8e\x8f]|[\xd4][\x97]|[\xd5][\xa9]|[\xd6][\x84]|[\xe1](?:[\xb9][\x94-\x97]|[\xbf][\xa4\xa5\xac])|[\xf0][\x9d](?:[\x90][\x8f\xa9]|[\x91][\x83\x9d\xb7]|[\x92][\x91]|[\x93][\x9f]|[\x95][\x87\xa1]|[\x96][\xaf]|[\x97][\x89\xa3\xbd]|[\x98][\x97\xb1]|[\x99][\x8b\xa5\xbf]|[\x9a][\x99\xb8]|[\x9b][\x92\xb2]|[\x9c][\x8c\xac]|[\x9d][\x86\xa6]|[\x9e][\x80\xa0\xba])|[\xf0][\x9f][\x87][\xb5])
+replace_tag R (?:[rR]|[\xc5][\x94\x95\x96\x97\x98\x99]|[\xc8][\x90\x91\x92\x93]|[\xd0][\x93\xaf]|[\xd1][\x8f\x93]|[\xd2][\x90\x91\x93]|[\xd3][\xb6\xb7]|[\xd4][\xb8\xbb]|[\xd5][\x90\x92]|[\xd6][\x80]|&\#(?:1(?:071|103)|34[0-5]|422|5(?:2[89]|3[01]|8[89])|6(?:3[67]|40));|[\xe1](?:[\xb9][\x98-\x9f])|[\xf0][\x9d](?:[\x90][\x91\xab]|[\x91][\x85\x9f\xb9]|[\x92][\x93\xad]|[\x93][\x87\xa1\xbb]|[\x94][\x95\xaf]|[\x95][\x89\xa3\xbd]|[\x96][\x97\xb1]|[\x97][\x8b\xa5\xbf]|[\x98][\x99\xb3]|[\x99][\x8d\xa7]|[\x9a][\x81\x9b])|[\xf0][\x9f][\x87][\xb7])
+replace_tag S (?:[sSz\xa6\xa7]|[\xc5][\x9a\x9b\x9c\x9d\x9e\x9f\xa0\xa1]|[\xc6][\xbe]|[\xd0][\x85]|[\xd1][\x95]|[\xd5][\x8f]|[\xe1](?:[\xb9][\xa0-\xa9])|[\xf0][\x9d](?:[\x90][\x92\xac]|[\x91][\x86\xa0\xba]|[\x92][\x94]|[\x94][\xb0]|[\x95][\x8a\xa4]|[\x96][\xb2]|[\x97][\x8c\xa6]|[\x98][\x80\x9a\xb4]|[\x99][\x8e\xa8]|[\x9a][\x82\x9c])|[\xf0][\x9f][\x87][\xb8])
+replace_tag T (?:[tT\xc3\xd4\xf4]|[\xc5][\xa2\xa3\xa4\xa5\xa6\xa7]|[\xcd][\xb2\xb3]|[\xce][\xa4]|[\xcf][\x84\xae\xaf]|[\xd0][\x93\xa2]|[\xd1][\x82]|[\xd2][\x90\xac\xad]|[\xd3][\xb6]|[\xd4][\xb5\xb7]|[\xd5][\x92\xa7]|[\xe1](?:[\xb9][\xaa-\xb1]|[\xba][\x97])|[\xf0][\x9d](?:[\x90][\x93\xad]|[\x91][\x87\xa1\xbb]|[\x92][\x95]|[\x93][\x89\xbd]|[\x94][\xb1]|[\x95][\x8b\xa5]|[\x96][\x99\xb3]|[\x97][\x8d\xa7]|[\x98][\x81\x9b\xb5]|[\x99][\x8f\xa9]|[\x9a][\x83\x9d\xbb]|[\x9b][\x95\xb5]|[\x9c][\x8f\xaf]|[\x9d][\x89\xa9]|[\x9e][\x83\xa3\xbd])|[\xf0][\x9f][\x87][\xb9])
+replace_tag U (?:[uUv\xb5\xd9\xda\xdb\xdc\xe0\xec\xf5\xfc\xfb\xfa\xf9\xfd]|[\xc3][\x99\x9a\x9b\x9c\xb9\xba\xbb\xbc]|[\xc5][\xa8\xa9\xaa\xab\xac\xad\xae\xaf\xb0\xb1\xb2\xb3]|[\xcf][\x85\x8b\x8d]|[\xd0][\x8f\xa6]|[\xd1][\x86\x9f]|[\xd4][\xb1\xbf]|[\xd5][\x84\x8d\xb4\xb6\xbd\xbe]|[\xd6][\x87]|[\xc2][\xb5]|[\xe1](?:[\xb9][\xb2-\xbb]|[\xbb][\xa4-\xb1]|[\xbd][\x90-\x97\xba\xbb]|[\xbf][\xa0-\xa3\xa6\xa7])|[\xf0][\x9d](?:[\x90][\x94\xae]|[\x91][\x88\xa2\xbc]|[\x92][\x96\xb0]|[\x93][\x8a\xa4\xbe]|[\x94][\x98\xb2]|[\x95][\x8c\xa6]|[\x96][\x80\x9a\xb4]|[\x97][\x8e\xa8]|[\x98][\x82\x9c\xb6]|[\x99][\x90\xaa]|[\x9a][\x84\x9e]|[\x9b][\x8d\x96]|[\x9c][\x87\x90]|[\x9d][\x81\x8a\xbb]|[\x9e][\x84\xb5\xbe])|[\xf0][\x9f][\x87][\xba])
+replace_tag V (?:[vVu\xe3\xed]|\\\/|[\xce][\xbd]|[\xd1][\xb4\xb5\xb6\xb7]|[\xe1](?:[\xb9][\xbc-\xbf]|[\xbd][\x90-\x97\xba\xbb]|[\xbf][\xa0-\xa3\xa6\xa7])|[\xf0][\x9d](?:[\x90][\x95\xaf]|[\x91][\x89\xa3\xbd]|[\x92][\x97]|[\x93][\x8b\xa5\xbf]|[\x95][\x8d\xa7]|[\x96][\xb5]|[\x97][\x8f\xa9]|[\x98][\x83\x9d\xb7]|[\x99][\x91\xab]|[\x9a][\x85\x9f]|[\x9b][\x96]|[\x9c][\x88]|[\x9d][\x8a])|[\xf0][\x9f][\x87][\xbb])
+replace_tag Y (?:[yY\xbe\xd5\xdb\xe3\xff\xfd\xa5j]|[\xc3][\x9d\xbd\xbf]|[\xc5][\xb6\xb7\xb8]|[\xce][\x8e\xa5\xab\xb3]|[\xcf][\x92\x93\x94]|[\xd0][\x8e\xa3]|[\xd1][\x83\x87\x9e]|[\xd2][\xae\xaf\xb0\xb1\xb6\xb7\xb8\xb9]|[\xd3][\x8b\x8c\xae\xaf\xb0\xb1\xb2\xb3\xb4\xb5]|[\xd4][\xbf]|[\xd5][\x8e\xaf\xbe]|[\xe1](?:[\xba][\x8e\x8f\x99]|[\xbb][\xb2-\xb9\xbe\xbf]|[\xbd][\x99-\x9f]|[\xbf][\xa8-\xab])|[\xf0][\x9d](?:[\x90][\x98\xb2]|[\x91][\x8c\xa6]|[\x92][\x80\x9a\xb4]|[\x93][\x8e\xa8]|[\x94][\x82]|[\x95][\x90\xaa]|[\x96][\xb8]|[\x97][\x92\xac]|[\x98][\x86\xa0\xba]|[\x99][\x94\xae]|[\x9a][\x88\xa2\xbc]|[\x9b][\x84\xb6\xbe]|[\x9c][\xb0\xb8]|[\x9d][\xaa\xb2]|[\x9e][\xa4\xac])|[\xf0][\x9f][\x87][\xbe])
+replace_rules FUZZY_BITCOIN FUZZY_PAYPAL __LOTSA_MONEY_00 __LOTSA_MONEY_01 __LOTSA_MONEY_02 __LOTSA_MONEY_03 __LOTSA_MONEY_04 __LOTSA_MONEY_05 __YOUR_PERSONAL

@@ -1,10 +1,14 @@
 name: Update KAM Rules
 
 on:
-  push:
+  # pull_request only (no push trigger): one CI run per change. Merges to main
+  # fire no run — the PR already tested the exact tree (squash merge).
   pull_request:
   schedule:
-    - cron: "0 3 * * *"  # Daily at 3am UTC
+    # Twice daily. 12:00 UTC catches the typical morning-ET KAM bump
+    # (~06-07 ET) same day; 00:00 UTC is the catch-all for later bumps.
+    # Most runs are no-ops (DNS-serial gate rebuilds only on a newer serial).
+    - cron: "0 0,12 * * *"
   workflow_dispatch:
 
 permissions:
@@ -12,13 +16,19 @@ permissions:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, builder02, docker]
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
         with:
           python-version: "3.x"
+
+      - name: Lint + type-check converter
+        run: |
+          python3 -m pip install --quiet --user ruff mypy
+          python3 -m ruff check kam_rspamd.py
+          python3 -m mypy --strict kam_rspamd.py
 
       - name: Run tests
         run: python3 -m unittest discover -s tests -v
@@ -32,7 +42,7 @@ jobs:
     # could never push anyway.)
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
     needs: test
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, builder02, docker]
     permissions:
       contents: write
     steps:
@@ -45,32 +55,189 @@ jobs:
       - name: Check if KAM.cf has updates
         id: check
         run: |
+          set -euo pipefail
           KAM_URL="https://mcgrail.com/downloads/KAM.cf"
           SOURCE_FILE="$RUNNER_TEMP/KAM.cf"
 
-          curl -fsSL --retry 3 --retry-delay 2 -o "$SOURCE_FILE" "$KAM_URL"
-          SOURCE_SHA=$(sha256sum "$SOURCE_FILE" | awk '{print $1}')
-          CURRENT_SHA=$(python3 -c \
-            'import json; print(json.load(open("dist/report.json")).get("source_sha256", ""))')
+          # Primary change signal: the KAM sa-update channel publishes its
+          # ruleset serial as a DNS TXT record, keyed by the SpamAssassin
+          # version REVERSED (SA 4.0.0 -> "0.0.4"), same scheme as
+          # updates.spamassassin.org. One cheap lookup tells us whether the
+          # channel advanced — no need to download KAM.cf just to hash it.
+          #   dig +short TXT 0.0.4.kam.sa-channels.mcgrail.com  =>  "1782987265"
+          SERIAL_NAME="0.0.4.kam.sa-channels.mcgrail.com"
+          # Resolve the TXT serial in pure Python via dnspython. The self-hosted
+          # runner has no dig/host/nslookup (dnsutils not installed, isolated
+          # filesystem), so we do NOT depend on any system DNS client. dnspython
+          # is a tiny pure-Python dep pinned into the runner's Python. Fail SOFT:
+          # any resolver error prints an empty serial, treated as "no change"
+          # below — never a hard abort under `set -e`.
+          python3 -m pip install --quiet --disable-pip-version-check dnspython==2.8.0
+          REMOTE_SERIAL=$(python3 tools/resolve_serial.py "$SERIAL_NAME" || true)
+          STORED_SERIAL=$(tr -dc '0-9' < dist/kam.serial 2>/dev/null || echo "")
 
-          echo "Downloaded source SHA-256: $SOURCE_SHA"
-          echo "source_file=$SOURCE_FILE" >> "$GITHUB_OUTPUT"
-          echo "source_sha=$SOURCE_SHA" >> "$GITHUB_OUTPUT"
-          if [[ "$SOURCE_SHA" == "$CURRENT_SHA" ]]; then
-            echo "No content changes detected"
-            echo "changed=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "Content changed"
-            echo "changed=true" >> "$GITHUB_OUTPUT"
+          if [[ -n "$REMOTE_SERIAL" && ! "$REMOTE_SERIAL" =~ ^[0-9]+$ ]]; then
+            echo "::error::DNS serial resolver returned a non-numeric serial"
+            exit 1
           fi
+
+          echo "DNS channel serial ($SERIAL_NAME): ${REMOTE_SERIAL:-<none>}"
+          echo "Stored serial (dist/kam.serial): ${STORED_SERIAL:-<none>}"
+
+          # Fail closed: a missing/garbage TXT answer must NOT read as "no
+          # update" forever, but also must not trigger a needless rebuild. Treat
+          # an empty remote serial as "no change" (transient DNS/upstream), and
+          # only rebuild when the channel serial is strictly newer than ours.
+          CHANGED=false
+          SERIAL_ADVANCED=false
+          if [[ -z "$REMOTE_SERIAL" ]]; then
+            echo "No channel serial resolved (transient?) — skipping update"
+            if [[ "$GITHUB_EVENT_NAME" == "schedule" ]]; then
+              # Fail-closed behavior is unchanged (empty serial still reads as
+              # "no change" above) — this only adds visibility so a run of
+              # transient DNS failures on the self-hosted runner doesn't go
+              # unnoticed for days between manual checks.
+              echo "::warning::DNS serial lookup failed on scheduled run — possible DNS outage on self-hosted runner"
+            fi
+          elif [[ -z "$STORED_SERIAL" || "$REMOTE_SERIAL" -gt "$STORED_SERIAL" ]]; then
+            SERIAL_ADVANCED=true
+            echo "Channel serial advanced — fetching KAM.cf"
+            curl -fsSL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o "$SOURCE_FILE" "$KAM_URL"
+            SOURCE_SHA=$(sha256sum "$SOURCE_FILE" | awk '{print $1}')
+            CURRENT_SHA=$(python3 -c \
+              'import json; print(json.load(open("dist/report.json")).get("source_sha256", ""))')
+            echo "Downloaded source SHA-256: $SOURCE_SHA"
+            printf 'source_file=%s\n' "$SOURCE_FILE" >> "$GITHUB_OUTPUT"
+            printf 'source_sha=%s\n' "$SOURCE_SHA" >> "$GITHUB_OUTPUT"
+            # Any serial advance triggers a full regen. The map header embeds the
+            # channel _serial and _generated_utc, so even a byte-identical KAM.cf
+            # re-touch produces a materially different map (new serial stamp) that
+            # must be rebuilt and shipped — not just recorded.
+            CHANGED=true
+            if [[ "$SOURCE_SHA" == "$CURRENT_SHA" ]]; then
+              echo "Serial advanced, KAM.cf bytes unchanged — regen to restamp serial"
+            else
+              echo "Serial advanced and KAM.cf content changed — full rebuild"
+            fi
+          else
+            echo "Channel serial not newer than stored — no update"
+          fi
+
+          printf 'remote_serial=%s\n' "$REMOTE_SERIAL" >> "$GITHUB_OUTPUT"
+          printf 'serial_advanced=%s\n' "$SERIAL_ADVANCED" >> "$GITHUB_OUTPUT"
+          printf 'changed=%s\n' "$CHANGED" >> "$GITHUB_OUTPUT"
+
+      - name: Record channel serial
+        # MUST run before the regen: convert() reads dist/kam.serial to stamp the
+        # map header (_serial). Writing the new serial first means the rebuilt map
+        # carries the current channel serial, and stops the next run from
+        # re-fetching the same tarball forever.
+        if: steps.check.outputs.serial_advanced == 'true'
+        env:
+          REMOTE_SERIAL: ${{ steps.check.outputs.remote_serial }}
+        run: |
+          printf '%s\n' "$REMOTE_SERIAL" > dist/kam.serial
+
+      - name: Capture pre-regen report stats
+        # Must run BEFORE the regen step overwrites dist/report.json. HEAD
+        # still points at the last committed report at this point (nothing has
+        # been amended), so this and `git show HEAD:...` afterward agree —
+        # captured here anyway to avoid relying on git history in the gate step.
+        # Validate before writing to GITHUB_ENV so malformed report content cannot
+        # inject extra env lines or feed shell arithmetic in the publish gate.
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          python3 - <<'PY' >> "$GITHUB_ENV"
+          import json
+          import re
+          from pathlib import Path
+
+          report = json.loads(Path("dist/report.json").read_text())
+          map_sha = report.get("map_sha256")
+          rule_count = report.get("converted_rule_count")
+
+          if not isinstance(map_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", map_sha):
+              raise SystemExit("dist/report.json has invalid map_sha256")
+          if type(rule_count) is not int or rule_count < 0:
+              raise SystemExit("dist/report.json has invalid converted_rule_count")
+
+          print(f"old_map_sha={map_sha}")
+          print(f"old_rule_count={rule_count}")
+          PY
 
       - name: Update KAM rules
         if: steps.check.outputs.changed == 'true'
+        env:
+          SOURCE_FILE: ${{ steps.check.outputs.source_file }}
+          SOURCE_SHA: ${{ steps.check.outputs.source_sha }}
         run: |
           python3 kam_rspamd.py \
-            --input "${{ steps.check.outputs.source_file }}" \
+            --input "$SOURCE_FILE" \
             --url "https://mcgrail.com/downloads/KAM.cf" \
-            --expected-sha256 "${{ steps.check.outputs.source_sha }}"
+            --expected-sha256 "$SOURCE_SHA"
+
+      - name: Sanity-check regenerated dist/
+        # A regen that changes dist/ must change map_sha256 too (a no-op hash
+        # match despite differing files is suspicious — most likely a stamping
+        # bug) and must not swing converted_rule_count by more than 5% (most
+        # likely a parser regression eating or duplicating rules). Skip
+        # trivially when the regen produced no diff at all.
+        if: steps.check.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          if git diff --quiet -- dist/; then
+            echo "dist/ unchanged by regen — skipping sanity gate"
+            exit 0
+          fi
+          : "${old_map_sha:?missing old_map_sha from pre-regen report capture}"
+          : "${old_rule_count:?missing old_rule_count from pre-regen report capture}"
+
+          python3 - <<'PY'
+          import json
+          import os
+          import re
+          from pathlib import Path
+
+          def die(message: str) -> None:
+              print(f"::error::{message}")
+              raise SystemExit(1)
+
+          old_map_sha = os.environ["old_map_sha"]
+          old_rule_count_raw = os.environ["old_rule_count"]
+          if not re.fullmatch(r"[0-9a-f]{64}", old_map_sha):
+              die("pre-regen map_sha256 is invalid")
+          if not re.fullmatch(r"[0-9]+", old_rule_count_raw):
+              die("pre-regen converted_rule_count is invalid")
+          old_rule_count = int(old_rule_count_raw)
+
+          try:
+              report = json.loads(Path("dist/report.json").read_text())
+          except Exception as exc:  # noqa: BLE001 - CI annotation should include parse/read failure
+              die(f"cannot read regenerated dist/report.json: {exc}")
+
+          new_map_sha = report.get("map_sha256")
+          new_rule_count = report.get("converted_rule_count")
+          if not isinstance(new_map_sha, str) or not re.fullmatch(r"[0-9a-f]{64}", new_map_sha):
+              die("regenerated dist/report.json has invalid map_sha256")
+          if type(new_rule_count) is not int or new_rule_count < 0:
+              die("regenerated dist/report.json has invalid converted_rule_count")
+
+          print(f"old map_sha256={old_map_sha} new={new_map_sha}")
+          print(f"old converted_rule_count={old_rule_count} new={new_rule_count}")
+
+          if old_map_sha == new_map_sha:
+              die("dist/ changed but map_sha256 is identical to the prior committed report — suspicious regen, refusing to publish")
+
+          if old_rule_count > 0:
+              delta = abs(new_rule_count - old_rule_count)
+              threshold = (old_rule_count * 5 + 99) // 100
+              if delta > threshold:
+                  die(
+                      "converted_rule_count swung by "
+                      f"{delta} rules (old={old_rule_count} new={new_rule_count}), "
+                      f"over the 5% threshold ({threshold}) — refusing to publish"
+                  )
+          PY
 
       - name: Validate updated plugin
         if: steps.check.outputs.changed == 'true'
@@ -80,6 +247,8 @@ jobs:
 
       - name: Commit and push if changed
         if: steps.check.outputs.changed == 'true'
+        env:
+          REMOTE_SERIAL: ${{ steps.check.outputs.remote_serial }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -87,6 +256,6 @@ jobs:
           if git diff --staged --quiet; then
             echo "No changes to commit"
           else
-            git commit -m "chore: update KAM rules from upstream"
+            git commit -m "chore: update KAM rules from upstream (channel serial ${REMOTE_SERIAL})"
             git push
           fi

@@ -5,7 +5,10 @@ on:
   # fire no run — the PR already tested the exact tree (squash merge).
   pull_request:
   schedule:
-    - cron: "0 3 * * *"  # Daily at 3am UTC
+    # Twice daily. 12:00 UTC catches the typical morning-ET KAM bump
+    # (~06-07 ET) same day; 00:00 UTC is the catch-all for later bumps.
+    # Most runs are no-ops (DNS-serial gate rebuilds only on a newer serial).
+    - cron: "0 0,12 * * *"
   workflow_dispatch:
 
 permissions:

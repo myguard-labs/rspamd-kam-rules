@@ -24,6 +24,12 @@ jobs:
         with:
           python-version: "3.x"
 
+      - name: Lint + type-check converter
+        run: |
+          python3 -m pip install --quiet --user ruff mypy
+          python3 -m ruff check kam_rspamd.py
+          python3 -m mypy --strict kam_rspamd.py
+
       - name: Run tests
         run: python3 -m unittest discover -s tests -v
 

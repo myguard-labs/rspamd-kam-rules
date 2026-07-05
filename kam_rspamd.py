@@ -214,7 +214,8 @@ def download(url: str, timeout: float) -> bytes:
         headers={"User-Agent": "rspamd-kam-rules/2.0 (+https://github.com/myguard-labs/rspamd-kam-rules)"},
     )
     with urllib.request.urlopen(request, timeout=timeout) as response:
-        return response.read()
+        data: bytes = response.read()
+    return data
 
 
 def read_symbol_file(path: Path) -> set[str]:
@@ -344,7 +345,7 @@ def parse_rules(
     source: bytes,
     external_symbols: set[str],
     unavailable_symbols: set[str],
-) -> tuple[dict[str, Rule], Counter, list[dict[str, object]], dict[str, list[str]]]:
+) -> tuple[dict[str, Rule], Counter[str], list[dict[str, object]], dict[str, list[str]]]:
     text = source.decode("utf-8", errors="replace").replace("\r\n", "\n").replace("\r", "\n")
     lines = active_lines(text)
     rules: dict[str, Rule] = {}
@@ -354,7 +355,7 @@ def parse_rules(
     maxhits: dict[str, int] = {}
     replace_tags: dict[str, str] = {}
     replace_rules: set[str] = set()
-    omitted = Counter()
+    omitted: Counter[str] = Counter()
     examples: list[dict[str, object]] = []
 
     def omit(number: int, directive: str, line: str) -> None:
@@ -1153,7 +1154,7 @@ def convert(
     unavailable_symbols: set[str] | None = None,
     expected_sha256: str | None = None,
     local_rules: bytes | None = None,
-) -> tuple[bytes, bytes, dict]:
+) -> tuple[bytes, bytes, dict[str, object]]:
     if len(source) < min_bytes:
         raise ConversionError(f"source is unexpectedly small: {len(source)} bytes < {min_bytes}")
     # SHA gate runs on the pristine upstream source only, so update-if-changed.sh

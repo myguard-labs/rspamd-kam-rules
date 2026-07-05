@@ -15,7 +15,7 @@ log() {
 }
 
 log "Checking KAM.cf for updates..."
-if ! curl -fsSL --retry 3 --retry-delay 2 -o "$SOURCE_FILE" "$KAM_URL"; then
+if ! curl -fsSL --retry 3 --retry-delay 2 --connect-timeout 15 --max-time 120 -o "$SOURCE_FILE" "$KAM_URL"; then
     log "ERROR: Could not download $KAM_URL"
     exit 1
 fi

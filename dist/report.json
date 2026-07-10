@@ -1,10 +1,10 @@
 {
-  "converted_rule_count": 3668,
+  "converted_rule_count": 3671,
   "converted_rule_types": {
-    "body": 1269,
+    "body": 1270,
     "full": 4,
-    "header": 1186,
-    "meta": 862,
+    "header": 1187,
+    "meta": 863,
     "mimeheader": 54,
     "rawbody": 82,
     "uri": 211
@@ -280,11 +280,11 @@
     "URIBL_RED"
   ],
   "external_dependency_count": 39,
-  "generated_date": "2026-07-09",
-  "generated_utc": "2026-07-09T01:56:58Z",
+  "generated_date": "2026-07-10",
+  "generated_utc": "2026-07-10T01:55:10Z",
   "local_rules_sha256": "8e34b1e3d1162e5ee89f0a216bd6c75aaf4774becb54b3866ef25fd01a08ebec",
-  "map_bytes": 799363,
-  "map_sha256": "3dc9e2ef06472b1ab5f6147854ecb2ac44475a56ca076801083a1c4eb28fd402",
+  "map_bytes": 799822,
+  "map_sha256": "f33fb08b30b379a8dde872c7c56957649bb8b4de1814ac23cf209a3497e78bce",
   "omitted_directives": {
     "clear_uridnsbl_skip_domain": 2,
     "enlist_addrlist": 1,
@@ -487,57 +487,57 @@
     },
     {
       "directive": "unsupported_header",
-      "line": 11624,
+      "line": 11633,
       "text": "header __RCVD_IN_HOSTKARMA eval:check_rbl('HOSTKARMA-lastexternal','hostkarma.junkemailfilter.com.')"
     },
     {
       "directive": "unsupported_header",
-      "line": 11628,
+      "line": 11637,
       "text": "header RCVD_IN_HOSTKARMA_W eval:check_rbl_sub('HOSTKARMA-lastexternal', '127.0.0.1')"
     },
     {
       "directive": "unsupported_header",
-      "line": 11633,
+      "line": 11642,
       "text": "header RCVD_IN_HOSTKARMA_BL eval:check_rbl_sub('HOSTKARMA-lastexternal', '127.0.0.2')"
     },
     {
       "directive": "unsupported_header",
-      "line": 11638,
+      "line": 11647,
       "text": "header RCVD_IN_HOSTKARMA_BR eval:check_rbl_sub('HOSTKARMA-lastexternal', '127.0.0.4')"
     },
     {
       "directive": "fns_ignore_dkim",
-      "line": 11765,
+      "line": 11774,
       "text": "fns_ignore_dkim linkedin.com googlegroups.com yahoogroups.com yahoogroups.de"
     },
     {
       "directive": "fns_ignore_headers",
-      "line": 11768,
+      "line": 11777,
       "text": "fns_ignore_headers List-Id List-Post Mailing-List X-Forwarded-For"
     },
     {
       "directive": "fns_add_addrlist",
-      "line": 11771,
+      "line": 11780,
       "text": "fns_add_addrlist   (GMAIL)  *@gmail.com *@googlemail.com"
     },
     {
       "directive": "unsupported_header",
-      "line": 11774,
+      "line": 11783,
       "text": "header   __PLUGIN_FROMNAME_SPOOF eval:check_fromname_spoof()"
     },
     {
       "directive": "unsupported_header",
-      "line": 11777,
+      "line": 11786,
       "text": "header   __PLUGIN_FROMNAME_EQUALS_TO eval:check_fromname_equals_to()"
     },
     {
       "directive": "util_rb_3tld",
-      "line": 11801,
+      "line": 11810,
       "text": "util_rb_3tld    ct.sendgrid.net"
     },
     {
       "directive": "util_rb_2tld",
-      "line": 11802,
+      "line": 11811,
       "text": "util_rb_2tld    page.link"
     }
   ],
@@ -598,9 +598,9 @@
       "header"
     ]
   },
-  "serial": "1783529251",
-  "source_bytes": 618982,
-  "source_sha256": "ce3b43cbbca77bef04f45e9ec20e3f54a1a4d43bfe28e5571040fe413cd17dd9",
+  "serial": "1783629062",
+  "source_bytes": 619360,
+  "source_sha256": "c01f354e799df7cdeb0442ec534993f72c9b155ae1ea08a0d3ed005b38305504",
   "source_url": "https://mcgrail.com/downloads/KAM.cf",
   "unexpanded_tag_rule_count": 12,
   "unexpanded_tag_rules": [

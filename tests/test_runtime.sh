@@ -84,6 +84,17 @@ assert_log() {
     fi
 }
 
+assert_no_log() {
+    local pattern=$1
+    local logs
+    logs=$(docker logs "$CONTAINER" 2>&1)
+    if grep -Eq "$pattern" <<<"$logs"; then
+        printf 'Container log matched forbidden pattern %s:\n%s\n' \
+            "$pattern" "$(grep -E "$pattern" <<<"$logs")" >&2
+        return 1
+    fi
+}
+
 cd "$ROOT"
 install -m 0644 dist/kam.lua "$TMPDIR/kam.lua"
 install -m 0644 dist/kam_rules.map "$TMPDIR/kam_rules.map"
@@ -103,6 +114,13 @@ chmod 0644 "$TMPDIR/rspamd.conf.local"
 start_rspamd "$TMPDIR/kam.lua" "$TMPDIR/kam_rules.map" "$TMPDIR/rspamd.conf.local"
 
 assert_log "loaded [0-9]+ generated KAM Lua rules"
+
+# Regression guard: the external-dependency wiring in kam.lua must never register
+# KAM_RULES_MODULE against an absent symbol (e.g. OLETOOLS_ENCRYPTED with olefy
+# disabled) or a pure composite (e.g. FREEMAIL_REPLYTO_NEQ_FROM). Either makes
+# rspamd log a symcache dependency error at config load. The shipped map carries
+# both kinds in external_dependencies, so this exercises the guard for real.
+assert_no_log "cannot register delayed dependency KAM_RULES_MODULE|invalid symbol types"
 
 scan $'From: a@example.com\nTo: b@example.com\nSubject: The TRUTH\n\nordinary text' |
     assert_symbol_score KAM_TRUTHINESS 1.5

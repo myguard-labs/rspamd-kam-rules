@@ -125,7 +125,7 @@ class ConversionTests(unittest.TestCase):
         self.assertNotIn("BAD", rules)
         self.assertIn("R_SPF_ALLOW", map_header(mapdata)["external_dependencies"])
         self.assertIn(
-            "rspamd_config:register_dependency('KAM_RULES_MODULE', dependency)",
+            "rspamd_config:register_dependency('KAM_RULES_MODULE', target)",
             text,
         )
         self.assertEqual(report["external_dependencies"], ["R_SPF_ALLOW"])

@@ -2,7 +2,7 @@
 -- rspamd-kam-rules — KAM.cf compiled to a native Rspamd Lua plugin.
 -- Copyright (c) 2026 eilandert / myguard.nl
 -- License:  MIT (converter) — generated rules are Apache-2.0, see below
--- Modified: 2026-07-05  (bump on every runtime edit; ruleset version is in the map)
+-- Modified: 2026-07-12  (bump on every runtime edit; ruleset version is in the map)
 -- Home:     https://github.com/myguard-labs/rspamd-kam-rules
 -- Article:  https://deb.myguard.nl/articles/kam-cf-rspamd-lua-converter/
 -- More Rspamd modules (olefy, yarad, gyzor, mailstrix, …): https://github.com/myguard-labs
@@ -532,8 +532,36 @@ local parent_id = rspamd_config:register_symbol({
   score = 0.01, priority = 5, group = 'KAM'
 })
 
+-- Wire external symbols as scheduling dependencies of KAM_RULES_MODULE so KAM
+-- runs after them and its metas can see their results. Guard every entry —
+-- rspamd rejects (and logs an error for) a dependency whose destination is:
+--   * absent        — get_symbol_flags() == nil (e.g. OLETOOLS_ENCRYPTED when
+--                      external_services/olefy is disabled on the host).
+--   * a pure composite — composites resolve in a later symcache stage than
+--                      filters, so a filter (KAM_RULES_MODULE) can never depend
+--                      on one (e.g. FREEMAIL_REPLYTO_NEQ_FROM). get_symbol_flags
+--                      does NOT expose the composite bit (it reports 'nostat'),
+--                      so consult the composites config section instead.
+-- Virtual child symbols — including callback-backed composites like FORGED_SENDER
+-- whose parent is a real callback (FORGED_CALLBACK) — are redirected to that
+-- parent so the dep still schedules. Deduped so a shared parent is not wired
+-- twice. If composites are disabled the symbol is simply absent (flags == nil),
+-- so this stays correct either way.
+local composite_syms = {}
+for _, key in ipairs({'composites', 'composite'}) do
+  local section = rspamd_config:get_all_opt(key)
+  if type(section) == 'table' then
+    for cname in pairs(section) do composite_syms[cname] = true end
+  end
+end
+local wired = {}
 for _, dependency in ipairs(external_dependencies) do
-  rspamd_config:register_dependency('KAM_RULES_MODULE', dependency)
+  local target = rspamd_config:get_symbol_parent(dependency) or dependency
+  if not composite_syms[target] and rspamd_config:get_symbol_flags(target)
+      and not wired[target] then
+    wired[target] = true
+    rspamd_config:register_dependency('KAM_RULES_MODULE', target)
+  end
 end
 
 -- Every scored rule is a virtual child of KAM_RULES_MODULE and belongs to the

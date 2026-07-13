@@ -354,6 +354,35 @@ def external_meta_dependencies(rules: dict[str, Rule], external_symbols: set[str
     return dependencies
 
 
+# KAM.cf `replace_tag` values pack in Unicode confusable homoglyphs for each
+# ASCII letter. When several tags concatenate into one word-phrase alternation
+# (e.g. __YOUR_PERSONAL = <Y><O><U><R> x <P><E><R><S><O><N><A><L>/.../...), the
+# combined regex can exceed rspamd's Hyperscan/PCRE compile limits ("cannot
+# compile KAM regexp"). Three 4-byte-UTF-8-lead ranges are the biggest, least
+# useful contributors to that size and are stripped:
+#   - Mathematical Alphanumeric Symbols (U+1D400-U+1D7FF: styled serif/sans/
+#     script/fraktur/double-struck letters nobody types by hand)
+#   - Regional Indicator Symbols (U+1F1E6-U+1F1FF: only meaningful in
+#     flag-emoji pairs, never standalone)
+#   - Latin Extended Additional (U+1E00-U+1EFF, \xe1[\xb8-\xbf] lead bytes:
+#     Vietnamese/academic-transliteration diacritics, not spam-evasion
+#     confusables in practice)
+# Common Latin-1/Latin-Extended-A/Cyrillic/Greek confusables are kept.
+_MATH_ALPHANUMERIC_RE = re.compile(r"\[\\xf0\]\[\\x9d\]\([^()]*\)")
+_REGIONAL_INDICATOR_RE = re.compile(r"\|\[\\xf0\]\[\\x9f\]\[\\x87\]\[\\x[0-9a-f]{2}\]")
+_LATIN_EXT_ADDITIONAL_RE = re.compile(r"\|\[\\xe1\]\([^()]*\)")
+
+
+def trim_homoglyph_class(value: str) -> str:
+    trimmed = _REGIONAL_INDICATOR_RE.sub("", value)
+    trimmed = re.sub(r"\|" + _MATH_ALPHANUMERIC_RE.pattern, "", trimmed)
+    trimmed = _MATH_ALPHANUMERIC_RE.sub("", trimmed)
+    trimmed = _LATIN_EXT_ADDITIONAL_RE.sub("", trimmed)
+    # Collapse a dangling leading "|" left when the first alternative was trimmed.
+    trimmed = re.sub(r"\(\?:\|", "(?:", trimmed)
+    return trimmed
+
+
 def parse_rules(
     source: bytes,
     external_symbols: set[str],
@@ -416,7 +445,7 @@ def parse_rules(
                     except ValueError:
                         pass
         elif directive == "replace_tag" and len(parts) == 3:
-            replace_tags[parts[1]] = parts[2]
+            replace_tags[parts[1]] = trim_homoglyph_class(parts[2])
         elif directive == "replace_rules" and len(parts) >= 2:
             replace_rules.update(" ".join(parts[1:]).split())
         elif directive == "meta" and len(parts) == 3:

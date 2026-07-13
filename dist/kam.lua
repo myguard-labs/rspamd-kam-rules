@@ -2,7 +2,7 @@
 -- rspamd-kam-rules — KAM.cf compiled to a native Rspamd Lua plugin.
 -- Copyright (c) 2026 eilandert / myguard.nl
 -- License:  MIT (converter) — generated rules are Apache-2.0, see below
--- Modified: 2026-07-12  (bump on every runtime edit; ruleset version is in the map)
+-- Modified: 2026-07-13  (bump on every runtime edit; ruleset version is in the map)
 -- Home:     https://github.com/myguard-labs/rspamd-kam-rules
 -- Article:  https://deb.myguard.nl/articles/kam-cf-rspamd-lua-converter/
 -- More Rspamd modules (olefy, yarad, gyzor, mailstrix, …): https://github.com/myguard-labs
@@ -441,7 +441,7 @@ do
       kam_cache_path, kam_map_path)
     init_data = ''
   else
-    rspamd_logger.infox(rspamd_config, 'KAM: loaded rule map from %s', source)
+    rspamd_logger.messagex(rspamd_config, 'KAM: loaded rule map from %s', source)
   end
   rules, replacements, external_dependencies = parse_map(init_data)
 end
@@ -499,7 +499,7 @@ if kam_map_url and kam_map_url ~= '' then
       local ok = os.rename(tmp, kam_cache_path)
       if lock then rspamd_util.unlock_file(lock) end
       if ok then
-        rspamd_logger.infox(rspamd_config,
+        rspamd_logger.messagex(rspamd_config,
           'KAM: downloaded updated rule map to %s (%s bytes); '
           .. 'reload rspamd to apply', kam_cache_path, tostring(#content))
       else
@@ -576,7 +576,10 @@ for name, rule in pairs(rules) do
   end
 end
 
-rspamd_logger.infox(
+-- messagex (not infox): always logged regardless of log_level, so the
+-- load-summary line reaches syslog even when rspamd's default level
+-- (notice) would otherwise suppress an info-priority message.
+rspamd_logger.messagex(
   rspamd_config,
   'loaded %s generated KAM Lua rules (%s disabled after compile errors)',
   tostring(rule_count),

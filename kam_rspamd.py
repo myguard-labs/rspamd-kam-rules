@@ -38,7 +38,7 @@ PROJECT_OVERVIEW = "https://github.com/myguard-labs"
 # so dist/kam.lua carries the new date. test_committed_lua_matches_generator
 # fails if you forget the --emit-lua; there is no test that forces the date bump,
 # so it is on you to keep it honest.
-LUA_MODIFIED = "2026-07-12"
+LUA_MODIFIED = "2026-07-13"
 # Terse deploy recipe carried inside both artifacts so a downloaded file is
 # self-documenting. Kept in sync with README "Install".
 PROJECT_HOWTO = [
@@ -998,7 +998,7 @@ do
       kam_cache_path, kam_map_path)
     init_data = ''
   else
-    rspamd_logger.infox(rspamd_config, 'KAM: loaded rule map from %s', source)
+    rspamd_logger.messagex(rspamd_config, 'KAM: loaded rule map from %s', source)
   end
   rules, replacements, external_dependencies = parse_map(init_data)
 end
@@ -1056,7 +1056,7 @@ if kam_map_url and kam_map_url ~= '' then
       local ok = os.rename(tmp, kam_cache_path)
       if lock then rspamd_util.unlock_file(lock) end
       if ok then
-        rspamd_logger.infox(rspamd_config,
+        rspamd_logger.messagex(rspamd_config,
           'KAM: downloaded updated rule map to %s (%s bytes); '
           .. 'reload rspamd to apply', kam_cache_path, tostring(#content))
       else
@@ -1133,7 +1133,10 @@ for name, rule in pairs(rules) do
   end
 end
 
-rspamd_logger.infox(
+-- messagex (not infox): always logged regardless of log_level, so the
+-- load-summary line reaches syslog even when rspamd's default level
+-- (notice) would otherwise suppress an info-priority message.
+rspamd_logger.messagex(
   rspamd_config,
   'loaded %s generated KAM Lua rules (%s disabled after compile errors)',
   tostring(rule_count),

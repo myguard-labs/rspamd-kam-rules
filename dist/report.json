@@ -281,10 +281,10 @@
   ],
   "external_dependency_count": 39,
   "generated_date": "2026-07-13",
-  "generated_utc": "2026-07-13T13:46:46Z",
+  "generated_utc": "2026-07-13T14:16:13Z",
   "local_rules_sha256": "8e34b1e3d1162e5ee89f0a216bd6c75aaf4774becb54b3866ef25fd01a08ebec",
   "map_bytes": 738338,
-  "map_sha256": "b58cf12643b8711af3c268fd73d01ea12e69f5c8bf87aa40d3c34d8d21bf4438",
+  "map_sha256": "1236234d69bf332f5f72f8d34cadd9a8b29e9cb45b3734b58037dcf9815cf6c3",
   "omitted_directives": {
     "clear_uridnsbl_skip_domain": 2,
     "enlist_addrlist": 1,
@@ -541,8 +541,8 @@
       "text": "util_rb_2tld    page.link"
     }
   ],
-  "output_bytes": 25712,
-  "output_sha256": "22ef9ce69822f62e961522fdabaccf44de9f213fc4b5da833dfb9e79bc4fbdca",
+  "output_bytes": 25924,
+  "output_sha256": "5f62465034e6506f1362438b582134dfae2a296b05d159158e56d1d37df0b017",
   "overridden_rule_count": 13,
   "overridden_rules": {
     "CBJ_GiveMeABreak": [

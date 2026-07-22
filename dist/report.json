@@ -282,11 +282,11 @@
     "URIBL_RED"
   ],
   "external_dependency_count": 39,
-  "generated_date": "2026-07-21",
-  "generated_utc": "2026-07-21T13:17:14Z",
+  "generated_date": "2026-07-22",
+  "generated_utc": "2026-07-22T01:43:42Z",
   "local_rules_sha256": "8e34b1e3d1162e5ee89f0a216bd6c75aaf4774becb54b3866ef25fd01a08ebec",
-  "map_bytes": 739036,
-  "map_sha256": "5abbca8b7dfd3228fa37e581e4b9ae5ddf3feab49e6dbdfb592a5e135f0ff4fd",
+  "map_bytes": 739128,
+  "map_sha256": "552faf0f2461dd843b5aac52385a84242c6149662c4f11d774aa49c5346e5d0b",
   "omitted_directives": {
     "clear_uridnsbl_skip_domain": 2,
     "enlist_addrlist": 1,
@@ -489,57 +489,57 @@
     },
     {
       "directive": "unsupported_header",
-      "line": 11644,
+      "line": 11648,
       "text": "header __RCVD_IN_HOSTKARMA eval:check_rbl('HOSTKARMA-lastexternal','hostkarma.junkemailfilter.com.')"
     },
     {
       "directive": "unsupported_header",
-      "line": 11648,
+      "line": 11652,
       "text": "header RCVD_IN_HOSTKARMA_W eval:check_rbl_sub('HOSTKARMA-lastexternal', '127.0.0.1')"
     },
     {
       "directive": "unsupported_header",
-      "line": 11653,
+      "line": 11657,
       "text": "header RCVD_IN_HOSTKARMA_BL eval:check_rbl_sub('HOSTKARMA-lastexternal', '127.0.0.2')"
     },
     {
       "directive": "unsupported_header",
-      "line": 11658,
+      "line": 11662,
       "text": "header RCVD_IN_HOSTKARMA_BR eval:check_rbl_sub('HOSTKARMA-lastexternal', '127.0.0.4')"
     },
     {
       "directive": "fns_ignore_dkim",
-      "line": 11785,
+      "line": 11789,
       "text": "fns_ignore_dkim linkedin.com googlegroups.com yahoogroups.com yahoogroups.de"
     },
     {
       "directive": "fns_ignore_headers",
-      "line": 11788,
+      "line": 11792,
       "text": "fns_ignore_headers List-Id List-Post Mailing-List X-Forwarded-For"
     },
     {
       "directive": "fns_add_addrlist",
-      "line": 11791,
+      "line": 11795,
       "text": "fns_add_addrlist   (GMAIL)  *@gmail.com *@googlemail.com"
     },
     {
       "directive": "unsupported_header",
-      "line": 11794,
+      "line": 11798,
       "text": "header   __PLUGIN_FROMNAME_SPOOF eval:check_fromname_spoof()"
     },
     {
       "directive": "unsupported_header",
-      "line": 11797,
+      "line": 11801,
       "text": "header   __PLUGIN_FROMNAME_EQUALS_TO eval:check_fromname_equals_to()"
     },
     {
       "directive": "util_rb_3tld",
-      "line": 11821,
+      "line": 11825,
       "text": "util_rb_3tld    ct.sendgrid.net"
     },
     {
       "directive": "util_rb_2tld",
-      "line": 11822,
+      "line": 11826,
       "text": "util_rb_2tld    page.link"
     }
   ],
@@ -600,9 +600,9 @@
       "header"
     ]
   },
-  "serial": "1784627784",
-  "source_bytes": 619622,
-  "source_sha256": "f9433c28798e6026d1ea482b2700d2a458312c27c73964b921f303536e98c061",
+  "serial": "1784682791",
+  "source_bytes": 619771,
+  "source_sha256": "f100ea08c4393bf0eb80d481457e46475bd0f6fddebe17667d41fbc5ac92fabf",
   "source_url": "https://mcgrail.com/downloads/KAM.cf",
   "unexpanded_tag_rule_count": 12,
   "unexpanded_tag_rules": [

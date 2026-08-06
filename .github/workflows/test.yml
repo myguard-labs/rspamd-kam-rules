@@ -34,8 +34,8 @@ jobs:
         # Bump these deliberately, in a PR, where the new findings are visible.
         run: |
           python3 -m pip install --quiet --user ruff==0.16.1 mypy==2.3.0
-          python3 -m ruff check kam_rspamd.py
-          python3 -m mypy --strict kam_rspamd.py
+          python3 -m ruff check kam_rspamd.py tools/
+          python3 -m mypy --strict kam_rspamd.py tools/
 
       - name: Run tests
         run: python3 -m unittest discover -s tests -v

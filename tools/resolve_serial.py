@@ -14,6 +14,9 @@ CI log shows why a lookup came back empty.
 """
 import re
 import sys
+from typing import cast
+
+from dns.rdtypes.ANY.TXT import TXT
 
 
 def main() -> int:
@@ -25,7 +28,7 @@ def main() -> int:
         txt = "".join(
             chunk.decode("ascii", "ignore")
             for record in answers
-            for chunk in record.strings
+            for chunk in cast(TXT, record).strings
         )
         match = re.search(r"[0-9]+", txt)
         print(match.group(0) if match else "")

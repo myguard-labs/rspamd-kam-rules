@@ -32,10 +32,14 @@ jobs:
         # resolved a newer wheel that morning. That is exactly how EXE001
         # started failing the nightly (#17) while an adjacent run stayed green.
         # Bump these deliberately, in a PR, where the new findings are visible.
+        # dnspython is installed here too (not just in the update job) because
+        # tools/resolve_serial.py imports it: it ships py.typed, so mypy reads
+        # real inline types and needs no stub package. Keep this pin equal to
+        # the update job's, or the two jobs type-check against different APIs.
         run: |
-          python3 -m pip install --quiet --user ruff==0.16.1 mypy==2.3.0
-          python3 -m ruff check kam_rspamd.py
-          python3 -m mypy --strict kam_rspamd.py
+          python3 -m pip install --quiet --user ruff==0.16.1 mypy==2.3.0 dnspython==2.8.0
+          python3 -m ruff check kam_rspamd.py tools/
+          python3 -m mypy --strict kam_rspamd.py tools/
 
       - name: Run tests
         run: python3 -m unittest discover -s tests -v

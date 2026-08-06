@@ -25,8 +25,15 @@ jobs:
           python-version: "3.x"
 
       - name: Lint + type-check converter
+        # Both tools are PINNED, same as dnspython in the update job. Unpinned
+        # linters make every upstream release a possible CI break on a tree
+        # nobody touched: ruff enables new rules in its default set as it
+        # releases, so a scheduled run can go red purely because the runner
+        # resolved a newer wheel that morning. That is exactly how EXE001
+        # started failing the nightly (#17) while an adjacent run stayed green.
+        # Bump these deliberately, in a PR, where the new findings are visible.
         run: |
-          python3 -m pip install --quiet --user ruff mypy
+          python3 -m pip install --quiet --user ruff==0.16.1 mypy==2.3.0
           python3 -m ruff check kam_rspamd.py
           python3 -m mypy --strict kam_rspamd.py
 

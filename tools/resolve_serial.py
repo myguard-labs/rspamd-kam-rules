@@ -31,7 +31,10 @@ def main() -> int:
         print(match.group(0) if match else "")
     except Exception as exc:  # noqa: BLE001 - fail soft, empty serial = no change
         print(f"TXT resolve failed for {name!r}: {exc}", file=sys.stderr)
-        print("")
+        # Empty line on stdout is load-bearing: the workflow captures stdout as
+        # the serial and treats an empty value as "no change". print() emits the
+        # same single newline as print("") did.
+        print()
     return 0
 
 

@@ -14,9 +14,13 @@ CI log shows why a lookup came back empty.
 """
 import re
 import sys
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
-from dns.rdtypes.ANY.TXT import TXT
+if TYPE_CHECKING:
+    # Type-only import: dnspython must NOT be imported at module scope, or a
+    # runner without it dies here instead of reaching the fail-soft handler
+    # below (empty stdout + exit 0 is the workflow's "no change" contract).
+    from dns.rdtypes.ANY.TXT import TXT
 
 
 def main() -> int:
@@ -28,7 +32,7 @@ def main() -> int:
         txt = "".join(
             chunk.decode("ascii", "ignore")
             for record in answers
-            for chunk in cast(TXT, record).strings
+            for chunk in cast("TXT", record).strings
         )
         match = re.search(r"[0-9]+", txt)
         print(match.group(0) if match else "")

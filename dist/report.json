@@ -1,15 +1,15 @@
 {
-  "converted_rule_count": 3684,
+  "converted_rule_count": 3651,
   "converted_rule_types": {
     "body": 1271,
     "full": 4,
     "header": 1191,
-    "meta": 866,
+    "meta": 834,
     "mimeheader": 54,
     "rawbody": 82,
-    "uri": 216
+    "uri": 215
   },
-  "dropped_meta_count": 68,
+  "dropped_meta_count": 100,
   "dropped_metas": {
     "GB_BADJS": [
       "OBFU_HTML_ATTACH",
@@ -45,18 +45,28 @@
     "GB_RETPATH_GOOG_TRIX": [
       "ENVFROM_GOOG_TRIX"
     ],
+    "GB_WEBFORM": [
+      "KAM_SHORT"
+    ],
     "JMQ_CONGRAT": [
       "KAM_RAPTOR_ALTERED",
       "T_FREEMAIL_DOC_PDF"
     ],
+    "KAM_2020": [
+      "KAM_SHORT"
+    ],
     "KAM_ADMIN": [
       "HTML_OBFUSCATE_10_20"
+    ],
+    "KAM_ARREST": [
+      "KAM_SHORT"
     ],
     "KAM_BAD_DNSWL": [
       "RCVD_IN_BL_SPAMCOP_NET",
       "RCVD_IN_HOSTKARMA_W"
     ],
     "KAM_BAD_HTML": [
+      "KAM_SHORT",
       "UNWANTED_LANGUAGE_BODY"
     ],
     "KAM_BENEFICIARY": [
@@ -93,11 +103,35 @@
     "KAM_DOMAINBROKER": [
       "KAM_BODY_MARKETINGBL_PCCC"
     ],
+    "KAM_DRUG2": [
+      "KAM_SHORT"
+    ],
+    "KAM_DRUG2_2": [
+      "KAM_SHORT"
+    ],
+    "KAM_EMAILPHISH": [
+      "KAM_SHORT"
+    ],
     "KAM_FACEBOOKMAIL": [
       "DKIM_ADSP_ALL"
     ],
+    "KAM_FAKEBBB": [
+      "KAM_SHORT"
+    ],
+    "KAM_FAKEDROPBOX2": [
+      "KAM_SHORT"
+    ],
+    "KAM_FAKEPP": [
+      "KAM_SHORT"
+    ],
     "KAM_FAKE_AGING": [
       "KAM_RAPTOR_EXTERNAL"
+    ],
+    "KAM_FAKE_CITIZEN": [
+      "KAM_SHORT"
+    ],
+    "KAM_FAKE_COINBASE4": [
+      "KAM_SHORT"
     ],
     "KAM_FAKE_DELIVER": [
       "KAM_RAPTOR_ALTERED"
@@ -105,10 +139,16 @@
     "KAM_FAKE_FAX2": [
       "GB_BADJS"
     ],
+    "KAM_FAKE_HOLD": [
+      "KAM_SHORT"
+    ],
     "KAM_FAKE_INVOICE": [
       "KAM_RAPTOR_ALTERED",
       "OLEMACRO_URI_TARGET",
       "__WLHTMLATTACH"
+    ],
+    "KAM_FAKE_MT": [
+      "KAM_SHORT"
     ],
     "KAM_FAKE_PAY_UPDATE": [
       "KAM_RAPTOR_EXTERNAL"
@@ -118,9 +158,29 @@
       "KAM_FAKE_PAY_UPDATE",
       "KAM_RAPTOR_EXTERNAL"
     ],
+    "KAM_FAKE_SHAREPOINT": [
+      "KAM_SHORT"
+    ],
+    "KAM_FAKE_SHAREPOINTLINK": [
+      "KAM_FAKE_SHAREPOINT",
+      "KAM_SHORT"
+    ],
+    "KAM_FAKE_SHAREPOINT_PRODUCTS": [
+      "KAM_FAKE_SHAREPOINT"
+    ],
+    "KAM_FAKE_TREZOR": [
+      "__KAM_SHORT"
+    ],
+    "KAM_FAKE_TREZOR2": [
+      "KAM_SHORT"
+    ],
     "KAM_GAMBLING": [
       "FORGED_GMAIL_RCVD",
+      "KAM_SHORT",
       "__FREEMAIL_DOC_PDF"
+    ],
+    "KAM_GIFT": [
+      "KAM_SHORT"
     ],
     "KAM_GOOGLE_FRESH_REDIR": [
       "FROM_FMBLA_NEWDOM",
@@ -138,6 +198,12 @@
     "KAM_GRABBAG7": [
       "HTML_MIME_NO_HTML_TAG"
     ],
+    "KAM_HAIRTRANS": [
+      "KAM_GIFT"
+    ],
+    "KAM_HAIRTRANS2": [
+      "KAM_GIFT"
+    ],
     "KAM_INVEST": [
       "EXTRACTTEXT"
     ],
@@ -150,6 +216,9 @@
     "KAM_JURY": [
       "KAM_RAPTOR_ALTERED"
     ],
+    "KAM_LINKBAIT3": [
+      "KAM_SHORT"
+    ],
     "KAM_LIST": [
       "EXTRACTTEXT"
     ],
@@ -160,13 +229,17 @@
       "EXTRACTTEXT",
       "KAM_LIST3"
     ],
+    "KAM_LIVEURI2": [
+      "KAM_DRUG2"
+    ],
     "KAM_MAILBOX": [
       "HTML_MIME_NO_HTML_TAG",
       "KAM_SENDGRID2",
       "T_FREEMAIL_DOC_PDF"
     ],
     "KAM_MAILBOX2": [
-      "KAM_MAILBOX"
+      "KAM_MAILBOX",
+      "KAM_SHORT"
     ],
     "KAM_MAILBOX3": [
       "KAM_MAILBOX",
@@ -190,6 +263,9 @@
     "KAM_PAYROLL_SCANNER": [
       "KAM_IFRAME"
     ],
+    "KAM_PHISHCP3": [
+      "KAM_SHORT"
+    ],
     "KAM_PHISHCP4": [
       "KAM_MAILBOX",
       "KAM_MAILBOX2"
@@ -202,6 +278,12 @@
       "KAM_FAKE_DELIVER",
       "KAM_RPTR_PASSED"
     ],
+    "KAM_REFI": [
+      "KAM_SHORT"
+    ],
+    "KAM_REFI2": [
+      "KAM_SHORT"
+    ],
     "KAM_SALE": [
       "BODY_8BITS"
     ],
@@ -210,6 +292,15 @@
     ],
     "KAM_SEX": [
       "__HTML_IMG_ONLY"
+    ],
+    "KAM_SEX2": [
+      "KAM_SHORT"
+    ],
+    "KAM_SHORT": [
+      "__KAM_SHORT"
+    ],
+    "KAM_STUDENT": [
+      "KAM_SHORT"
     ],
     "KAM_UAH_YAHOOGROUP_SENDER": [
       "FORGED_YAHOO_RCVD"
@@ -224,8 +315,17 @@
     "KAM_VM_HTML": [
       "KAM_VM"
     ],
+    "KAM_WATERHACK": [
+      "KAM_SHORT"
+    ],
     "KAM_WEIRDTRICK2": [
       "T_REMOTE_IMAGE"
+    ],
+    "KAM_WORKFROMHOME": [
+      "KAM_SHORT"
+    ],
+    "KAM_WORKHOME2": [
+      "KAM_SHORT"
     ],
     "MSGID_MULTIPLE_AT_OUTLOOK": [
       "MSGID_MULTIPLE_AT",
@@ -257,8 +357,6 @@
     "FREEMAIL_REPLYTO",
     "FREEMAIL_REPLYTO_NEQ_FROM",
     "FREEMAIL_TO",
-    "HAS_GOOGLE_REDIR",
-    "HAS_X_PHP_SCRIPT",
     "HTML_SHORT_LINK_IMG_1",
     "HTML_SHORT_LINK_IMG_2",
     "HTML_SHORT_LINK_IMG_3",
@@ -284,12 +382,12 @@
     "URIBL_BLACK",
     "URIBL_RED"
   ],
-  "external_dependency_count": 39,
-  "generated_date": "2026-09-01",
-  "generated_utc": "2026-09-01T02:35:57Z",
+  "external_dependency_count": 37,
+  "generated_date": "2026-09-02",
+  "generated_utc": "2026-09-02T15:36:13Z",
   "local_rules_sha256": "8e34b1e3d1162e5ee89f0a216bd6c75aaf4774becb54b3866ef25fd01a08ebec",
-  "map_bytes": 741306,
-  "map_sha256": "35123b9dcf8f0f980523ce54e13fae74fac721f955f734c26f5eba553a395e5e",
+  "map_bytes": 733438,
+  "map_sha256": "f3b5ee5e5f258f8c8010c7d4c1f082cf1184800e42147faa1e3559d7fbe5d337",
   "omitted_directives": {
     "clear_uridnsbl_skip_domain": 2,
     "enlist_addrlist": 1,
@@ -603,9 +701,9 @@
       "header"
     ]
   },
-  "serial": "1788205665",
-  "source_bytes": 623372,
-  "source_sha256": "55c998feaa9d84e533ded8c3dc7c6eae62bcd80b814b327f10dd95b08fe4139d",
+  "serial": "1788312144",
+  "source_bytes": 623396,
+  "source_sha256": "8e20a3b96fca72eb4aaa03ed4b110a958a3d5db95f62d4282d19336ca853c8ee",
   "source_url": "https://mcgrail.com/downloads/KAM.cf",
   "unexpanded_tag_rule_count": 12,
   "unexpanded_tag_rules": [

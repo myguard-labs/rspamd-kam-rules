@@ -69,8 +69,9 @@ result = json.load(sys.stdin)
 actual = result.get("symbols", {}).get(symbol)
 if actual is None:
     raise SystemExit(f"{symbol} was not inserted: {result}")
-if not math.isclose(float(actual["score"]), expected, rel_tol=0, abs_tol=1e-9):
-    raise SystemExit(f"{symbol} score {actual['score']} != {expected}")
+score = float(actual["score"])
+if not math.isclose(score, expected, rel_tol=0, abs_tol=1e-9):
+    raise SystemExit(f"{symbol} score {score} != {expected}")
 ' "$symbol" "$expected"
 }
 
@@ -126,7 +127,7 @@ scan $'From: a@example.com\nTo: b@example.com\nSubject: The TRUTH\n\nordinary te
     assert_symbol_score KAM_TRUTHINESS 1.5
 
 scan $'From: a@example.com\nTo: b@example.com\nSubject: ordinary\n\nhttps://storage.googleapis.com/bucket-one/path/file.html https://storage.googleapis.com/bucket-two/path/file.html' |
-    assert_symbol_score GB_STORAGE_GOOGLE_HTM 2.5
+    assert_symbol_score GB_S3_HTM 6.5
 
 # Slow path: a header rule with an addr transform (From:addr =~ /adv@/i) does NOT
 # ride the combined Hyperscan DB — it parses each address in Lua. Exercise it so

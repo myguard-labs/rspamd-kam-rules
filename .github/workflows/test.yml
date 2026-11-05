@@ -36,10 +36,16 @@ jobs:
         # tools/resolve_serial.py imports it: it ships py.typed, so mypy reads
         # real inline types and needs no stub package. Keep this pin equal to
         # the update job's, or the two jobs type-check against different APIs.
+        # Install into a venv under $RUNNER_TEMP, not `pip --user`: the
+        # self-hosted slot's $HOME is not writable, so ~/.local fails EACCES.
         run: |
-          python3 -m pip install --quiet --user ruff==0.16.1 mypy==2.3.0 dnspython==2.8.0
-          python3 -m ruff check kam_rspamd.py tools/
-          python3 -m mypy --strict kam_rspamd.py tools/
+          python3 -m venv "$RUNNER_TEMP/lint-venv"
+          LINT_PY="$RUNNER_TEMP/lint-venv/bin/python"
+          "$LINT_PY" -m pip install --quiet --no-cache-dir \
+            --disable-pip-version-check \
+            ruff==0.16.1 mypy==2.3.0 dnspython==2.8.0
+          "$LINT_PY" -m ruff check kam_rspamd.py tools/
+          "$LINT_PY" -m mypy --strict kam_rspamd.py tools/
 
       - name: Run tests
         run: python3 -m unittest discover -s tests -v

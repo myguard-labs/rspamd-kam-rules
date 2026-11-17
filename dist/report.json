@@ -1,25 +1,20 @@
 {
-  "converted_rule_count": 3702,
+  "converted_rule_count": 3695,
   "converted_rule_types": {
     "body": 1275,
     "full": 4,
     "header": 1211,
-    "meta": 840,
+    "meta": 833,
     "mimeheader": 54,
     "rawbody": 82,
     "uri": 236
   },
-  "dropped_meta_count": 104,
+  "dropped_meta_count": 111,
   "dropped_metas": {
     "GB_BADJS": [
+      "HTML_ATTACH",
       "OBFU_HTML_ATTACH",
       "UNICODE_OBFU_ASC"
-    ],
-    "GB_DKIM_REPLAY_ARC_CHAIN": [
-      "MANY_ARC_SEALS"
-    ],
-    "GB_DKIM_REPLAY_RONMS": [
-      "GB_DKIM_REPLAY_ARC_CHAIN"
     ],
     "GB_DKIM_REPLAY_SUSP": [
       "FORGED_SPF_HELO"
@@ -32,6 +27,7 @@
       "PDS_FROMNAME_SPOOFED_EMAIL"
     ],
     "GB_HTML_FORM": [
+      "HTML_ATTACH",
       "OBFU_HTML_ATTACH",
       "UNICODE_OBFU_ASC"
     ],
@@ -70,13 +66,20 @@
     "KAM_ARREST": [
       "KAM_SHORT"
     ],
+    "KAM_BADPO2": [
+      "HTML_ATTACH"
+    ],
     "KAM_BAD_DNSWL": [
       "RCVD_IN_BL_SPAMCOP_NET",
       "RCVD_IN_HOSTKARMA_W"
     ],
     "KAM_BAD_HTML": [
+      "HTML_ATTACH",
       "KAM_SHORT",
       "UNWANTED_LANGUAGE_BODY"
+    ],
+    "KAM_BAD_SCAN": [
+      "HTML_ATTACH"
     ],
     "KAM_BENEFICIARY": [
       "EXTRACTTEXT"
@@ -136,6 +139,9 @@
     "KAM_FAKE_AGING": [
       "KAM_RAPTOR_EXTERNAL"
     ],
+    "KAM_FAKE_BENEFIT": [
+      "HTML_ATTACH"
+    ],
     "KAM_FAKE_CITIZEN": [
       "KAM_SHORT"
     ],
@@ -145,13 +151,22 @@
     "KAM_FAKE_DELIVER": [
       "KAM_RAPTOR_ALTERED"
     ],
+    "KAM_FAKE_DOCUSIGN": [
+      "HTML_ATTACH"
+    ],
+    "KAM_FAKE_FAX": [
+      "HTML_ATTACH"
+    ],
     "KAM_FAKE_FAX2": [
-      "GB_BADJS"
+      "GB_BADJS",
+      "HTML_ATTACH",
+      "KAM_FAKE_FAX"
     ],
     "KAM_FAKE_HOLD": [
       "KAM_SHORT"
     ],
     "KAM_FAKE_INVOICE": [
+      "HTML_ATTACH",
       "KAM_RAPTOR_ALTERED",
       "OLEMACRO_URI_TARGET",
       "__WLHTMLATTACH"
@@ -166,6 +181,9 @@
       "EXTRACTTEXT",
       "KAM_FAKE_PAY_UPDATE",
       "KAM_RAPTOR_EXTERNAL"
+    ],
+    "KAM_FAKE_PO": [
+      "HTML_ATTACH"
     ],
     "KAM_FAKE_SHAREPOINT": [
       "KAM_SHORT"
@@ -182,6 +200,9 @@
     ],
     "KAM_FAKE_TREZOR2": [
       "KAM_SHORT"
+    ],
+    "KAM_FEDEX": [
+      "HTML_ATTACH"
     ],
     "KAM_GAMBLING": [
       "FORGED_GMAIL_RCVD",
@@ -216,6 +237,9 @@
     "KAM_INVEST": [
       "EXTRACTTEXT"
     ],
+    "KAM_INVOICEPO": [
+      "HTML_ATTACH"
+    ],
     "KAM_INVOICE_OBFU": [
       "FUZZY_AMAZON"
     ],
@@ -242,6 +266,7 @@
       "KAM_DRUG2"
     ],
     "KAM_MAILBOX": [
+      "HTML_ATTACH",
       "HTML_MIME_NO_HTML_TAG",
       "KAM_SENDGRID2",
       "T_FREEMAIL_DOC_PDF",
@@ -272,6 +297,7 @@
       "PDS_FROMNAME_SPOOFED_EMAIL"
     ],
     "KAM_PAYROLL_SCANNER": [
+      "HTML_ATTACH",
       "KAM_IFRAME"
     ],
     "KAM_PHISHCP3": [
@@ -280,6 +306,9 @@
     "KAM_PHISHCP4": [
       "KAM_MAILBOX",
       "KAM_MAILBOX2"
+    ],
+    "KAM_PRIV": [
+      "HTML_ATTACH"
     ],
     "KAM_QUITE_BAD_DNSWL": [
       "RCVD_IN_BL_SPAMCOP_NET",
@@ -397,11 +426,11 @@
     "URIBL_RED"
   ],
   "external_dependency_count": 37,
-  "generated_date": "2026-11-16",
-  "generated_utc": "2026-11-16T21:26:11Z",
+  "generated_date": "2026-11-17",
+  "generated_utc": "2026-11-17T20:14:02Z",
   "local_rules_sha256": "8e34b1e3d1162e5ee89f0a216bd6c75aaf4774becb54b3866ef25fd01a08ebec",
-  "map_bytes": 742978,
-  "map_sha256": "a35e6453dd98b4089b454e7d949f90f2b9ae7a1728db1bb87d833ebbb86b3b33",
+  "map_bytes": 741729,
+  "map_sha256": "b3e0752b21908fbca6e9b8b50277feb387d941739de207515f37c946bc37315a",
   "omitted_directives": {
     "clear_uridnsbl_skip_domain": 2,
     "enlist_addrlist": 1,
@@ -595,7 +624,7 @@
     {
       "directive": "enlist_addrlist",
       "line": 7815,
-      "text": "enlist_addrlist (WLHTMLATTACH)          *@pearson.com"
+      "text": "enlist_addrlist (WLHTMLATTACH)          *@pearson.com *@app.montgomerycountymd.gov"
     },
     {
       "directive": "unsupported_header",
@@ -609,57 +638,57 @@
     },
     {
       "directive": "unsupported_header",
-      "line": 11842,
+      "line": 11853,
       "text": "header __RCVD_IN_HOSTKARMA eval:check_rbl('HOSTKARMA-lastexternal','hostkarma.junkemailfilter.com.')"
     },
     {
       "directive": "unsupported_header",
-      "line": 11846,
+      "line": 11857,
       "text": "header RCVD_IN_HOSTKARMA_W eval:check_rbl_sub('HOSTKARMA-lastexternal', '127.0.0.1')"
     },
     {
       "directive": "unsupported_header",
-      "line": 11851,
+      "line": 11862,
       "text": "header RCVD_IN_HOSTKARMA_BL eval:check_rbl_sub('HOSTKARMA-lastexternal', '127.0.0.2')"
     },
     {
       "directive": "unsupported_header",
-      "line": 11856,
+      "line": 11867,
       "text": "header RCVD_IN_HOSTKARMA_BR eval:check_rbl_sub('HOSTKARMA-lastexternal', '127.0.0.4')"
     },
     {
       "directive": "fns_ignore_dkim",
-      "line": 11983,
+      "line": 11994,
       "text": "fns_ignore_dkim linkedin.com googlegroups.com yahoogroups.com yahoogroups.de"
     },
     {
       "directive": "fns_ignore_headers",
-      "line": 11986,
+      "line": 11997,
       "text": "fns_ignore_headers List-Id List-Post Mailing-List X-Forwarded-For"
     },
     {
       "directive": "fns_add_addrlist",
-      "line": 11989,
+      "line": 12000,
       "text": "fns_add_addrlist   (GMAIL)  *@gmail.com *@googlemail.com"
     },
     {
       "directive": "unsupported_header",
-      "line": 11992,
+      "line": 12003,
       "text": "header   __PLUGIN_FROMNAME_SPOOF eval:check_fromname_spoof()"
     },
     {
       "directive": "unsupported_header",
-      "line": 11995,
+      "line": 12006,
       "text": "header   __PLUGIN_FROMNAME_EQUALS_TO eval:check_fromname_equals_to()"
     },
     {
       "directive": "util_rb_3tld",
-      "line": 12019,
+      "line": 12030,
       "text": "util_rb_3tld    ct.sendgrid.net"
     },
     {
       "directive": "util_rb_2tld",
-      "line": 12020,
+      "line": 12031,
       "text": "util_rb_2tld    page.link"
     }
   ],
@@ -720,9 +749,9 @@
       "header"
     ]
   },
-  "serial": "1794855575",
-  "source_bytes": 636703,
-  "source_sha256": "994ab8084468957c5a4c35397fa683e52afdd09cc12b80bbabd18cb5a90eea75",
+  "serial": "1794943659",
+  "source_bytes": 637180,
+  "source_sha256": "5ec4a2cf015a35f56916ada1ae9efecbc721d0ddbb6be8c8d8c3386f590158f3",
   "source_url": "https://mcgrail.com/downloads/KAM.cf",
   "unexpanded_tag_rule_count": 12,
   "unexpanded_tag_rules": [

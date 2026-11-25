@@ -429,11 +429,11 @@
     "URIBL_RED"
   ],
   "external_dependency_count": 37,
-  "generated_date": "2026-11-24",
-  "generated_utc": "2026-11-24T21:43:16Z",
+  "generated_date": "2026-11-25",
+  "generated_utc": "2026-11-25T20:50:57Z",
   "local_rules_sha256": "8e34b1e3d1162e5ee89f0a216bd6c75aaf4774becb54b3866ef25fd01a08ebec",
-  "map_bytes": 742275,
-  "map_sha256": "68718cba9df7bac0245bc6264e65e501e64fbfed714df0d96820ffdd2c03ba30",
+  "map_bytes": 742293,
+  "map_sha256": "0554d9f652ed144be82e8ae1d04efbe60ca00e3cf68c10c2e5119f6520c346ca",
   "omitted_directives": {
     "clear_uridnsbl_skip_domain": 2,
     "enlist_addrlist": 1,
@@ -752,9 +752,9 @@
       "header"
     ]
   },
-  "serial": "1795520011",
-  "source_bytes": 638830,
-  "source_sha256": "ed21037e771af614948c9c8270b5ccd989b3fdf89956b062d89cfd026b451fda",
+  "serial": "1795630131",
+  "source_bytes": 638871,
+  "source_sha256": "7a2a72531bd91cbe3002c4e3157a7a784ab1930c3d0720cd494be29303be7a36",
   "source_url": "https://mcgrail.com/downloads/KAM.cf",
   "unexpanded_tag_rule_count": 12,
   "unexpanded_tag_rules": [
